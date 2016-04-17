@@ -15,7 +15,7 @@ namespace Photos.Models
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
             string myConnectionString;
-            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=pa5CAL01D;";
+            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=xxxxxx;";
             conn = new MySql.Data.MySqlClient.MySqlConnection();
             conn.ConnectionString = myConnectionString;
             conn.Open();
