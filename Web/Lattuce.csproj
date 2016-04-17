@@ -134,6 +134,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="App_Data\PhotoSetupMySQL.sql" />
     <Content Include="Global.asax" />
+    <Content Include="HtmlPage1.html" />
     <Content Include="Resource\css\bootstrap.min.css" />
     <Content Include="Resource\css\templatemo-style.css" />
     <Content Include="Resource\fonts\glyphicons-halflings-regular.svg" />
