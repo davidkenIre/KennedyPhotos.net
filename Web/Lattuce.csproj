@@ -388,6 +388,8 @@
     <Content Include="Resource\js\bootstrap.min.js" />
     <Content Include="Resource\js\jquery.min.js" />
     <Content Include="Resource\js\jquery.singlePageNav.min.js" />
+    <None Include="sql\01_photos_ddl.sql" />
+    <None Include="sql\02_photos_dml.sql" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
