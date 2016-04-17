@@ -7,13 +7,16 @@ drop table album;
 create table album (
 	album_id           	int not null primary key auto_increment,
 	album_name			varchar(500) not null,
+    album_date			date,
+    description			varchar(32000),
 	location  			varchar(1000) not null
 );
 
 create table photo (
 	photo_id 			int not null primary key auto_increment,
     album_id			int not null references album(album_id),
-	filename 			varchar(1000) not null
+	filename 			varchar(1000) not null,
+    thumbnail_filename  varchar(1000) not null
 );
 
 

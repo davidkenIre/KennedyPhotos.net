@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Photos.Models.Photo>
+                      <div class="page-header">
+                          <h1>View Album</h1>
+                      </div>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Album_Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Filename)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Location)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumName)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            <a href="@Html.DisplayFor(modelItem => item.Location)@Html.DisplayFor(modelItem => item.Filename)">
+                <img src="/Thumbnails/@Html.DisplayFor(modelItem => item.ThumbnailFilename)" class="img-thumbnail" alt="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera">
+            </a>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Filename)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Location)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AlbumName)
+        </td>
+    </tr>
+}
+
+</table>
+
+                      <p><a class="btn btn-primary" href="/Photos/Index" role="button"> &laquo; Back to Albums</a></p>

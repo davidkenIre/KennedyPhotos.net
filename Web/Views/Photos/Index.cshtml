@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+@model IEnumerable<Photos.Models.Album>
+
+
+    <div class="page-header">
+        <h1>All Albums (MVC Listing)</h1>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Album Name</th>
+                <th>Date</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>
+                        <a href="/Photos/ViewAlbum/@item.Id">@item.AlbumName</a>
+                    </td>
+                    <td>@item.AlbumDate</td>
+                    <td>@item.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="page-header">
+        <h1>All Albums (Manual Listing)</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/France2007/">France 2007</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/Paris2012/">Paris 2012</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/Cuba2013/">Cuba 2013</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/StPetersburg2013/">St Petersburg 2013</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/AranIslands2014/">Aran Islands 2014</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/Croatia2014/">Croatia 2014</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/Edinburgh2014/">Edinburgh 2014</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/NewOrleans2014/">New Orleans 2014</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/SanFrancisco2014/">San Francisco 2014</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/MarcBaptisim2015/">Marc Baptisim 2015</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a href="/LegacyAlbums/NewYork2015/">New York 2015</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+

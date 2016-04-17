@@ -13,6 +13,8 @@ namespace Photos.Models
         public string Id { get; set; }
         public string Location { get; set; }
         public string AlbumName { get; set; }
+        public string AlbumDate { get; set; }
+        public string Description { get; set; }
     }
 
 
@@ -22,7 +24,11 @@ namespace Photos.Models
     public class Photo
     {
         public string Id { get; set; }
-        public string FileName { get; set; }
-   }
+        public string Album_Id { get; set; }
+        public string Filename { get; set; }
+        public string Location { get; set; }
+        public string AlbumName { get; set; }
+        public string ThumbnailFilename { get; set; }
+    }
 }
  

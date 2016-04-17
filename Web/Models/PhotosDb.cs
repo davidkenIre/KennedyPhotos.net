@@ -11,7 +11,11 @@ namespace Photos.Models
 {
     public class PhotosDb 
     {
-        public List<Photo> GetAllAlbums()
+        /// <summary>
+        /// Retrive a list of all albums from the database
+        /// </summary>
+        /// <returns></returns>
+        public List<Album> GetAllAlbums()
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -31,30 +35,32 @@ namespace Photos.Models
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
             //Read the data and store them in the list
-            List<Album> _photos = new List<Album>();
+            List<Album> _albums = new List<Album>();
             while (dataReader.Read())
             {
-                Photo item = new Album()
+                Album item = new Album()
                 {
                     Id = dataReader["album_id"].ToString(),
-                    FileName = dataReader["filename"].ToString(),
                     Location = dataReader["location"].ToString(),
-                    AlbumName = dataReader["albumname"].ToString()
+                    AlbumName = dataReader["album_name"].ToString(),
+                    AlbumDate = dataReader["album_date"].ToString(),
+                    Description = dataReader["description"].ToString()
                 };
-                _photos.Add(item);
+                _albums.Add(item);
             }
 
             //close Data Reader
             dataReader.Close();
             conn.Close();
 
-            return _photos;
-
+            return _albums;
         }
 
-
-
-
+        /// <summary>
+        /// Retrive a list of all photos from the database, 
+        /// along with a list of associated albums
+        /// </summary>
+        /// <returns></returns>
         public List<Photo> GetAllPhotos()
         {
             // Connect to MySQL and load all the photos
@@ -70,7 +76,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            MySqlCommand cmd = new MySqlCommand("select * from photo", conn);
+            MySqlCommand cmd = new MySqlCommand("select a.*, p.* from photo p, album a where a.album_id = p.album_id", conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
@@ -81,9 +87,11 @@ namespace Photos.Models
                 Photo item = new Photo()
                 {
                     Id = dataReader["photo_id"].ToString(),
-                    FileName = dataReader["filename"].ToString(),
+                    Album_Id = dataReader["album_id"].ToString(),
+                    Filename = dataReader["filename"].ToString(),
                     Location = dataReader["location"].ToString(),
-                    AlbumName = dataReader["albumname"].ToString()
+                    AlbumName = dataReader["album_name"].ToString(),
+                    ThumbnailFilename = dataReader["thumbnail_filename"].ToString()
                 };
                 _photos.Add(item);
             }
@@ -93,7 +101,6 @@ namespace Photos.Models
             conn.Close();
 
             return _photos;
-        
         }
     }
 }
