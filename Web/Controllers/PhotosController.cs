@@ -21,10 +21,10 @@ namespace Photos.Controllers
         }
 
         [HttpGet]
-        public ActionResult ViewAlbum(int id)
+        public ActionResult ViewAlbum(int Id)
         {
             //            return Content("Viewing Album: " + id);
-            List<Photo> _PhotoListing = _db.GetAllPhotos();
+            List<Photo> _PhotoListing = _db.GetAllPhotos(Id);
             return View(_PhotoListing.ToList());
 
         }

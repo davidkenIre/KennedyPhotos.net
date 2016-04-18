@@ -61,7 +61,7 @@ namespace Photos.Models
         /// along with a list of associated albums
         /// </summary>
         /// <returns></returns>
-        public List<Photo> GetAllPhotos()
+        public List<Photo> GetAllPhotos(int AlbumId)
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -76,7 +76,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            MySqlCommand cmd = new MySqlCommand("select a.*, p.* from photo p, album a where a.album_id = p.album_id", conn);
+            MySqlCommand cmd = new MySqlCommand("select a.*, p.* from photo p, album a where a.album_id = p.album_id and a.album_id = " + AlbumId, conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
 

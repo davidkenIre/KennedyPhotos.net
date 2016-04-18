@@ -1,11 +1,7 @@
-﻿using MySql.Data;
-using MySql.Data.MySqlClient;
-using Microsoft.Win32;
-using System.Drawing;
+﻿using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Text;
-
 
 namespace PhotoWatcher
 {
@@ -72,7 +68,6 @@ namespace PhotoWatcher
         /// <summary>
         /// Event occurs when the contents of a File or Directory are changed
         /// </summary>
-        /// 
 
         private void FSPhotoWatcher_Changed(object sender,
                         System.IO.FileSystemEventArgs e)
@@ -85,48 +80,28 @@ namespace PhotoWatcher
         private void FSPhotoWatcher_Created(object sender,
                         System.IO.FileSystemEventArgs e)
         {
-
+            Utility U = new Utility();
             try {
-                // Thumbnail
-                //http://www.beansoftware.com/ASP.NET-FAQ/Create-Thumbnail-Image.aspx
-                Guid g;
-                g = Guid.NewGuid();
-                Image image = Image.FromFile(e.FullPath);
-                Image thumb = image.GetThumbnailImage(300, 200, () => false, IntPtr.Zero);
-                thumb.Save("d:\\media\\photos\\thumbnails\\" + g.ToString() + Path.GetExtension(e.Name).ToString());
-                image.Dispose();
-                thumb.Dispose();
+                // Create the thumbnail
+                // Wait 5 seconds for the original file to actually land and avoid errors where file is still busy
+                System.Threading.Thread.Sleep(5000);
+
+                string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
+                Guid g = Guid.NewGuid();
+                U.CreateThumbnail(200, e.FullPath, ThumbnailDirectory + g.ToString() + Path.GetExtension(e.Name).ToString());
+
+                // Get the parent Directory Name - this is needed to link the picture to an Album name
+                FileInfo fInfo = new FileInfo(e.FullPath);
+                String AlbumName = fInfo.Directory.Name;
 
                 // Connect to MySQL and load all the photos
-                MySql.Data.MySqlClient.MySqlConnection conn;
-                string myConnectionString;
-
-                // Get the connection password
-                string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
-
-                myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
-                conn = new MySql.Data.MySqlClient.MySqlConnection();
-                conn.ConnectionString = myConnectionString;
-                conn.Open();
-
-                //Create Command
-                MySqlCommand cmd = new MySqlCommand("insert into photo (album_id, filename, thumbnail_filename) select distinct album_id, '" + Path.GetFileName(e.FullPath).ToString() + "', '" + g.ToString() + Path.GetExtension(e.Name).ToString() + "' from album where album_name='Aran Islands 2014';", conn);
-                //Create a data reader and Execute the command
-                cmd.ExecuteNonQuery();
-                conn.Close();
+                U.dbDML("insert into photo (album_id, filename, thumbnail_filename) select distinct album_id, '" + Path.GetFileName(e.FullPath).ToString() + "', '" + g.ToString() + Path.GetExtension(e.Name).ToString() + "' from album where upper(album_name)='" + AlbumName.ToUpper() + "';");
             } 
             catch (Exception e1) {
-                // Create the file.
-                using (StreamWriter sw = File.AppendText("d:\\Error.log"))
-                {
-                    sw.WriteLine("---------------");
-                    sw.WriteLine("Message: " + e1.Message);
-                    sw.WriteLine("Message: " + e1.Message);sw.WriteLine("Base Exception: " + e1.GetBaseException().ToString());
-                    sw.WriteLine("Inner Exception: " + e1.InnerException);
-                    sw.WriteLine("---------------");
-                }
+                U.WriteLog("Message: " + e1.Message +  "\r\n" + "Base Exception: " + e1.GetBaseException().ToString() + "\r\n" + "Inner Exception: " + e1.InnerException);
             }
         }
+
         /// <summary>
         /// Event occurs when the a File or Directory is deleted
         /// </summary>
@@ -143,10 +118,6 @@ namespace PhotoWatcher
         {
             //code here for newly renamed file or directory
         }
-
-
-
-
     }
 }
 
