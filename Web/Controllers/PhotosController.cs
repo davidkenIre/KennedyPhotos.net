@@ -16,7 +16,7 @@ namespace Photos.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            List<Album> _AlbumListing = _db.GetAllAlbums();
+            List<Album> _AlbumListing = _db.GetAlbums(0);
             return View(_AlbumListing.ToList());
         }
 

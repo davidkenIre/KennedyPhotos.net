@@ -15,7 +15,7 @@ namespace Photos.Models
         /// Retrive a list of all albums from the database
         /// </summary>
         /// <returns></returns>
-        public List<Album> GetAllAlbums()
+        public List<Album> GetAlbums(int Limit)
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -30,7 +30,12 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            MySqlCommand cmd = new MySqlCommand("select * from album", conn);
+            string SQL = "select * from album where active = 'Y' order by created_date desc";
+            if (Limit != 0) {
+                SQL += " Limit 5";
+            }
+
+            MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
@@ -76,7 +81,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            MySqlCommand cmd = new MySqlCommand("select a.*, p.* from photo p, album a where a.album_id = p.album_id and a.album_id = " + AlbumId, conn);
+            MySqlCommand cmd = new MySqlCommand("select a.*, p.* from photo p, album a where a.album_id = p.album_id and a.album_id = " + AlbumId + " and a.active = 'Y' and p.active = 'Y'", conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
 

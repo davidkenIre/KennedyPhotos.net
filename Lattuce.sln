@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lattuce", "Web\Lattuce.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatcher", "PhotoWatcher\PhotoWatcher.csproj", "{09D3CFE4-C3DC-4E25-90BC-B657D1BAEC59}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatcherLib", "PhotoWatcherLib\PhotoWatcherLib.csproj", "{CCB24DC5-2775-421A-91C8-6C232E594227}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{09D3CFE4-C3DC-4E25-90BC-B657D1BAEC59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09D3CFE4-C3DC-4E25-90BC-B657D1BAEC59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09D3CFE4-C3DC-4E25-90BC-B657D1BAEC59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCB24DC5-2775-421A-91C8-6C232E594227}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCB24DC5-2775-421A-91C8-6C232E594227}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCB24DC5-2775-421A-91C8-6C232E594227}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCB24DC5-2775-421A-91C8-6C232E594227}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

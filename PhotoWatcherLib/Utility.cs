@@ -10,10 +10,9 @@ using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.IO;
 
-
-namespace PhotoWatcher
+namespace PhotoWatcherLib
 {
-    class Utility1
+    public class Utility
     {
         /// <summary>
         /// Create a thumbnail.  Code taken from http://www.beansoftware.com/ASP.NET-FAQ/Create-Thumbnail-Image.aspx
@@ -54,12 +53,41 @@ namespace PhotoWatcher
             ThumbnailBitmap.Save(ThumbnailImagePath);
         }
 
+
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="FileName"></param>
+        public void RemoveFile(string FileName)
+        {
+            try
+            {
+                // Get the Album the file belongs to
+                // Get the parent Directory Name - this is needed to link the picture to an Album name
+                FileInfo fInfo = new FileInfo(FileName);
+
+                // Get an Album ID (It may be necessary to create a new Album)
+                // The Album name should match the name of the directory containing the photos
+                int AlbumID = GetAlbum(fInfo.Directory.Name);
+
+                // Connect to MySQL and mark file removed
+                dbDML("update photo set active = 'N', update_date = now(), update_by = 'TEMPUSER' where album_id = " + AlbumID + " and filename = '" + Path.GetFileName(FileName).ToString() + "'");
+
+                // TODO: The cleanup utility should delete thumbnails which no longer exist in the database
+            }
+            catch (Exception e1)
+            {
+                WriteLog("Message: " + e1.Message + "\r\n" + "Base Exception: " + e1.GetBaseException().ToString() + "\r\n" + "Inner Exception: " + e1.InnerException);
+            }
+        }
+
         /// <summary>
         ///  Given a filename, this subroutine will examine the file,
         ///  generate a thumbnail add it to the database if appropiate
         /// </summary>
         /// <param name="FileName"></param>
-        public void AddFile(string FileName) {
+        public void AddFile(string FileName)
+        {
             try
             {
                 FileAttributes attr = File.GetAttributes(FileName);
@@ -82,7 +110,7 @@ namespace PhotoWatcher
                     int AlbumID = GetAlbum(fInfo.Directory.Name);
 
                     // Connect to MySQL and load all the photos
-                    dbDML("insert into photo (album_id, filename, thumbnail_filename) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "')");
+                    dbDML("insert into photo (album_id, filename, thumbnail_filename, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', now(), 'TEMPUSER')");
                 }
             }
             catch (Exception e1)
@@ -135,23 +163,26 @@ namespace PhotoWatcher
             conn.Open();
 
             // Create Command
-            MySqlCommand cmd = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "'", conn);
+            MySqlCommand cmd = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", conn);
             // Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
             // Read the the Album ID, if it cannot be create and read again
             // TODO: This section should be coded a little more elegantly!
-            if (!dataReader.Read()) {
+            if (!dataReader.Read())
+            {
                 dataReader.Close();
                 // Create Album
-                MySqlCommand cmd2 = new MySqlCommand("insert into Album (album_name, location) values ('" + AlbumName + "', '/Albums/" + AlbumName  + "/')", conn);
+                MySqlCommand cmd2 = new MySqlCommand("insert into Album (album_name, location, created_date, created_by) values ('" + AlbumName + "', '/Albums/" + AlbumName + "/', now(), 'TEMPUSER')", conn);
                 cmd2.ExecuteNonQuery();
 
-                MySqlCommand cmd3 = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "'", conn);
+                MySqlCommand cmd3 = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", conn);
                 MySqlDataReader dataReader3 = cmd.ExecuteReader();
+                dataReader3.Read();
                 Int32.TryParse(dataReader3["Album_ID"].ToString(), out AlbumID);
                 dataReader3.Close();
-            } else
+            }
+            else
             {
                 Int32.TryParse(dataReader["Album_ID"].ToString(), out AlbumID);
             }
@@ -167,12 +198,12 @@ namespace PhotoWatcher
         /// <param name="Message"></param>
         public void WriteLog(string Message)
         {
-                using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\PhotoWatcher.log"))
-                {
-                    sw.WriteLine(DateTime.Now.ToString("dd-Mmm-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")));                    
-                    sw.WriteLine(Message);
-                    sw.WriteLine("---------------------------------------------------------------------------");
-                }
+            using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\PhotoWatcher.log"))
+            {
+                sw.WriteLine(DateTime.Now.ToString("dd-Mmm-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")));
+                sw.WriteLine(Message);
+                sw.WriteLine("---------------------------------------------------------------------------");
+            }
         }
     }
 }

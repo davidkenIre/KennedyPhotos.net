@@ -58,7 +58,6 @@ namespace PhotoWatcher
             // 
             this.ServiceName = "PhotoWatcher";
             ((System.ComponentModel.ISupportInitialize)(this.FSPhotoWatcher)).EndInit();
-
         }
 
         #endregion
@@ -74,32 +73,15 @@ namespace PhotoWatcher
         {
             //code here for newly changed file or directory
         }
+        
         /// <summary>
         /// Event occurs when the a File or Directory is created
         /// </summary>
         private void FSPhotoWatcher_Created(object sender,
                         System.IO.FileSystemEventArgs e)
         {
-            Utility U = new Utility();
-            try {
-                // Create the thumbnail
-                // Wait 5 seconds for the original file to actually land and avoid errors where file is still busy
-                System.Threading.Thread.Sleep(5000);
-
-                string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
-                Guid g = Guid.NewGuid();
-                U.CreateThumbnail(200, e.FullPath, ThumbnailDirectory + g.ToString() + Path.GetExtension(e.Name).ToString());
-
-                // Get the parent Directory Name - this is needed to link the picture to an Album name
-                FileInfo fInfo = new FileInfo(e.FullPath);
-                String AlbumName = fInfo.Directory.Name;
-
-                // Connect to MySQL and load all the photos
-                U.dbDML("insert into photo (album_id, filename, thumbnail_filename) select distinct album_id, '" + Path.GetFileName(e.FullPath).ToString() + "', '" + g.ToString() + Path.GetExtension(e.Name).ToString() + "' from album where upper(album_name)='" + AlbumName.ToUpper() + "';");
-            } 
-            catch (Exception e1) {
-                U.WriteLog("Message: " + e1.Message +  "\r\n" + "Base Exception: " + e1.GetBaseException().ToString() + "\r\n" + "Inner Exception: " + e1.InnerException);
-            }
+            PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
+            U.AddFile(e.FullPath);
         }
 
         /// <summary>
@@ -109,6 +91,8 @@ namespace PhotoWatcher
                         System.IO.FileSystemEventArgs e)
         {
             //code here for newly deleted file or directory
+            PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
+            U.RemoveFile(e.FullPath);
         }
         /// <summary>
         /// Event occurs when the a File or Directory is renamed
@@ -117,6 +101,10 @@ namespace PhotoWatcher
                         System.IO.RenamedEventArgs e)
         {
             //code here for newly renamed file or directory
+            PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
+            // TODO: Should probably do a striaght rename here rather than a remove/add
+            U.RemoveFile(e.OldFullPath);
+            U.AddFile(e.FullPath);
         }
     }
 }

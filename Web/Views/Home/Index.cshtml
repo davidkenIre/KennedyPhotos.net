@@ -1,26 +1,30 @@
-﻿<div class="row">
-    <div class="col-md-4">
-        <h2>Cameras</h2>
-        <ol>
-            <li><a href="http://lattuce.duckdns.org:171/">Realtime Front</a></li>
-            <li><a href="http://lattuce.duckdns.org:170/">Realtime Back</a></li>
-            <li><a href="http://lattuce.duckdns.org:5648">Realtime Both</a></li>
-            <li><a href="http://lattuce.duckdns.org:5648/desktopclient.html?u=admin&p=0d7ee64a4d929ae564711f5bf341ca51">Recorded Video</a></li>
-        </ol>
+﻿@model IEnumerable<Photos.Models.Album>
+
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Cameras</h2>
+            <ol>
+                <li><a href="http://lattuce.duckdns.org:171/">Realtime Front</a></li>
+                <li><a href="http://lattuce.duckdns.org:170/">Realtime Back</a></li>
+                <li><a href="http://lattuce.duckdns.org:5648">Realtime Both</a></li>
+                <li><a href="http://lattuce.duckdns.org:5648/desktopclient.html?u=admin&p=0d7ee64a4d929ae564711f5bf341ca51">Recorded Video</a></li>
+            </ol>
+        </div>
+        <div class="col-md-4">
+            <h2>Recent Albums</h2>
+            <ol>
+                @foreach (var item in Model)
+            {
+                    <li><a href="/Photos/ViewAlbum/@item.Id">@item.AlbumName</a></li>
+                }
+
+            </ol>
+            <p><a class="btn btn-default" href="/Photos/Index" role="button">See All Albums &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+            <h2>Heading</h2>
+            <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+            <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Recent Albums</h2>
-        <ol>
-            <li><a href="javascript:alert('Not Implemented!')">Album 1</a></li>
-            <li><a href="javascript:alert('Not Implemented!')">Album 2</a></li>
-            <li><a href="javascript:alert('Not Implemented!')">Album 3</a></li>
-            <li><a href="javascript:alert('Not Implemented!')">Album 4</a></li>
-        </ol>
-        <p><a class="btn btn-default" href="/Photos/Index" role="button">See All Albums &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Heading</h2>
-        <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
-        <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
-    </div>
-</div>
