@@ -3,6 +3,19 @@ using System;
 using System.IO;
 using System.Text;
 
+//using System;
+using System.Collections.Generic;
+using System.Linq;
+//using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+//using Microsoft.Win32;
+//using MySql.Data;
+//using MySql.Data.MySqlClient;
+//using System.IO;
+
+
 namespace PhotoWatcher
 {
     partial class PhotoWatchService
@@ -125,7 +138,7 @@ namespace PhotoWatcher
             {
                 PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
                 U.WriteLog("Intercepted call to refresh Albums");
-                U.RefreshAlbums("d:\\media\\photos\\albums\\");
+                U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", ""));
             }
         }
     }

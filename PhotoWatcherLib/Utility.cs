@@ -14,6 +14,20 @@ namespace PhotoWatcherLib
 {
     public class Utility
     {
+        // Globals
+        MySql.Data.MySqlClient.MySqlConnection MySQLConn;
+
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        public Utility()
+        {
+            MySQLConn = new MySql.Data.MySqlClient.MySqlConnection();
+            MySQLConn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "") + ";";
+            MySQLConn.Open();
+        }
+
+
         /// <summary>
         /// Create a thumbnail.  Code taken from http://www.beansoftware.com/ASP.NET-FAQ/Create-Thumbnail-Image.aspx
         /// </summary>
@@ -122,10 +136,16 @@ namespace PhotoWatcherLib
 
         public void RefreshAlbums(string sourcePath)
         {
-            dbDML("delete from photo;");
-            dbDML("delete from album;");
+            dbDML("update photo set to_remove = 'Y';");
+            dbDML("update album set to_remove = 'Y';");
 
             DirSearch(sourcePath);
+
+            // Revove photos from database which are no longer available
+            dbDML("update photo set active='N' where to_remove = 'Y';");
+            
+            // TODO: Delete thumbnails which are no longer needed
+
         }
 
         private void DirSearch(string sDir)
@@ -134,9 +154,11 @@ namespace PhotoWatcherLib
             {
                 foreach (string f in Directory.GetFiles(   sDir, "."))
                 {
-                    WriteLog(f);
+                    //WriteLog(f);
                     // We encountered a photo, check its valid on the database, and that the thumbnail exists
-                    AddFile(f);
+                    if (!AlreadyExists(f)) { 
+                        AddFile(f);
+                    }
                 }
 
                 foreach (string d in Directory.GetDirectories(sDir))
@@ -149,11 +171,60 @@ namespace PhotoWatcherLib
                 WriteLog(excpt.Message);
             }
         }
-    
 
+        /// <summary>
+        /// Checks to see if the photo's metadata alredy exists in the database
+        /// If it does, return true, else retuen false
+        /// </summary>
+        /// <returns></returns>
+        private bool AlreadyExists(string FileName)
+        {
+            // Remove the Base directory from the filename
+            string BaseDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "");
+            BaseDirectory = BaseDirectory.ToLower();
 
+            FileName = FileName.ToLower();
+            FileName = FileName.Replace(BaseDirectory, "");
+            FileName = FileName.Replace("\\", "/");
 
+            
 
+            //MySql.Data.MySqlClient.MySqlConnection conn;
+            //conn = new MySql.Data.MySqlClient.MySqlConnection();
+            //conn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "") + ";";
+            //conn.Open();
+
+            // Create Command
+            string SQL = "select p.photo_id from album a, photo p ";
+            SQL += " where a.album_id = p.album_id ";
+            SQL += " and replace(lower(concat(a.location, p.filename)), '/albums/', '') = '" + FileName + "';";
+
+            MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
+            // Create a data reader and Execute the command
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+
+            // Read the the Album ID, if it cannot be create and read again
+            // TODO: This section should be coded a little more elegantly!
+            string PhotoID = "";
+            if (dataReader.Read())
+            {
+                PhotoID = dataReader["Photo_ID"].ToString();
+            }
+
+            dataReader.Close();
+            //conn.Close();
+
+            if (PhotoID != "")
+            {
+                WriteLog("File Exists check: " + FileName + " exists in the database");
+                // TODO: Implement the to_remove logic
+                dbDML("update photo set to_remove='N' where photo_id = " + PhotoID);
+                return false;
+            } else {
+                WriteLog("File Exists check: " + FileName + " does not exist in the database");
+                return true;
+            }
+        }
 
         // Executes a DML statement
         public void dbDML(string SQL)
@@ -186,19 +257,13 @@ namespace PhotoWatcherLib
         public int GetAlbum(string AlbumName)
         {
             int AlbumID = 0;
-            MySql.Data.MySqlClient.MySqlConnection conn;
-            string myConnectionString;
-
-            // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
-
-            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
-            conn = new MySql.Data.MySqlClient.MySqlConnection();
-            conn.ConnectionString = myConnectionString;
-            conn.Open();
+            //MySql.Data.MySqlClient.MySqlConnection conn;
+            //conn = new MySql.Data.MySqlClient.MySqlConnection();
+            //conn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "") + ";"; 
+            //conn.Open();
 
             // Create Command
-            MySqlCommand cmd = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", conn);
+            MySqlCommand cmd = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", MySQLConn);
             // Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
@@ -208,10 +273,10 @@ namespace PhotoWatcherLib
             {
                 dataReader.Close();
                 // Create Album
-                MySqlCommand cmd2 = new MySqlCommand("insert into Album (album_name, location, created_date, created_by) values ('" + AlbumName + "', '/Albums/" + AlbumName + "/', now(), 'TEMPUSER')", conn);
+                MySqlCommand cmd2 = new MySqlCommand("insert into Album (album_name, location, created_date, created_by) values ('" + AlbumName + "', '/Albums/" + AlbumName + "/', now(), 'TEMPUSER')", MySQLConn);
                 cmd2.ExecuteNonQuery();
 
-                MySqlCommand cmd3 = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", conn);
+                MySqlCommand cmd3 = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", MySQLConn);
                 MySqlDataReader dataReader3 = cmd.ExecuteReader();
                 dataReader3.Read();
                 Int32.TryParse(dataReader3["Album_ID"].ToString(), out AlbumID);
@@ -219,14 +284,15 @@ namespace PhotoWatcherLib
             }
             else
             {
+                
                 Int32.TryParse(dataReader["Album_ID"].ToString(), out AlbumID);
+                dataReader.Close();
             }
 
-            conn.Close();
+            //conn.Close();
             return AlbumID;
         }
-
-
+        
         /// <summary>
         /// Write a generic string to the Log file
         /// </summary>
@@ -235,9 +301,8 @@ namespace PhotoWatcherLib
         {
             using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\PhotoWatcher.log"))
             {
-                sw.WriteLine(DateTime.Now.ToString("dd-Mmm-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")));
-                sw.WriteLine(Message);
-                sw.WriteLine("---------------------------------------------------------------------------");
+                sw.Write(DateTime.Now.ToString("dd-Mmm-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")) + ": ");
+                sw.WriteLine(Message);                
             }
         }
     }
