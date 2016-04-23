@@ -120,6 +120,41 @@ namespace PhotoWatcherLib
         }
 
 
+        public void RefreshAlbums(string sourcePath)
+        {
+            dbDML("delete from photo;");
+            dbDML("delete from album;");
+
+            DirSearch(sourcePath);
+        }
+
+        private void DirSearch(string sDir)
+        {
+            try
+            {
+                foreach (string f in Directory.GetFiles(   sDir, "."))
+                {
+                    WriteLog(f);
+                    // We encountered a photo, check its valid on the database, and that the thumbnail exists
+                    AddFile(f);
+                }
+
+                foreach (string d in Directory.GetDirectories(sDir))
+                {
+                    this.DirSearch(d);
+                }
+            }
+            catch (System.Exception excpt)
+            {
+                WriteLog(excpt.Message);
+            }
+        }
+    
+
+
+
+
+
         // Executes a DML statement
         public void dbDML(string SQL)
         {

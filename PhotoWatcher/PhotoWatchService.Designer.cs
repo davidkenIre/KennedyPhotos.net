@@ -7,6 +7,12 @@ namespace PhotoWatcher
 {
     partial class PhotoWatchService
     {
+        // Must be int between 128 and 255
+        public enum CustomEvents
+        {
+            RefreshAlbums = 255
+        }        
+
         /// <summary> 
         /// Required designer variable.
         /// </summary>
@@ -105,6 +111,22 @@ namespace PhotoWatcher
             // TODO: Should probably do a striaght rename here rather than a remove/add
             U.RemoveFile(e.OldFullPath);
             U.AddFile(e.FullPath);
+        }
+
+        /// <summary>
+        /// This event should be raised by an external application to 
+        /// allow on demand refreshing of the Albums
+        /// </summary>
+        /// <param name="command"></param>
+        protected override void OnCustomCommand(int command)
+        {
+            base.OnCustomCommand(command);
+            if (command == (int)CustomEvents.RefreshAlbums)
+            {
+                PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
+                U.WriteLog("Intercepted call to refresh Albums");
+                U.RefreshAlbums("d:\\media\\photos\\albums\\");
+            }
         }
     }
 }

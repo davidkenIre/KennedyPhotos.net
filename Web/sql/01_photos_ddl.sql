@@ -6,8 +6,8 @@ drop table album;
 
 create table album (
 	album_id           	int not null primary key auto_increment,
-    created_date		date, 
-    created_by			varchar(100),
+    created_date		date not null, 
+    created_by			varchar(100) not null,
     updated_date		date,
     updated_by			varchar(100),
 	album_name			varchar(500) not null,
@@ -19,6 +19,10 @@ create table album (
 
 create table photo (
 	photo_id 			int not null primary key auto_increment,
+    created_date		date not null, 
+    created_by			varchar(100) not null,
+    updated_date		date,
+    updated_by			varchar(100),    
     album_id			int not null references album(album_id),
 	filename 			varchar(1000) not null,
     thumbnail_filename  varchar(1000) not null,
@@ -26,3 +30,4 @@ create table photo (
 );
 
 
+select count(*) from photo where active = 'Y';

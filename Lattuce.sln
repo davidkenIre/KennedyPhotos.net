@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatcher", "PhotoWatche
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatcherLib", "PhotoWatcherLib\PhotoWatcherLib.csproj", "{CCB24DC5-2775-421A-91C8-6C232E594227}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestEventGenerator", "TestEventGenerator\TestEventGenerator.csproj", "{331CE0AF-5189-48DF-B679-6EA39B5FC175}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{CCB24DC5-2775-421A-91C8-6C232E594227}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCB24DC5-2775-421A-91C8-6C232E594227}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCB24DC5-2775-421A-91C8-6C232E594227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{331CE0AF-5189-48DF-B679-6EA39B5FC175}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{331CE0AF-5189-48DF-B679-6EA39B5FC175}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{331CE0AF-5189-48DF-B679-6EA39B5FC175}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{331CE0AF-5189-48DF-B679-6EA39B5FC175}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
