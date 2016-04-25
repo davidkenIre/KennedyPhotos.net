@@ -30,7 +30,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -117,9 +117,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PhotoWatcherLib\PhotoWatcherLib.csproj">
+    <ProjectReference Include="..\PhotoWatcherLib\PhotoWatchLibrary.csproj">
       <Project>{ccb24dc5-2775-421a-91c8-6c232e594227}</Project>
-      <Name>PhotoWatcherLib</Name>
+      <Name>PhotoWatchLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

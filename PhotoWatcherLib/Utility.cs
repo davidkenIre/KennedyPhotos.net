@@ -134,18 +134,35 @@ namespace PhotoWatcherLib
         }
 
 
+        /// <summary>
+        /// This subroutine will do a full scan of the album directory, add new files to the database, 
+        /// sync the database with the filesystem and delete any thinbnails which are not active in the database
+        /// </summary>
+        /// <param name="sourcePath"></param>
         public void RefreshAlbums(string sourcePath)
         {
+            // TODO: the full refresh is incrementiall using memory - something is not being released
+
             dbDML("update photo set to_remove = 'Y';");
             dbDML("update album set to_remove = 'Y';");
 
+            // TODO: Rename this subroutine
             DirSearch(sourcePath);
 
             // Revove photos from database which are no longer available
             dbDML("update photo set active='N' where to_remove = 'Y';");
-            
-            // TODO: Delete thumbnails which are no longer needed
+            dbDML("update album set active='N' where album_id in (select distinct album_id from photo where to_remove = 'Y');");
 
+            // Remove thumbnails where the actual photo has just been removed
+            string SQL = "select p.thumbnail_filename from photo p where to_remove = 'Y'";
+            MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
+            if (dataReader.Read())
+            {
+                File.Delete(ThumbnailDirectory + dataReader["thumbnail_filename"].ToString());
+            }
+            dataReader.Close();            
         }
 
         private void DirSearch(string sDir)
@@ -187,13 +204,6 @@ namespace PhotoWatcherLib
             FileName = FileName.Replace(BaseDirectory, "");
             FileName = FileName.Replace("\\", "/");
 
-            
-
-            //MySql.Data.MySqlClient.MySqlConnection conn;
-            //conn = new MySql.Data.MySqlClient.MySqlConnection();
-            //conn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "") + ";";
-            //conn.Open();
-
             // Create Command
             string SQL = "select p.photo_id from album a, photo p ";
             SQL += " where a.album_id = p.album_id ";
@@ -219,10 +229,10 @@ namespace PhotoWatcherLib
                 WriteLog("File Exists check: " + FileName + " exists in the database");
                 // TODO: Implement the to_remove logic
                 dbDML("update photo set to_remove='N' where photo_id = " + PhotoID);
-                return false;
+                return true;
             } else {
                 WriteLog("File Exists check: " + FileName + " does not exist in the database");
-                return true;
+                return false;
             }
         }
 
@@ -257,10 +267,6 @@ namespace PhotoWatcherLib
         public int GetAlbum(string AlbumName)
         {
             int AlbumID = 0;
-            //MySql.Data.MySqlClient.MySqlConnection conn;
-            //conn = new MySql.Data.MySqlClient.MySqlConnection();
-            //conn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "") + ";"; 
-            //conn.Open();
 
             // Create Command
             MySqlCommand cmd = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", MySQLConn);

@@ -28,4 +28,8 @@ select * from album;
 
 select * from photo;
 
+            select p.photo_id from album a, photo p 
+             where a.album_id = p.album_id 
+             and replace(lower(concat(a.location, p.filename)), '/albums/', '') = '.ds_store';
+
 select * from album order by created_date limit 4;

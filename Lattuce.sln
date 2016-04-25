@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lattuce", "Web\Lattuce.csproj", "{FA4A64B9-2B45-48C7-A7C5-72FBC84312C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LattuceWebsite", "Web\LattuceWebsite.csproj", "{FA4A64B9-2B45-48C7-A7C5-72FBC84312C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatcher", "PhotoWatcher\PhotoWatcher.csproj", "{09D3CFE4-C3DC-4E25-90BC-B657D1BAEC59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatchService", "PhotoWatcher\PhotoWatchService.csproj", "{09D3CFE4-C3DC-4E25-90BC-B657D1BAEC59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatcherLib", "PhotoWatcherLib\PhotoWatcherLib.csproj", "{CCB24DC5-2775-421A-91C8-6C232E594227}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatchLibrary", "PhotoWatcherLib\PhotoWatchLibrary.csproj", "{CCB24DC5-2775-421A-91C8-6C232E594227}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestEventGenerator", "TestEventGenerator\TestEventGenerator.csproj", "{331CE0AF-5189-48DF-B679-6EA39B5FC175}"
 EndProject
