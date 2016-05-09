@@ -141,13 +141,10 @@ namespace PhotoWatcherLib
         /// <param name="sourcePath"></param>
         public void RefreshAlbums(string sourcePath)
         {
-            // TODO: the full refresh is incrementiall using memory - something is not being released
-
             dbDML("update photo set to_remove = 'Y';");
             dbDML("update album set to_remove = 'Y';");
 
-            // TODO: Rename this subroutine
-            DirSearch(sourcePath);
+            FullDirectoryScan(sourcePath);
 
             // Revove photos from database which are no longer available
             dbDML("update photo set active='N' where to_remove = 'Y';");
@@ -165,7 +162,14 @@ namespace PhotoWatcherLib
             dataReader.Close();            
         }
 
-        private void DirSearch(string sDir)
+        /// <summary>
+        /// This routine performs a complete scan of the root album directory
+        /// and any subdirectories, checks to see if any photos it finds 
+        /// already exists in the database, and if not, adds them.
+        /// This routine uses recursive techniques
+        /// </summary>
+        /// <param name="sDir"></param>
+        private void FullDirectoryScan(string sDir)
         {
             try
             {
@@ -239,23 +243,12 @@ namespace PhotoWatcherLib
         // Executes a DML statement
         public void dbDML(string SQL)
         {
-            MySql.Data.MySqlClient.MySqlConnection conn;
-            string myConnectionString;
-
-            // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
-
-            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
-            conn = new MySql.Data.MySqlClient.MySqlConnection();
-            conn.ConnectionString = myConnectionString;
-            conn.Open();
-
             // Create Command
-            MySqlCommand cmd = new MySqlCommand(SQL, conn);
+            MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
 
             //Create a data reader and Execute the command
             cmd.ExecuteNonQuery();
-            conn.Close();
+            cmd.Dispose();
         }
 
         /// <summary>
@@ -307,7 +300,7 @@ namespace PhotoWatcherLib
         {
             using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\PhotoWatcher.log"))
             {
-                sw.Write(DateTime.Now.ToString("dd-Mmm-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")) + ": ");
+                sw.Write(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")) + ": ");
                 sw.WriteLine(Message);                
             }
         }

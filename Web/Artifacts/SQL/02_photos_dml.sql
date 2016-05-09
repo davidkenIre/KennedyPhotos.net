@@ -24,6 +24,7 @@ insert into photo (album_id, filename, thumbnail_filename) select distinct album
 
 commit;
 
+
 select * from album;
 
 select * from photo;
@@ -33,3 +34,5 @@ select * from photo;
              and replace(lower(concat(a.location, p.filename)), '/albums/', '') = '.ds_store';
 
 select * from album order by created_date limit 4;
+
+select * from photo;

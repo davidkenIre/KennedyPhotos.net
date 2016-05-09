@@ -247,9 +247,6 @@
     <Content Include="bootstrap-3.3.6\docs\examples\tooltip-viewport\index.html" />
     <Content Include="bootstrap-3.3.6\docs\examples\tooltip-viewport\tooltip-viewport.css" />
     <Content Include="bootstrap-3.3.6\docs\examples\tooltip-viewport\tooltip-viewport.js" />
-    <Content Include="Content\bootstrap.css" />
-    <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Site.css" />
     <Content Include="favicon.ico" />
     <Content Include="bootstrap-3.3.6\docs\getting-started.html" />
     <Content Include="bootstrap-3.3.6\docs\index.html" />
@@ -378,38 +375,10 @@
     <Content Include="bootstrap-3.3.6\js\transition.js" />
     <Content Include="bootstrap-3.3.6\package.js" />
     <Content Include="bootstrap-3.3.6\test-infra\requirements.txt" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Resource\css\bootstrap.min.css" />
-    <Content Include="Resource\css\templatemo-style.css" />
-    <Content Include="Resource\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="Resource\images\1.jpg" />
-    <Content Include="Resource\images\2.jpg" />
-    <Content Include="Resource\images\3.jpg" />
-    <Content Include="Resource\images\4.jpg" />
-    <Content Include="Resource\images\5.png" />
-    <Content Include="Resource\images\back.jpg" />
-    <Content Include="Resource\js\bootstrap.min.js" />
-    <Content Include="Resource\js\jquery.min.js" />
-    <Content Include="Resource\js\jquery.singlePageNav.min.js" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Artifacts\REG\Lattuce.reg" />
     <Content Include="Artifacts\SQL\01_photos_ddl.sql" />
-    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\jquery-1.10.2.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.js" />
-    <Content Include="Scripts\jquery-1.10.2.min.map" />
     <None Include="Artifacts\SQL\02_photos_dml.sql" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -558,10 +527,6 @@
     <Content Include="bootstrap-3.3.6\test-infra\uncached-npm-install.sh" />
     <Content Include="bootstrap-3.3.6\_config.yml" />
     <None Include="Properties\PublishProfiles\lattuce-dc.pubxml" />
-    <Content Include="Resource\fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Resource\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="Resource\fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="Resource\fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
