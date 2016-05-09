@@ -184,7 +184,7 @@ namespace PhotoWatcherLib
 
                 foreach (string d in Directory.GetDirectories(sDir))
                 {
-                    this.DirSearch(d);
+                    this.FullDirectoryScan(d);
                 }
             }
             catch (System.Exception excpt)
