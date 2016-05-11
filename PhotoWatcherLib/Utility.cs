@@ -10,6 +10,8 @@ using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.IO;
 
+// TODO: Only look at image file extensions
+
 namespace PhotoWatcherLib
 {
     public class Utility
@@ -69,25 +71,22 @@ namespace PhotoWatcherLib
 
 
         /// <summary>
-        ///  
+        ///  Called when the PhotoWatcherService detects a phisical delete of a file
         /// </summary>
         /// <param name="FileName"></param>
         public void RemoveFile(string FileName)
         {
             try
             {
-                // Get the Album the file belongs to
-                // Get the parent Directory Name - this is needed to link the picture to an Album name
-                FileInfo fInfo = new FileInfo(FileName);
-
                 // Get an Album ID (It may be necessary to create a new Album)
                 // The Album name should match the name of the directory containing the photos
+                FileInfo fInfo = new FileInfo(FileName);
                 int AlbumID = GetAlbum(fInfo.Directory.Name);
 
                 // Connect to MySQL and mark file removed
                 dbDML("update photo set active = 'N', update_date = now(), update_by = 'TEMPUSER' where album_id = " + AlbumID + " and filename = '" + Path.GetFileName(FileName).ToString() + "'");
-
-                // TODO: The cleanup utility should delete thumbnails which no longer exist in the database
+                dbDML("update album set active='N' where album_id not in (select distinct album_id from photo where active = 'Y');");
+                dbDML("update album set active='Y' where album_id in (select distinct album_id from photo where active = 'Y');");
             }
             catch (Exception e1)
             {
@@ -97,7 +96,8 @@ namespace PhotoWatcherLib
 
         /// <summary>
         ///  Given a filename, this subroutine will examine the file,
-        ///  generate a thumbnail add it to the database if appropiate
+        ///  generate a thumbnail add it to the database if appropiate,
+        ///  This can be called from the PhotoWatcher service, or from the Full Directory Scan
         /// </summary>
         /// <param name="FileName"></param>
         public void AddFile(string FileName)
@@ -148,7 +148,8 @@ namespace PhotoWatcherLib
 
             // Revove photos from database which are no longer available
             dbDML("update photo set active='N' where to_remove = 'Y';");
-            dbDML("update album set active='N' where album_id in (select distinct album_id from photo where to_remove = 'Y');");
+            dbDML("update album set active='N' where album_id not in (select distinct album_id from photo where active = 'Y');");
+            dbDML("update album set active='Y' where album_id in (select distinct album_id from photo where active = 'Y');");
 
             // Remove thumbnails where the actual photo has just been removed
             string SQL = "select p.thumbnail_filename from photo p where to_remove = 'Y'";
@@ -173,9 +174,9 @@ namespace PhotoWatcherLib
         {
             try
             {
+                // Add new Photos to the database
                 foreach (string f in Directory.GetFiles(   sDir, "."))
                 {
-                    //WriteLog(f);
                     // We encountered a photo, check its valid on the database, and that the thumbnail exists
                     if (!AlreadyExists(f)) { 
                         AddFile(f);
@@ -187,6 +188,7 @@ namespace PhotoWatcherLib
                     this.FullDirectoryScan(d);
                 }
             }
+
             catch (System.Exception excpt)
             {
                 WriteLog(excpt.Message);
@@ -226,12 +228,11 @@ namespace PhotoWatcherLib
             }
 
             dataReader.Close();
-            //conn.Close();
 
             if (PhotoID != "")
             {
                 WriteLog("File Exists check: " + FileName + " exists in the database");
-                // TODO: Implement the to_remove logic
+                // TODO: This update soes not belong in this function
                 dbDML("update photo set to_remove='N' where photo_id = " + PhotoID);
                 return true;
             } else {
@@ -262,33 +263,29 @@ namespace PhotoWatcherLib
             int AlbumID = 0;
 
             // Create Command
-            MySqlCommand cmd = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", MySQLConn);
+            MySqlCommand cmd1 = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", MySQLConn);
             // Create a data reader and Execute the command
-            MySqlDataReader dataReader = cmd.ExecuteReader();
+            MySqlDataReader dataReader = cmd1.ExecuteReader();
 
             // Read the the Album ID, if it cannot be create and read again
-            // TODO: This section should be coded a little more elegantly!
             if (!dataReader.Read())
             {
                 dataReader.Close();
-                // Create Album
+                // Create Album, then select back the newly created Album_id
                 MySqlCommand cmd2 = new MySqlCommand("insert into Album (album_name, location, created_date, created_by) values ('" + AlbumName + "', '/Albums/" + AlbumName + "/', now(), 'TEMPUSER')", MySQLConn);
                 cmd2.ExecuteNonQuery();
 
-                MySqlCommand cmd3 = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", MySQLConn);
-                MySqlDataReader dataReader3 = cmd.ExecuteReader();
-                dataReader3.Read();
-                Int32.TryParse(dataReader3["Album_ID"].ToString(), out AlbumID);
-                dataReader3.Close();
+                dataReader = cmd1.ExecuteReader();  // Try the Album ID select again, should work this time!
+                dataReader.Read();
+                Int32.TryParse(dataReader["Album_ID"].ToString(), out AlbumID);
+                dataReader.Close();
             }
             else
             {
-                
                 Int32.TryParse(dataReader["Album_ID"].ToString(), out AlbumID);
                 dataReader.Close();
             }
 
-            //conn.Close();
             return AlbumID;
         }
         
