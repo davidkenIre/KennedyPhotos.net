@@ -2,19 +2,11 @@
 using System;
 using System.IO;
 using System.Text;
-
-//using System;
 using System.Collections.Generic;
 using System.Linq;
-//using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-//using Microsoft.Win32;
-//using MySql.Data;
-//using MySql.Data.MySqlClient;
-//using System.IO;
-
 
 namespace PhotoWatcher
 {
@@ -23,7 +15,7 @@ namespace PhotoWatcher
         // Must be int between 128 and 255
         public enum CustomEvents
         {
-            RefreshAlbums = 255
+            RefreshAlbumEvent = 255
         }        
 
         /// <summary> 
@@ -82,7 +74,6 @@ namespace PhotoWatcher
         #endregion
 
         private System.IO.FileSystemWatcher FSPhotoWatcher;
-        /* DEFINE WATCHER EVENTS... */
         /// <summary>
         /// Event occurs when the contents of a File or Directory are changed
         /// </summary>
@@ -90,17 +81,16 @@ namespace PhotoWatcher
         private void FSPhotoWatcher_Changed(object sender,
                         System.IO.FileSystemEventArgs e)
         {
-            //code here for newly changed file or directory
+            PerformRefresh();
         }
-        
+
         /// <summary>
         /// Event occurs when the a File or Directory is created
         /// </summary>
         private void FSPhotoWatcher_Created(object sender,
                         System.IO.FileSystemEventArgs e)
         {
-            PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
-            U.AddFile(e.FullPath);
+            PerformRefresh();
         }
 
         /// <summary>
@@ -109,9 +99,7 @@ namespace PhotoWatcher
         private void FSPhotoWatcher_Deleted(object sender,
                         System.IO.FileSystemEventArgs e)
         {
-            //code here for newly deleted file or directory
-            PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
-            U.RemoveFile(e.FullPath);
+            PerformRefresh();
         }
         /// <summary>
         /// Event occurs when the a File or Directory is renamed
@@ -119,11 +107,7 @@ namespace PhotoWatcher
         private void FSPhotoWatcher_Renamed(object sender,
                         System.IO.RenamedEventArgs e)
         {
-            //code here for newly renamed file or directory
-            PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
-            // TODO: Should probably do a striaght rename here rather than a remove/add
-            U.RemoveFile(e.OldFullPath);
-            U.AddFile(e.FullPath);
+            PerformRefresh();
         }
 
         /// <summary>
@@ -134,12 +118,19 @@ namespace PhotoWatcher
         protected override void OnCustomCommand(int command)
         {
             base.OnCustomCommand(command);
-            if (command == (int)CustomEvents.RefreshAlbums)
+            if (command == (int)CustomEvents.RefreshAlbumEvent)
             {
-                PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
-                U.WriteLog("Intercepted call to refresh Albums");
-                U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", ""));
+                PerformRefresh();
             }
+        }
+
+        /// <summary>
+        /// Makes a call to the Photowatcher library, to perform a Library Refresh
+        /// </summary>
+        private void PerformRefresh()
+        {
+            PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
+            U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", ""));
         }
     }
 }

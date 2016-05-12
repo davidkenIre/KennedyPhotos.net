@@ -10,7 +10,7 @@ using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.IO;
 
-// TODO: Only look at image file extensions
+// TODO: CRC checks on picture files
 
 namespace PhotoWatcherLib
 {
@@ -28,7 +28,6 @@ namespace PhotoWatcherLib
             MySQLConn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "") + ";";
             MySQLConn.Open();
         }
-
 
         /// <summary>
         /// Create a thumbnail.  Code taken from http://www.beansoftware.com/ASP.NET-FAQ/Create-Thumbnail-Image.aspx
@@ -69,7 +68,6 @@ namespace PhotoWatcherLib
             ThumbnailBitmap.Save(ThumbnailImagePath);
         }
 
-
         /// <summary>
         ///  Called when the PhotoWatcherService detects a phisical delete of a file
         /// </summary>
@@ -78,6 +76,7 @@ namespace PhotoWatcherLib
         {
             try
             {
+                WriteLog("Removing File: " + FileName);
                 // Get an Album ID (It may be necessary to create a new Album)
                 // The Album name should match the name of the directory containing the photos
                 FileInfo fInfo = new FileInfo(FileName);
@@ -90,7 +89,7 @@ namespace PhotoWatcherLib
             }
             catch (Exception e1)
             {
-                WriteLog("Message: " + e1.Message + "\r\n" + "Base Exception: " + e1.GetBaseException().ToString() + "\r\n" + "Inner Exception: " + e1.InnerException);
+                WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
             }
         }
 
@@ -108,10 +107,9 @@ namespace PhotoWatcherLib
                 // Only execute if the object being created is not a directory
                 if (!attr.HasFlag(FileAttributes.Directory))
                 {
-                    // Create the thumbnail
-                    // Wait 5 seconds for the original file to actually land and avoid errors where file is still busy
-                    // TODO: Probably a better way to do this rather than waiting 5 seconds
-                    System.Threading.Thread.Sleep(5000);
+                    WriteLog("Adding File: " + FileName);
+
+                    // Create the thumbnail                    
                     string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
                     Guid g = Guid.NewGuid();
                     CreateThumbnail(200, FileName, ThumbnailDirectory + g.ToString() + Path.GetExtension(FileName).ToString());
@@ -124,15 +122,14 @@ namespace PhotoWatcherLib
                     int AlbumID = GetAlbum(fInfo.Directory.Name);
 
                     // Connect to MySQL and load all the photos
-                    dbDML("insert into photo (album_id, filename, thumbnail_filename, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', now(), 'TEMPUSER')");
+                    dbDML("insert into photo (album_id, filename, thumbnail_filename, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', now(), 'TEMPUSER')");                    
                 }
             }
             catch (Exception e1)
             {
-                WriteLog("Message: " + e1.Message + "\r\n" + "Base Exception: " + e1.GetBaseException().ToString() + "\r\n" + "Inner Exception: " + e1.InnerException);
+                WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
             }
         }
-
 
         /// <summary>
         /// This subroutine will do a full scan of the album directory, add new files to the database, 
@@ -141,10 +138,15 @@ namespace PhotoWatcherLib
         /// <param name="sourcePath"></param>
         public void RefreshAlbums(string sourcePath)
         {
+            WriteLog("Performing an Album Refresh");
             dbDML("update photo set to_remove = 'Y';");
             dbDML("update album set to_remove = 'Y';");
 
-            FullDirectoryScan(sourcePath);
+            // Keep running directory scans until a full scan has completed without making any changes
+            do
+            {
+                WriteLog("Checking for changes in the Album directory");
+            } while (FullDirectoryScan(sourcePath, false) == true);
 
             // Revove photos from database which are no longer available
             dbDML("update photo set active='N' where to_remove = 'Y';");
@@ -160,7 +162,8 @@ namespace PhotoWatcherLib
             {
                 File.Delete(ThumbnailDirectory + dataReader["thumbnail_filename"].ToString());
             }
-            dataReader.Close();            
+            dataReader.Close();
+            WriteLog("Finished Performing Album Refresh");
         }
 
         /// <summary>
@@ -170,28 +173,41 @@ namespace PhotoWatcherLib
         /// This routine uses recursive techniques
         /// </summary>
         /// <param name="sDir"></param>
-        private void FullDirectoryScan(string sDir)
+        /// <returns>
+        /// false-No Change was made
+        /// true-Changes were made
+        /// </returns>
+        private bool FullDirectoryScan(string DirToScan, bool ChangeMadeIn)
         {
-            try
+            bool ChangeMade = false;
+            try                
             {
                 // Add new Photos to the database
-                foreach (string f in Directory.GetFiles(   sDir, "."))
+                foreach (string FileName in Directory.GetFiles(DirToScan, "."))
                 {
                     // We encountered a photo, check its valid on the database, and that the thumbnail exists
-                    if (!AlreadyExists(f)) { 
-                        AddFile(f);
+                    if (!AlreadyExists(FileName)) {
+                        if (IsImage(FileName))
+                        {
+                            ChangeMade = true;
+                            AddFile(FileName);
+                        }
                     }
                 }
 
-                foreach (string d in Directory.GetDirectories(sDir))
+                foreach (string d in Directory.GetDirectories(DirToScan))
                 {
-                    this.FullDirectoryScan(d);
+                    ChangeMade = this.FullDirectoryScan(d, ChangeMade) ;
                 }
-            }
 
-            catch (System.Exception excpt)
-            {
-                WriteLog(excpt.Message);
+                // Use an OR operator to bubble up the ChangeMade flag in the recusion operation
+                return ChangeMade || ChangeMadeIn;
+            }
+            
+            catch (System.Exception e1)
+            {                
+                WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
+                throw new Exception("Error Performing Directory Scan");
             }
         }
 
@@ -226,17 +242,14 @@ namespace PhotoWatcherLib
             {
                 PhotoID = dataReader["Photo_ID"].ToString();
             }
-
             dataReader.Close();
 
             if (PhotoID != "")
             {
-                WriteLog("File Exists check: " + FileName + " exists in the database");
                 // TODO: This update soes not belong in this function
                 dbDML("update photo set to_remove='N' where photo_id = " + PhotoID);
                 return true;
             } else {
-                WriteLog("File Exists check: " + FileName + " does not exist in the database");
                 return false;
             }
         }
@@ -288,7 +301,37 @@ namespace PhotoWatcherLib
 
             return AlbumID;
         }
-        
+
+        /// <summary>
+        /// Copied the following routine from 
+        /// http://stackoverflow.com/questions/670546/determine-if-file-is-an-image
+        /// Should return true or false if the passed in filename is an image or not
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static bool IsImage(string fileName)
+        {
+            string targetExtension = System.IO.Path.GetExtension(fileName);
+            if (String.IsNullOrEmpty(targetExtension))
+                return false;
+            else
+                targetExtension = "*" + targetExtension.ToLowerInvariant();
+
+            List<string> recognisedImageExtensions = new List<string>();
+
+            foreach (System.Drawing.Imaging.ImageCodecInfo imageCodec in System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders())
+                recognisedImageExtensions.AddRange(imageCodec.FilenameExtension.ToLowerInvariant().Split(";".ToCharArray()));
+
+            foreach (string extension in recognisedImageExtensions)
+            {
+                if (extension.Equals(targetExtension))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Write a generic string to the Log file
         /// </summary>
