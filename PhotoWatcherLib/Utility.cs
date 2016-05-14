@@ -9,8 +9,10 @@ using Microsoft.Win32;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.IO;
+using System.Security.Cryptography;
 
 // TODO: CRC checks on picture files
+// TODO: Get rid of to_remove, use the active flag only - we can use a user_active for user deletes later on
 
 namespace PhotoWatcherLib
 {
@@ -64,8 +66,14 @@ namespace PhotoWatcherLib
             ResizedImage.SmoothingMode = SmoothingMode.HighQuality;
             // Draw resized image
             ResizedImage.DrawImage(imgOriginal, 0, 0, ThumbnailWidth, ThumbnailHeight);
+
             // Save thumbnail to file
             ThumbnailBitmap.Save(ThumbnailImagePath);
+
+            // Dispose Objects
+            imgOriginal.Dispose();
+            ResizedImage.Dispose();
+            ThumbnailBitmap.Dispose();
         }
 
         /// <summary>
@@ -121,8 +129,15 @@ namespace PhotoWatcherLib
                     // The Album name should match the name of the directory containing the photos
                     int AlbumID = GetAlbum(fInfo.Directory.Name);
 
-                    // Connect to MySQL and load all the photos
-                    dbDML("insert into photo (album_id, filename, thumbnail_filename, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', now(), 'TEMPUSER')");                    
+                    // Get the  MD5 Checksum
+                    int MD5Checksum = CalculateChecksum(FileName);
+
+                    // Insert a record in the database for the photo
+                    // We should also issue a delete before the update, usually this will delete 0 rows,  
+                    // but sometimes, in the case where a file has been updated, and a checksum has changed, the photo
+                    // might already exist on the database.  A straight delete will remove and we can then insert again.
+                    dbDML("delete from photo where album_id = " + AlbumID + " and filename= '" + Path.GetFileName(FileName).ToString() + "'");
+                    dbDML("insert into photo (album_id, filename, thumbnail_filename, checksum, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', '" + MD5Checksum + "', now(), 'TEMPUSER')");                    
                 }
             }
             catch (Exception e1)
@@ -222,14 +237,14 @@ namespace PhotoWatcherLib
             string BaseDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "");
             BaseDirectory = BaseDirectory.ToLower();
 
-            FileName = FileName.ToLower();
-            FileName = FileName.Replace(BaseDirectory, "");
-            FileName = FileName.Replace("\\", "/");
+            string FileNameURL = FileName.ToLower();
+            FileNameURL = FileNameURL.Replace(BaseDirectory, "");
+            FileNameURL = FileNameURL.Replace("\\", "/");
 
             // Create Command
-            string SQL = "select p.photo_id from album a, photo p ";
+            string SQL = "select p.photo_id, p.checksum from album a, photo p ";
             SQL += " where a.album_id = p.album_id ";
-            SQL += " and replace(lower(concat(a.location, p.filename)), '/albums/', '') = '" + FileName + "';";
+            SQL += " and replace(lower(concat(a.location, p.filename)), '/albums/', '') = '" + FileNameURL + "';";
 
             MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
             // Create a data reader and Execute the command
@@ -238,20 +253,27 @@ namespace PhotoWatcherLib
             // Read the the Album ID, if it cannot be create and read again
             // TODO: This section should be coded a little more elegantly!
             string PhotoID = "";
+            int Checksum = 0;
             if (dataReader.Read())
             {
                 PhotoID = dataReader["Photo_ID"].ToString();
+                Checksum = (Convert.ToInt32(dataReader["checksum"]));
             }
             dataReader.Close();
 
-            if (PhotoID != "")
-            {
-                // TODO: This update soes not belong in this function
-                dbDML("update photo set to_remove='N' where photo_id = " + PhotoID);
-                return true;
-            } else {
+            // Metadata not on database
+            if (PhotoID == "")
                 return false;
-            }
+
+
+            // Does File Checksum match whats on the database?
+            if (Checksum != CalculateChecksum(FileName))
+                return false;
+
+            // All checks match
+            // TODO: This update soes not belong in this function
+            dbDML("update photo set to_remove='N' where photo_id = " + PhotoID);
+            return true;
         }
 
         // Executes a DML statement
@@ -330,6 +352,29 @@ namespace PhotoWatcherLib
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Calculate the md5 checksum for a file
+        /// Code was lifted from http://stackoverflow.com/questions/10520048/calculate-md5-checksum-for-a-file
+        /// </summary>
+        /// <param name="Filename"></param>
+        /// <returns></returns>
+        private int CalculateChecksum(string Filename) {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(Filename))
+                {
+                    byte[] MD5ChecksumArray = md5.ComputeHash(stream);
+                    string MD5Checksum = System.Text.Encoding.UTF8.GetString(MD5ChecksumArray, 0, MD5ChecksumArray.Length);
+                    //  return MD5Checksum;
+
+
+                    // if (BitConverter.IsLittleEndian)
+                    //     Array.Reverse(MD5ChecksumArray);
+                    return BitConverter.ToInt32(MD5ChecksumArray, 0);
+                }
+            }
         }
 
         /// <summary>
