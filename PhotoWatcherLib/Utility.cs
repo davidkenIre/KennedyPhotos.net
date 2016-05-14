@@ -11,8 +11,7 @@ using MySql.Data.MySqlClient;
 using System.IO;
 using System.Security.Cryptography;
 
-// TODO: CRC checks on picture files
-// TODO: Get rid of to_remove, use the active flag only - we can use a user_active for user deletes later on
+// TODO: What happens when a thumbnail gets deleted - when does it get recreated?
 
 namespace PhotoWatcherLib
 {
@@ -137,7 +136,7 @@ namespace PhotoWatcherLib
                     // but sometimes, in the case where a file has been updated, and a checksum has changed, the photo
                     // might already exist on the database.  A straight delete will remove and we can then insert again.
                     dbDML("delete from photo where album_id = " + AlbumID + " and filename= '" + Path.GetFileName(FileName).ToString() + "'");
-                    dbDML("insert into photo (album_id, filename, thumbnail_filename, checksum, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', '" + MD5Checksum + "', now(), 'TEMPUSER')");                    
+                    dbDML("insert into photo (album_id, filename, thumbnail_filename, checksum, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', '" + MD5Checksum + "', now(), 'TEMPUSER')");
                 }
             }
             catch (Exception e1)
@@ -155,7 +154,6 @@ namespace PhotoWatcherLib
         {
             WriteLog("Performing an Album Refresh");
             dbDML("update photo set to_remove = 'Y';");
-            dbDML("update album set to_remove = 'Y';");
 
             // Keep running directory scans until a full scan has completed without making any changes
             do
@@ -169,15 +167,7 @@ namespace PhotoWatcherLib
             dbDML("update album set active='Y' where album_id in (select distinct album_id from photo where active = 'Y');");
 
             // Remove thumbnails where the actual photo has just been removed
-            string SQL = "select p.thumbnail_filename from photo p where to_remove = 'Y'";
-            MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
-            MySqlDataReader dataReader = cmd.ExecuteReader();
-            string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
-            if (dataReader.Read())
-            {
-                File.Delete(ThumbnailDirectory + dataReader["thumbnail_filename"].ToString());
-            }
-            dataReader.Close();
+            CleanThumbnailDir();            
             WriteLog("Finished Performing Album Refresh");
         }
 
@@ -195,13 +185,14 @@ namespace PhotoWatcherLib
         private bool FullDirectoryScan(string DirToScan, bool ChangeMadeIn)
         {
             bool ChangeMade = false;
-            try                
+            try
             {
                 // Add new Photos to the database
                 foreach (string FileName in Directory.GetFiles(DirToScan, "."))
                 {
                     // We encountered a photo, check its valid on the database, and that the thumbnail exists
-                    if (!AlreadyExists(FileName)) {
+                    if (!AlreadyExists(FileName))
+                    {
                         if (IsImage(FileName))
                         {
                             ChangeMade = true;
@@ -212,15 +203,15 @@ namespace PhotoWatcherLib
 
                 foreach (string d in Directory.GetDirectories(DirToScan))
                 {
-                    ChangeMade = this.FullDirectoryScan(d, ChangeMade) ;
+                    ChangeMade = this.FullDirectoryScan(d, ChangeMade);
                 }
 
                 // Use an OR operator to bubble up the ChangeMade flag in the recusion operation
                 return ChangeMade || ChangeMadeIn;
             }
-            
+
             catch (System.Exception e1)
-            {                
+            {
                 WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
                 throw new Exception("Error Performing Directory Scan");
             }
@@ -247,13 +238,11 @@ namespace PhotoWatcherLib
             SQL += " and replace(lower(concat(a.location, p.filename)), '/albums/', '') = '" + FileNameURL + "';";
 
             MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
-            // Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
-            // Read the the Album ID, if it cannot be create and read again
-            // TODO: This section should be coded a little more elegantly!
             string PhotoID = "";
             int Checksum = 0;
+
             if (dataReader.Read())
             {
                 PhotoID = dataReader["Photo_ID"].ToString();
@@ -265,13 +254,13 @@ namespace PhotoWatcherLib
             if (PhotoID == "")
                 return false;
 
-
             // Does File Checksum match whats on the database?
             if (Checksum != CalculateChecksum(FileName))
                 return false;
 
-            // All checks match
-            // TODO: This update soes not belong in this function
+            // At this point we can mark the database record to ensure the record is not made inactive 
+            // at the end of the scans, this is probably a funny place to put this update - should really move it to somewhere 
+            // more appropiate, but the nice thing about doing it here is that you have the PhotoID
             dbDML("update photo set to_remove='N' where photo_id = " + PhotoID);
             return true;
         }
@@ -360,20 +349,43 @@ namespace PhotoWatcherLib
         /// </summary>
         /// <param name="Filename"></param>
         /// <returns></returns>
-        private int CalculateChecksum(string Filename) {
+        private int CalculateChecksum(string Filename)
+        {
             using (var md5 = MD5.Create())
             {
                 using (var stream = File.OpenRead(Filename))
                 {
                     byte[] MD5ChecksumArray = md5.ComputeHash(stream);
                     string MD5Checksum = System.Text.Encoding.UTF8.GetString(MD5ChecksumArray, 0, MD5ChecksumArray.Length);
-                    //  return MD5Checksum;
-
-
-                    // if (BitConverter.IsLittleEndian)
-                    //     Array.Reverse(MD5ChecksumArray);
                     return BitConverter.ToInt32(MD5ChecksumArray, 0);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Loop through each thumbnail in the filesystem, delete it if it does not
+        /// exist on the database
+        /// </summary>
+        private void CleanThumbnailDir()
+        {
+            string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
+            MySqlCommand cmd;
+            MySqlDataReader dataReader;
+            string SQL;
+
+            // Add new Photos to the database
+            foreach (string FileName in Directory.GetFiles(ThumbnailDirectory, "."))
+            {
+                SQL = "select photo_id from photo p where lower(thumbnail_filename)='" + Path.GetFileName(FileName.ToLower()) + "'";
+                cmd = new MySqlCommand(SQL, MySQLConn);
+                dataReader = cmd.ExecuteReader();
+
+                if (!dataReader.Read())
+                {
+                    // Delete
+                    File.Delete(FileName);
+                }
+                dataReader.Close();
             }
         }
 
@@ -386,7 +398,7 @@ namespace PhotoWatcherLib
             using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\PhotoWatcher.log"))
             {
                 sw.Write(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")) + ": ");
-                sw.WriteLine(Message);                
+                sw.WriteLine(Message);
             }
         }
     }
