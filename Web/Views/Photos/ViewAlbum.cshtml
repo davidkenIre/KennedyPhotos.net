@@ -5,17 +5,11 @@
 
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Album_Id)
+        <th style="width:220px">
+            
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Filename)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Location)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AlbumName)
+            Technical Details
         </th>
     </tr>
 
@@ -27,13 +21,13 @@
             </a>
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Filename)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Location)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.AlbumName)
+            <table class="table">
+                <tr><td>Date Taken</td><td>@Html.DisplayFor(modelItem => item.DateTaken)</td><td>F Stop</td><td>@Html.DisplayFor(modelItem => item.FStop)</td></tr>
+                <tr><td>Dimensions</td><td>@Html.DisplayFor(modelItem => item.Dimensions)</td><td>Exposure</td><td>@Html.DisplayFor(modelItem => item.Exposure)</td></tr>
+                <tr><td>Camera Maker</td><td>@Html.DisplayFor(modelItem => item.CameraMaker)</td><td>ISO</td><td>@Html.DisplayFor(modelItem => item.ISO)</td></tr>
+                <tr><td>Camera Model</td><td>@Html.DisplayFor(modelItem => item.CameraModel)</td><td>Focal Length</td><td>@Html.DisplayFor(modelItem => item.FocalLength)</td></tr>
+                <tr><td>DPI</td><td>@Html.DisplayFor(modelItem => item.DPI)</td><td>Flash</td><td>@Html.DisplayFor(modelItem => item.Flash)</td></tr>
+             </table>
         </td>
     </tr>
 }

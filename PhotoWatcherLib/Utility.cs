@@ -10,8 +10,14 @@ using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.IO;
 using System.Security.Cryptography;
+using Shell32;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 // TODO: What happens when a thumbnail gets deleted - when does it get recreated?
+// TODO: Database Created by and updated by
+// TODO: File Attributes getting read differently on the server
+// TODO: Shells32 not usable in service?
 
 namespace PhotoWatcherLib
 {
@@ -90,7 +96,7 @@ namespace PhotoWatcherLib
                 int AlbumID = GetAlbum(fInfo.Directory.Name);
 
                 // Connect to MySQL and mark file removed
-                dbDML("update photo set active = 'N', update_date = now(), update_by = 'TEMPUSER' where album_id = " + AlbumID + " and filename = '" + Path.GetFileName(FileName).ToString() + "'");
+                dbDML("update photo set active='N', update_date = now(), update_by = 'TEMPUSER' where album_id = " + AlbumID + " and filename = '" + Path.GetFileName(FileName).ToString() + "'");
                 dbDML("update album set active='N' where album_id not in (select distinct album_id from photo where active = 'Y');");
                 dbDML("update album set active='Y' where album_id in (select distinct album_id from photo where active = 'Y');");
             }
@@ -98,6 +104,16 @@ namespace PhotoWatcherLib
             {
                 WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
             }
+        }
+
+        /// <summary>
+        /// Only allow certain character types in a string
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string RemoveSpecialCharacters(string str)
+        {
+            return Regex.Replace(str, @"[^a-zA-Z0-9:\-\\_. /]+", "", RegexOptions.Compiled);  
         }
 
         /// <summary>
@@ -110,7 +126,46 @@ namespace PhotoWatcherLib
         {
             try
             {
+                string DateTaken = "";
+                string FStop = "";
+                string Exposure = "";
+                string ISO = "";
+                string FocalLength = "";
+                string Flash = "";
+                string DPI = "";
+                string Dimensions = "";
+                string CameraMaker = "";
+                string CameraModel = "";
+
                 FileAttributes attr = File.GetAttributes(FileName);
+
+                // Create shell instance - this is used to read the extended file attributes
+                Shell32.Shell shell = new Shell32.Shell();
+
+                // Set the namespace to file path
+                Shell32.Folder folder = shell.NameSpace(Path.GetDirectoryName(FileName));
+                
+                // Get ahandle to the file
+                Shell32.FolderItem folderItem = folder.ParseName(Path.GetFileName(FileName));                
+                if (folderItem != null)
+                {
+                    DateTaken = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 12));
+                    FStop = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 252));
+                    Exposure = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 251));
+                    ISO = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 256));
+                    FocalLength = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 254));
+                    Flash = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 253));                    
+                    DPI = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 170));
+                    Dimensions = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 31));
+                    CameraMaker = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 32));
+                    CameraModel = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 30));
+                }
+
+                for (int a=0; a<1000;a++)
+                {
+                    Debug.Print(a + ": " + RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, a)));
+                }
+
                 // Only execute if the object being created is not a directory
                 if (!attr.HasFlag(FileAttributes.Directory))
                 {
@@ -136,7 +191,8 @@ namespace PhotoWatcherLib
                     // but sometimes, in the case where a file has been updated, and a checksum has changed, the photo
                     // might already exist on the database.  A straight delete will remove and we can then insert again.
                     dbDML("delete from photo where album_id = " + AlbumID + " and filename= '" + Path.GetFileName(FileName).ToString() + "'");
-                    dbDML("insert into photo (album_id, filename, thumbnail_filename, checksum, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', '" + MD5Checksum + "', now(), 'TEMPUSER')");
+                    string s = "insert into photo (album_id, filename, thumbnail_filename, date_taken, fStop, exposure, iso, focal_length, flash, dpi, dimensions, Camera_maker, Camera_model, checksum, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', str_to_date('" + DateTaken + "', '%d-%M-%Y %T:%i'), '" + FStop + "', '" + Exposure + "', '" + ISO + "', '" + FocalLength + "', '" + Flash + "', '" + DPI + "', '" + Dimensions + "', '" + CameraMaker + "', '" + CameraModel + "','" + MD5Checksum + "', now(), 'TEMPUSER')";
+                    dbDML("insert into photo (album_id, filename, thumbnail_filename, date_taken, fStop, exposure, iso, focal_length, flash, dpi, dimensions, Camera_maker, Camera_model, checksum, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', str_to_date('" + DateTaken + "', '%d-%M-%Y %T:%i'), '" + FStop + "', '" + Exposure + "', '" + ISO + "', '" + FocalLength + "', '" + Flash + "', '" + DPI + "', '" + Dimensions + "', '" + CameraMaker + "', '" + CameraModel + "','" + MD5Checksum + "', now(), 'TEMPUSER')");
                 }
             }
             catch (Exception e1)
@@ -198,6 +254,10 @@ namespace PhotoWatcherLib
                             ChangeMade = true;
                             AddFile(FileName);
                         }
+                    } else
+                    {
+                        // File does exist
+
                     }
                 }
 

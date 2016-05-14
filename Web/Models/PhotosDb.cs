@@ -96,7 +96,17 @@ namespace Photos.Models
                     Filename = dataReader["filename"].ToString(),
                     Location = dataReader["location"].ToString(),
                     AlbumName = dataReader["album_name"].ToString(),
-                    ThumbnailFilename = dataReader["thumbnail_filename"].ToString()
+                    ThumbnailFilename = dataReader["thumbnail_filename"].ToString(),
+                    DateTaken = dataReader["date_taken"].ToString(),
+                    FStop = dataReader["fStop"].ToString(),
+                    Exposure = dataReader["exposure"].ToString(),
+                    ISO = dataReader["iso"].ToString(),
+                    FocalLength = dataReader["focal_length"].ToString(),
+                    Flash = dataReader["flash"].ToString(),
+                    DPI = dataReader["dpi"].ToString(),
+                    Dimensions = dataReader["dimensions"].ToString(),
+                    CameraMaker = dataReader["Camera_maker"].ToString(),
+                    CameraModel = dataReader["Camera_model"].ToString()
                 };
                 _photos.Add(item);
             }
