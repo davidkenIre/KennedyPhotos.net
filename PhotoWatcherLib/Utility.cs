@@ -10,14 +10,13 @@ using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.IO;
 using System.Security.Cryptography;
-using Shell32;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 // TODO: What happens when a thumbnail gets deleted - when does it get recreated?
 // TODO: Database Created by and updated by
-// TODO: File Attributes getting read differently on the server
-// TODO: Shells32 not usable in service?
+// TODO: str_to_date in SQL is not stable because the date format is dependant on the local
+// TODO: Log File should be kept at a certain length
 
 namespace PhotoWatcherLib
 {
@@ -122,6 +121,8 @@ namespace PhotoWatcherLib
         ///  This can be called from the PhotoWatcher service, or from the Full Directory Scan
         /// </summary>
         /// <param name="FileName"></param>
+
+        [STAThread]
         public void AddFile(string FileName)
         {
             try
@@ -131,46 +132,30 @@ namespace PhotoWatcherLib
                 string Exposure = "";
                 string ISO = "";
                 string FocalLength = "";
-                string Flash = "";
-                string DPI = "";
                 string Dimensions = "";
                 string CameraMaker = "";
                 string CameraModel = "";
 
                 FileAttributes attr = File.GetAttributes(FileName);
 
-                // Create shell instance - this is used to read the extended file attributes
-                Shell32.Shell shell = new Shell32.Shell();
-
-                // Set the namespace to file path
-                Shell32.Folder folder = shell.NameSpace(Path.GetDirectoryName(FileName));
-                
-                // Get ahandle to the file
-                Shell32.FolderItem folderItem = folder.ParseName(Path.GetFileName(FileName));                
-                if (folderItem != null)
-                {
-                    DateTaken = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 12));
-                    FStop = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 252));
-                    Exposure = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 251));
-                    ISO = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 256));
-                    FocalLength = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 254));
-                    Flash = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 253));                    
-                    DPI = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 170));
-                    Dimensions = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 31));
-                    CameraMaker = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 32));
-                    CameraModel = RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, 30));
-                }
-
-                for (int a=0; a<1000;a++)
-                {
-                    Debug.Print(a + ": " + RemoveSpecialCharacters(folder.GetDetailsOf(folderItem, a)));
-                }
-
                 // Only execute if the object being created is not a directory
                 if (!attr.HasFlag(FileAttributes.Directory))
                 {
                     WriteLog("Adding File: " + FileName);
 
+                    // Read the photos tags
+                    TagLib.File tagFile = TagLib.File.Create(FileName);
+                    var image = tagFile as TagLib.Image.File;
+
+                    DateTaken = Convert.ToString(image.ImageTag.DateTime);
+                    FStop = Convert.ToString(image.ImageTag.FNumber);
+                    Exposure = Convert.ToString(image.ImageTag.ExposureTime);
+                    ISO = Convert.ToString(image.ImageTag.ISOSpeedRatings);
+                    FocalLength = Convert.ToString(image.ImageTag.FocalLength);
+                    Dimensions = Convert.ToString(image.Properties.PhotoHeight) + "x" + Convert.ToString(image.Properties.PhotoWidth);
+                    CameraMaker = image.ImageTag.Make;
+                    CameraModel = image.ImageTag.Model;
+                
                     // Create the thumbnail                    
                     string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
                     Guid g = Guid.NewGuid();
@@ -191,8 +176,7 @@ namespace PhotoWatcherLib
                     // but sometimes, in the case where a file has been updated, and a checksum has changed, the photo
                     // might already exist on the database.  A straight delete will remove and we can then insert again.
                     dbDML("delete from photo where album_id = " + AlbumID + " and filename= '" + Path.GetFileName(FileName).ToString() + "'");
-                    string s = "insert into photo (album_id, filename, thumbnail_filename, date_taken, fStop, exposure, iso, focal_length, flash, dpi, dimensions, Camera_maker, Camera_model, checksum, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', str_to_date('" + DateTaken + "', '%d-%M-%Y %T:%i'), '" + FStop + "', '" + Exposure + "', '" + ISO + "', '" + FocalLength + "', '" + Flash + "', '" + DPI + "', '" + Dimensions + "', '" + CameraMaker + "', '" + CameraModel + "','" + MD5Checksum + "', now(), 'TEMPUSER')";
-                    dbDML("insert into photo (album_id, filename, thumbnail_filename, date_taken, fStop, exposure, iso, focal_length, flash, dpi, dimensions, Camera_maker, Camera_model, checksum, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', str_to_date('" + DateTaken + "', '%d-%M-%Y %T:%i'), '" + FStop + "', '" + Exposure + "', '" + ISO + "', '" + FocalLength + "', '" + Flash + "', '" + DPI + "', '" + Dimensions + "', '" + CameraMaker + "', '" + CameraModel + "','" + MD5Checksum + "', now(), 'TEMPUSER')");
+                    dbDML("insert into photo (album_id, filename, thumbnail_filename, date_taken, fStop, exposure, iso, focal_length, dimensions, Camera_maker, Camera_model, checksum, created_date, created_by) values (" + AlbumID + ", '" + Path.GetFileName(FileName).ToString() + "', '" + g.ToString() + Path.GetExtension(FileName).ToString() + "', str_to_date('" + DateTaken + "', '%d/%c/%Y %T:%i:%s'), '" + FStop + "', '" + Exposure + "', '" + ISO + "', '" + FocalLength + "', '" + Dimensions + "', '" + CameraMaker + "', '" + CameraModel + "','" + MD5Checksum + "', now(), 'TEMPUSER')");
                 }
             }
             catch (Exception e1)

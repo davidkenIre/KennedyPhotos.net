@@ -102,8 +102,6 @@ namespace Photos.Models
                     Exposure = dataReader["exposure"].ToString(),
                     ISO = dataReader["iso"].ToString(),
                     FocalLength = dataReader["focal_length"].ToString(),
-                    Flash = dataReader["flash"].ToString(),
-                    DPI = dataReader["dpi"].ToString(),
                     Dimensions = dataReader["dimensions"].ToString(),
                     CameraMaker = dataReader["Camera_maker"].ToString(),
                     CameraModel = dataReader["Camera_model"].ToString()

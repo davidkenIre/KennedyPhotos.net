@@ -34,8 +34,6 @@ namespace Photos.Models
         public string Exposure { get; set; }
         public string ISO { get; set; }
         public string FocalLength { get; set; }
-        public string Flash { get; set; }
-        public string DPI { get; set; }
         public string Dimensions { get; set; }
         public string CameraMaker { get; set; }
         public string CameraModel { get; set; }
