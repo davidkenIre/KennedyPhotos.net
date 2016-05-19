@@ -32,7 +32,7 @@ namespace Photos.Models
             //Create Command
             string SQL = "select * from album where active = 'Y' order by created_date desc";
             if (Limit != 0) {
-                SQL += " Limit 5";
+                SQL += " Limit " + Limit;
             }
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
