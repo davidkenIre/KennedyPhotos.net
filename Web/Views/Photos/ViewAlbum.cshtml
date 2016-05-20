@@ -1,36 +1,98 @@
 ﻿@model IEnumerable<Photos.Models.Photo>
-                      <div class="page-header">
-                          <h1>View Album</h1>
-                      </div>
 
-<table class="table">
-    <tr>
-        <th style="width:220px">
-            
-        </th>
-        <th>
-            Technical Details
-        </th>
-    </tr>
+<!--TODO: Implement pagination-->
+<!--TODO: Sort out Vertical/Horizontal thumbnails-->
+<!--TODO: Can get 3 empty divs at the end of a listing-->
+<!--TODO: Regenerate thumbnails at the correct size-->
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
+    <!-- Page Header -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Page Heading
+                <small>Secondary Text</small>
+            </h1>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    @{int cnt = 0;}
+
+    @foreach (var item in Model)
+    {
+
+        if (cnt % 3 == 0)
+        {
+            @Html.Raw("<div>")
+        }
+
+        <div class="col-md-4 portfolio-item">
             <a href="@Html.DisplayFor(modelItem => item.Location)@Html.DisplayFor(modelItem => item.Filename)">
-                <img src="/Thumbnails/@Html.DisplayFor(modelItem => item.ThumbnailFilename)" class="img-thumbnail" alt="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera">
+                <img src="/Thumbnails/@Html.DisplayFor(modelItem => item.ThumbnailFilename)" class="img-responsive" alt="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera">
             </a>
-        </td>
-        <td>
-            <table class="table">
-                <tr><td>Date Taken</td><td>@Html.DisplayFor(modelItem => item.DateTaken)</td><td>F Stop</td><td>@Html.DisplayFor(modelItem => item.FStop)</td></tr>
-                <tr><td>Dimensions</td><td>@Html.DisplayFor(modelItem => item.Dimensions)</td><td>Exposure</td><td>@Html.DisplayFor(modelItem => item.Exposure)</td></tr>
-                <tr><td>Camera Maker</td><td>@Html.DisplayFor(modelItem => item.CameraMaker)</td><td>ISO</td><td>@Html.DisplayFor(modelItem => item.ISO)</td></tr>
-                <tr><td>Camera Model</td><td>@Html.DisplayFor(modelItem => item.CameraModel)</td><td>Focal Length</td><td>@Html.DisplayFor(modelItem => item.FocalLength)</td></tr>
-             </table>
-        </td>
-    </tr>
-}
+            <h3><a href="#">Project Name</a></h3>
+            <p>
+                <b>Date Taken:</b> @Html.DisplayFor(modelItem => item.DateTaken)
+                <b>Dimensions:</b> @Html.DisplayFor(modelItem => item.Dimensions)
+                <b>Camera Maker:</b> @Html.DisplayFor(modelItem => item.CameraMaker)
+                <b>Camera Model:</b> @Html.DisplayFor(modelItem => item.CameraModel)
+                <b>F Stop:</b> @Html.DisplayFor(modelItem => item.FStop)
+                <b>Exposure:</b> @Html.DisplayFor(modelItem => item.Exposure)
+                <b>ISO:</b> @Html.DisplayFor(modelItem => item.ISO)
+                <b>Focal Length:</b> @Html.DisplayFor(modelItem => item.FocalLength)
+            </p>
+        </div>
 
-</table>
+        cnt += 1;
+        if (cnt % 3 == 0)
+        {
+            @Html.Raw("</div>")
+        }
 
-                      <p><a class="btn btn-primary" href="/Photos/Index" role="button"> &laquo; Back to Albums</a></p>
+    }
+
+    <!-- Empty divs where there are not enough images to fill the last line-->
+    @if (cnt % 3 != 0)
+    {
+        for (int a = 1; a < cnt % 3; a++)
+        {
+            <div class="col-md-4 portfolio-item" style="height:350px"></div>
+        }
+
+        @Html.Raw("</div>")
+    }
+
+    
+                      <hr>
+                      <!-- Pagination -->
+                      <div class="row text-center">
+                          <div class="col-lg-12">
+                              <ul class="pagination">
+                                  <li>
+                                      <a href="#">&laquo;</a>
+                                  </li>
+                                  <li class="active">
+                                      <a href="#">1</a>
+                                  </li>
+                                  <li>
+                                      <a href="#">2</a>
+                                  </li>
+                                  <li>
+                                      <a href="#">3</a>
+                                  </li>
+                                  <li>
+                                      <a href="#">4</a>
+                                  </li>
+                                  <li>
+                                      <a href="#">5</a>
+                                  </li>
+                                  <li>
+                                      <a href="#">&raquo;</a>
+                                  </li>
+                              </ul>
+                          </div>
+                      </div>
+                      <!-- /.row -->
+
+
+    <p><a class="btn btn-primary" href="/Photos/Index" role="button"> &laquo; Back to Albums</a></p>

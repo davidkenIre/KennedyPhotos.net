@@ -26,8 +26,5 @@ namespace Photos.Controllers
             List<Album> _AlbumListing = _db.GetAlbums(5);
             return View(_AlbumListing.ToList());
         }
-
-
-
     }
 }
