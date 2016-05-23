@@ -4,6 +4,13 @@
 <!--TODO: Sort out Vertical/Horizontal thumbnails-->
 <!--TODO: Can get 3 empty divs at the end of a listing-->
 <!--TODO: Regenerate thumbnails at the correct size-->
+<!--TODO: Page Menu needs to be the same as the main website-->
+<!--TODO: Tidyup download HTML-->
+<!--TODO: Cleanup download temp files-->
+<!--TODO: Download status-->
+<!--TODO: Only active pictures should be downloadable-->
+<!--TODO: Download temp folder should not be the thumbnails dir-->
+
 
     <!-- Page Header -->
     <div class="row">
@@ -48,7 +55,6 @@
         {
             @Html.Raw("</div>")
         }
-
     }
 
     <!-- Empty divs where there are not enough images to fill the last line-->
@@ -58,7 +64,6 @@
         {
             <div class="col-md-4 portfolio-item" style="height:350px"></div>
         }
-
         @Html.Raw("</div>")
     }
 

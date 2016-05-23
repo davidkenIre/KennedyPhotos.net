@@ -12,6 +12,7 @@
                 <th>Album Name</th>
                 <th>Date</th>
                 <th>Description</th>
+                <th>...</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +25,9 @@
                     </td>
                     <td>@item.AlbumDate</td>
                     <td>@item.Description</td>
+                    <td>
+                    @Html.ActionLink("Download", "DownloadAlbum", new { id = item.Id })
+                    </td>
                 </tr>
             }
         </tbody>

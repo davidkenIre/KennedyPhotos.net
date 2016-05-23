@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Photos.Models;
+using System.IO;
+
 
 namespace Photos.Controllers
 {
@@ -23,10 +25,24 @@ namespace Photos.Controllers
         [HttpGet]
         public ActionResult ViewAlbum(int Id)
         {
-            //            return Content("Viewing Album: " + id);
             List<Photo> _PhotoListing = _db.GetAllPhotos(Id);
             return View(_PhotoListing.ToList());
 
+        }
+
+        /// <summary>
+        /// Zip up an album and present it for download
+        /// </summary>
+        /// <param name="Id">Album ID</param>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult DownloadAlbum(int Id)
+        {
+            PhotoWatcherLib.Utility Utility = new PhotoWatcherLib.Utility();
+            string file = Utility.ZipFolder(Id);
+
+            string contentType = "application/zip";
+            return File(file, contentType, Path.GetFileName(file));
         }
     }
 }

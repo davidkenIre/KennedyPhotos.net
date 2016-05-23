@@ -12,6 +12,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.IO.Compression;
 
 // TODO: What happens when a thumbnail gets deleted - when does it get recreated?
 // TODO: Database Created by and updated by
@@ -445,5 +446,37 @@ namespace PhotoWatcherLib
                 sw.WriteLine(Message);
             }
         }
+
+        /// <summary>
+        /// Zip a folder
+        /// </summary>
+        /// <returns></returns>
+        public string ZipFolder(int Id)
+        {
+            // Get the physical location of the album
+            MySqlCommand cmd;
+            MySqlDataReader dataReader;
+            string SQL = "select album_name from album a where album_id = " + Id;
+            cmd = new MySqlCommand(SQL, MySQLConn);
+            dataReader = cmd.ExecuteReader();
+            dataReader.Read();
+            string Location = dataReader["album_name"].ToString();
+            dataReader.Close();
+            cmd.Dispose();
+
+            // Build up the physical location of the album
+            Location = Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "") + Location;
+
+            // Get the Zip Name
+            Guid g = Guid.NewGuid();
+            string ZipName = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "") + "\\" + g.ToString() +  ".zip";
+
+            // Zip the folder
+            ZipFile.CreateFromDirectory( Location, ZipName);
+
+            return ZipName;
+        }
+
     }
 }
+
