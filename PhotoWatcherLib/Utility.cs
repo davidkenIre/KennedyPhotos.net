@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using Microsoft.Win32;
 using MySql.Data;
 using MySql.Data.MySqlClient;
@@ -13,11 +12,19 @@ using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.IO.Compression;
+using ImageProcessor;
+using ImageProcessor.Imaging.Formats;
 
 // TODO: What happens when a thumbnail gets deleted - when does it get recreated?
 // TODO: Database Created by and updated by
 // TODO: str_to_date in SQL is not stable because the date format is dependant on the local
 // TODO: Log File should be kept at a certain length
+// TODO: Implement pagination in the view albums page
+// TODO: Can get 3 empty divs at the end of a listing
+// TODO: Download status in the View albums page
+// TODO: Deal with borders in thumbnails
+// TODO: Take a look at the image processor website - see if there are any interesting API's we can use
+// Schedule Cleanup and refresh modules
 
 namespace PhotoWatcherLib
 {
@@ -37,49 +44,82 @@ namespace PhotoWatcherLib
         }
 
         /// <summary>
-        /// Create a thumbnail.  Code taken from http://www.beansoftware.com/ASP.NET-FAQ/Create-Thumbnail-Image.aspx
+        /// Create a thumbnail.  Function uses package taken from http://imageprocessor.org/
         /// </summary>
         /// <param name="ThumbnailMax"></param>
         /// <param name="OriginalImagePath"></param>
         /// <param name="ThumbnailImagePath"></param>
         public void CreateThumbnail(int ThumbnailMax, string OriginalImagePath, string ThumbnailImagePath)
         {
-            // Loads original image from file
-            Image imgOriginal = Image.FromFile(OriginalImagePath);
-            // Finds height and width of original image
-            float OriginalHeight = imgOriginal.Height;
-            float OriginalWidth = imgOriginal.Width;
-            // Finds height and width of resized image
-            int ThumbnailWidth;
-            int ThumbnailHeight;
-            if (OriginalHeight > OriginalWidth)
-            {
-                ThumbnailHeight = ThumbnailMax;
-                ThumbnailWidth = (int)((OriginalWidth / OriginalHeight) * (float)ThumbnailMax);
-            }
-            else
-            {
-                ThumbnailWidth = ThumbnailMax;
-                ThumbnailHeight = (int)((OriginalHeight / OriginalWidth) * (float)ThumbnailMax);
-            }
-            // Create new bitmap that will be used for thumbnail
-            Bitmap ThumbnailBitmap = new Bitmap(ThumbnailWidth, ThumbnailHeight);
-            Graphics ResizedImage = Graphics.FromImage(ThumbnailBitmap);
-            // Resized image will have best possible quality
-            ResizedImage.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            ResizedImage.CompositingQuality = CompositingQuality.HighQuality;
-            ResizedImage.SmoothingMode = SmoothingMode.HighQuality;
-            // Draw resized image
-            ResizedImage.DrawImage(imgOriginal, 0, 0, ThumbnailWidth, ThumbnailHeight);
+            byte[] photoBytes = File.ReadAllBytes(OriginalImagePath); // change imagePath with a valid image path
+            int quality = 70;
+            ISupportedImageFormat format = new PngFormat { Quality = 70 };
+            var size = new Size(ThumbnailMax, ThumbnailMax);
 
-            // Save thumbnail to file
-            ThumbnailBitmap.Save(ThumbnailImagePath);
-
-            // Dispose Objects
-            imgOriginal.Dispose();
-            ResizedImage.Dispose();
-            ThumbnailBitmap.Dispose();
+            using (var inStream = new MemoryStream(photoBytes))
+            {
+                using (var outStream = new MemoryStream())
+                {
+                    // Initialize the ImageFactory using the overload to preserve EXIF metadata.
+                    using (var imageFactory = new ImageFactory(preserveExifData: true))
+                    {
+                        // Do your magic here
+                        imageFactory.Load(inStream)
+                            .Resize(size)
+                            .Format(format)
+                            .Quality(quality)
+                            .Save(outStream);
+                    }
+                    FileStream file = new FileStream(ThumbnailImagePath, FileMode.Create, System.IO.FileAccess.Write);
+                    outStream.CopyTo(file);
+                }
+            }
         }
+
+        ///// <summary>
+        ///// Create a thumbnail.  Code taken from http://www.beansoftware.com/ASP.NET-FAQ/Create-Thumbnail-Image.aspx
+        ///// </summary>
+        ///// <param name="ThumbnailMax"></param>
+        ///// <param name="OriginalImagePath"></param>
+        ///// <param name="ThumbnailImagePath"></param>
+        //public void CreateThumbnail1(int ThumbnailMax, string OriginalImagePath, string ThumbnailImagePath)
+        //{
+        //    // Loads original image from file
+        //    Image imgOriginal = Image.FromFile(OriginalImagePath);
+        //    // Finds height and width of original image
+        //    float OriginalHeight = imgOriginal.Height;
+        //    float OriginalWidth = imgOriginal.Width;
+        //    // Finds height and width of resized image
+        //    int ThumbnailWidth;
+        //    int ThumbnailHeight;
+        //    if (OriginalHeight > OriginalWidth)  // Portrait
+        //    {
+        //        ThumbnailHeight = ThumbnailMax;
+        //        ThumbnailWidth = (int)((OriginalWidth / OriginalHeight) * (float)ThumbnailMax);
+        //    }
+        //    else                                 // Landscape
+        //    {
+        //        ThumbnailWidth = ThumbnailMax;
+        //        ThumbnailHeight = (int)((OriginalHeight / OriginalWidth) * (float)ThumbnailMax);
+        //    }
+        //    // Create new bitmap that will be used for thumbnail
+        //    Bitmap ThumbnailBitmap = new Bitmap(ThumbnailWidth, ThumbnailHeight);
+        //    Graphics ResizedImage = Graphics.FromImage(ThumbnailBitmap);
+        //    // Resized image will have best possible quality
+        //    ResizedImage.InterpolationMode = InterpolationMode.HighQualityBicubic;
+        //    ResizedImage.CompositingQuality = CompositingQuality.HighQuality;
+        //    ResizedImage.SmoothingMode = SmoothingMode.HighQuality;
+        //    // Draw resized image
+        //    ResizedImage.DrawImage(imgOriginal, 0, 0, ThumbnailWidth, ThumbnailHeight);
+
+        //    // Save thumbnail to file
+        //    ThumbnailBitmap.Save(ThumbnailImagePath);
+
+        //    // Dispose Objects
+        //    imgOriginal.Dispose();
+        //    ResizedImage.Dispose();
+        //    ThumbnailBitmap.Dispose();
+        //}
 
         /// <summary>
         ///  Called when the PhotoWatcherService detects a phisical delete of a file
@@ -159,8 +199,9 @@ namespace PhotoWatcherLib
                 
                     // Create the thumbnail                    
                     string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
+                    int ThumbnailSize = (int)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Thumbnailsize", "");
                     Guid g = Guid.NewGuid();
-                    CreateThumbnail(200, FileName, ThumbnailDirectory + g.ToString() + Path.GetExtension(FileName).ToString());
+                    CreateThumbnail(ThumbnailSize, FileName, ThumbnailDirectory + g.ToString() + Path.GetExtension(FileName).ToString());
 
                     // Get the parent Directory Name - this is needed to link the picture to an Album name
                     FileInfo fInfo = new FileInfo(FileName);
@@ -206,10 +247,15 @@ namespace PhotoWatcherLib
             dbDML("update photo set active='N' where to_remove = 'Y';");
             dbDML("update album set active='N' where album_id not in (select distinct album_id from photo where active = 'Y');");
             dbDML("update album set active='Y' where album_id in (select distinct album_id from photo where active = 'Y');");
-
-            // Remove thumbnails where the actual photo has just been removed
-            CleanThumbnailDir();            
+          
             WriteLog("Finished Performing Album Refresh");
+        }
+
+        public void PerformCleanup()
+        {
+            // Remove thumbnails where the actual photo has just been removed
+            CleanThumbnailDir();
+            CleanDownloadDir();
         }
 
         /// <summary>
@@ -435,6 +481,35 @@ namespace PhotoWatcherLib
         }
 
         /// <summary>
+        /// Clean any Temp Files older than a day
+        /// </summary>
+        private void CleanDownloadDir()
+        {
+            try
+            {
+
+
+                string TempFolder = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "TempDirectory", "");
+                var Dirs = new DirectoryInfo(TempFolder).GetDirectories();
+                foreach (var Dir in Dirs)
+                {
+                    // Delete directory if it is greater one day old 
+                    if (DateTime.UtcNow - Dir.CreationTimeUtc > TimeSpan.FromDays(1))
+                    {
+                        Directory.Delete(Dir.FullName, true);
+                    }
+                }
+            }
+
+            catch (System.Exception e1)
+            {
+                WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
+                throw new Exception("Error cleaning downloaded directory");
+            }
+
+        }
+
+        /// <summary>
         /// Write a generic string to the Log file
         /// </summary>
         /// <param name="Message"></param>
@@ -450,33 +525,50 @@ namespace PhotoWatcherLib
         /// <summary>
         /// Zip a folder
         /// </summary>
-        /// <returns></returns>
+        /// <param name="Id">The Album ID we are zipping</param>
+        /// <returns>The physical location of the newly zipped archive</returns>
         public string ZipFolder(int Id)
         {
-            // Get the physical location of the album
+            // Get the album name from the id passed in
             MySqlCommand cmd;
             MySqlDataReader dataReader;
             string SQL = "select album_name from album a where album_id = " + Id;
             cmd = new MySqlCommand(SQL, MySQLConn);
             dataReader = cmd.ExecuteReader();
             dataReader.Read();
-            string Location = dataReader["album_name"].ToString();
+            string AlbumName = dataReader["album_name"].ToString();
             dataReader.Close();
             cmd.Dispose();
 
             // Build up the physical location of the album
-            Location = Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "") + Location;
+            string Location = Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "") + AlbumName + "\\";
 
             // Get the Zip Name
             Guid g = Guid.NewGuid();
-            string ZipName = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "") + "\\" + g.ToString() +  ".zip";
+            string ZipDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "TempDirectory", "") + "\\" + g.ToString() + "\\";
+            string ZipName = AlbumName + ".zip";
+            
+            // Create the temporary directory
+            Directory.CreateDirectory(ZipDirectory);
 
-            // Zip the folder
-            ZipFile.CreateFromDirectory( Location, ZipName);
+            // Add all active files into the new archive
+            SQL = "select filename from photo p where album_id = " + Id + " and active='Y'";
+            cmd = new MySqlCommand(SQL, MySQLConn);
+            dataReader = cmd.ExecuteReader();
 
-            return ZipName;
+            using (ZipArchive archive = ZipFile.Open(ZipDirectory + ZipName, ZipArchiveMode.Update)) {
+                while (dataReader.Read())
+                {
+                    string FileName = dataReader["filename"].ToString();
+                    archive.CreateEntryFromFile(Location + FileName, FileName);
+                }
+            }
+            
+            dataReader.Close();
+            cmd.Dispose();
+
+            return ZipDirectory + ZipName;
         }
-
     }
 }
 

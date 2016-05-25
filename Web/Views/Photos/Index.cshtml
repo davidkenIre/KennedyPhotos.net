@@ -20,13 +20,13 @@
             {
                 <tr>
                     <td>@item.Id</td>
-                    <td>
-                        <a href="/Photos/ViewAlbum/@item.Id">@item.AlbumName</a>
-                    </td>
+                    <td><a href="/Photos/ViewAlbum/@item.Id">@item.AlbumName</a></td>
                     <td>@item.AlbumDate</td>
                     <td>@item.Description</td>
-                    <td>
-                    @Html.ActionLink("Download", "DownloadAlbum", new { id = item.Id })
+                    <td style="width:100px">
+                        <a href="@Url.Action("DownloadAlbum", "Photos", new { id = item.Id })" class="btn btn-default btn-sm">
+                            Download <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+                        </a>
                     </td>
                 </tr>
             }

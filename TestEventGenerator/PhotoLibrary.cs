@@ -17,9 +17,9 @@ using System.Drawing.Drawing2D;
 
 namespace TestEventGenerator
 {
-    public partial class Form1 : Form
+    public partial class PhotoLibrary : Form
     {
-        public Form1()
+        public PhotoLibrary()
         {
             InitializeComponent();
         }
@@ -33,8 +33,13 @@ namespace TestEventGenerator
         private void button2_Click(object sender, EventArgs e)
         {
             PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
-            U.WriteLog("Intercepted call to refresh Albums");
             U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", ""));
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
+            U.PerformCleanup();
         }
     }
 }

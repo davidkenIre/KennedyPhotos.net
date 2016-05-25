@@ -131,6 +131,7 @@ namespace PhotoWatcher
         {
             PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
             U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", ""));
+            U.PerformCleanup();
         }
     }
 }
