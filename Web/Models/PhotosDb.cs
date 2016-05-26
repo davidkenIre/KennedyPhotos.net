@@ -12,6 +12,48 @@ namespace Photos.Models
     public class PhotosDb 
     {
         /// <summary>
+        /// Get a single album from the database
+        /// </summary>
+        /// <returns></returns>
+        public Album GetAlbum(int Id)
+        {
+            // Connect to MySQL and load all the photos
+            MySql.Data.MySqlClient.MySqlConnection conn;
+            string myConnectionString;
+
+            // Get the connection password
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+
+            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+            conn = new MySql.Data.MySqlClient.MySqlConnection();
+            conn.ConnectionString = myConnectionString;
+            conn.Open();
+
+            //Create Command
+            string SQL = "select * from album where album_id = " + Id + " and active = 'Y'";
+
+            MySqlCommand cmd = new MySqlCommand(SQL, conn);
+            //Create a data reader and Execute the command
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+
+            dataReader.Read();
+            Album _album = new Album()
+            {
+                Id = dataReader["album_id"].ToString(),
+                Location = dataReader["location"].ToString(),
+                AlbumName = dataReader["album_name"].ToString(),
+                AlbumDate = dataReader["album_date"].ToString(),
+                Description = dataReader["description"].ToString()
+            };                
+
+            //close Data Reader
+            dataReader.Close();
+            conn.Close();
+
+            return _album;
+        }
+
+        /// <summary>
         /// Retrive a list of all albums from the database
         /// </summary>
         /// <returns></returns>

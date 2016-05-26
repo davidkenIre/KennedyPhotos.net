@@ -13,8 +13,10 @@ namespace Photos.Controllers
     {
         PhotosDb _db = new PhotosDb();
 
-        //
-        // GET: /Photo/
+        /// <summary>
+        /// Get an Album Listing
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Index()
         {
@@ -22,12 +24,28 @@ namespace Photos.Controllers
             return View(_AlbumListing.ToList());
         }
 
+        /// <summary>
+        /// Get a Photo Listing
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult ViewAlbum(int Id)
         {
             List<Photo> _PhotoListing = _db.GetAllPhotos(Id);
             return View(_PhotoListing.ToList());
 
+        }
+
+        /// <summary>
+        /// Get a Single Album
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public ActionResult GetAlbum(int Id)
+        {
+            Album _Album = _db.GetAlbum(Id);
+            return View(_Album);
         }
 
         /// <summary>

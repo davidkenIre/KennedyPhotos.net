@@ -144,6 +144,10 @@
     <Content Include="bootstrap-3.3.6\css\bootstrap.min.css" />
     <Content Include="bootstrap-3.3.6\css\ie10-viewport-bug-workaround.css" />
     <Content Include="bootstrap-3.3.6\css\jumbotron.css" />
+    <Content Include="bootstrap-3.3.6\dist\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="bootstrap-3.3.6\dist\js\bootstrap.js" />
+    <Content Include="bootstrap-3.3.6\dist\js\bootstrap.min.js" />
+    <Content Include="bootstrap-3.3.6\dist\js\npm.js" />
     <Content Include="favicon.ico" />
     <Content Include="bootstrap-3.3.6\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="bootstrap-3.3.6\js\affix.js" />
@@ -191,6 +195,7 @@
     <Content Include="Artifacts\SQL\01_photos_ddl.sql" />
     <None Include="Artifacts\SQL\02_photos_dml.sql" />
     <Content Include="images\HomepageBackground.png" />
+    <Content Include="script\jquery-1.12.4.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -208,7 +213,6 @@
     <Content Include="Views\Home\_ViewStart.cshtml" />
     <Content Include="Views\Photos\_Layout.cshtml" />
     <Content Include="Views\Photos\_ViewStart.cshtml" />
-    <Content Include="Views\Photos\__VABackup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bootstrap-3.3.6\css\bootstrap-theme.css.map" />
@@ -223,6 +227,10 @@
     <Content Include="bootstrap-3.3.6\js\.jshintrc" />
     <Content Include="bootstrap-3.3.6\js\tests\README.md" />
     <Content Include="bootstrap-3.3.6\js\tests\unit\.jshintrc" />
+    <Content Include="bootstrap-3.3.6\dist\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="bootstrap-3.3.6\dist\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="bootstrap-3.3.6\dist\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="bootstrap-3.3.6\dist\fonts\glyphicons-halflings-regular.woff2" />
     <None Include="Properties\PublishProfiles\lattuce-dc.pubxml" />
     <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
@@ -234,6 +242,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="bootstrap-3.3.6\dist\css\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PhotoWatcherLib\PhotoWatchLibrary.csproj">

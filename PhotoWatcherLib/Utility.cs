@@ -19,12 +19,10 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Database Created by and updated by
 // TODO: str_to_date in SQL is not stable because the date format is dependant on the local
 // TODO: Log File should be kept at a certain length
-// TODO: Implement pagination in the view albums page
 // TODO: Can get 3 empty divs at the end of a listing
 // TODO: Download status in the View albums page
-// TODO: Deal with borders in thumbnails
 // TODO: Take a look at the image processor website - see if there are any interesting API's we can use
-// Schedule Cleanup and refresh modules
+// TODO: Schedule Cleanup and refresh modules
 
 namespace PhotoWatcherLib
 {

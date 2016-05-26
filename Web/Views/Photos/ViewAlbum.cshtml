@@ -1,90 +1,77 @@
 ﻿@model IEnumerable<Photos.Models.Photo>
-    <!-- Page Header -->
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">
-                Page Heading
-                <small>Secondary Text</small>
-            </h1>
-        </div>
-    </div>
-    <!-- /.row -->
 
-    @{int cnt = 0;}
-
-    @foreach (var item in Model)
-    {
-
-        if (cnt % 3 == 0)
-        {
-            @Html.Raw("<div>")
-        }
-
-        <div class="col-md-4 portfolio-item">
-            <a href="@Html.DisplayFor(modelItem => item.Location)@Html.DisplayFor(modelItem => item.Filename)">
-                <img src="/Thumbnails/@Html.DisplayFor(modelItem => item.ThumbnailFilename)" class="img-responsive" alt="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera">
-            </a>
-            <h3><a href="#">Project Name</a></h3>
-            <p>
-                <b>Date Taken:</b> @Html.DisplayFor(modelItem => item.DateTaken)
-                <b>Dimensions:</b> @Html.DisplayFor(modelItem => item.Dimensions)
-                <b>Camera Maker:</b> @Html.DisplayFor(modelItem => item.CameraMaker)
-                <b>Camera Model:</b> @Html.DisplayFor(modelItem => item.CameraModel)
-                <b>F Stop:</b> @Html.DisplayFor(modelItem => item.FStop)
-                <b>Exposure:</b> @Html.DisplayFor(modelItem => item.Exposure)
-                <b>ISO:</b> @Html.DisplayFor(modelItem => item.ISO)
-                <b>Focal Length:</b> @Html.DisplayFor(modelItem => item.FocalLength)
-            </p>
-        </div>
-
-        cnt += 1;
-        if (cnt % 3 == 0)
-        {
-            @Html.Raw("</div>")
-        }
-    }
-
-    <!-- Empty divs where there are not enough images to fill the last line-->
-    @if (cnt % 3 != 0)
-    {
-        for (int a = 1; a < cnt % 3; a++)
-        {
-            <div class="col-md-4 portfolio-item" style="height:350px"></div>
-        }
-        @Html.Raw("</div>")
-    }
-
-    
-                      <hr>
-                      <!-- Pagination -->
-                      <div class="row text-center">
-                          <div class="col-lg-12">
-                              <ul class="pagination"> 
-                                  <li>
-                                      <a href="#">&laquo;</a>
-                                  </li>
-                                  <li class="active">
-                                      <a href="#">1</a>
-                                  </li>
-                                  <li>
-                                      <a href="#">2</a>
-                                  </li>
-                                  <li>
-                                      <a href="#">3</a>
-                                  </li>
-                                  <li>
-                                      <a href="#">4</a>
-                                  </li>
-                                  <li>
-                                      <a href="#">5</a>
-                                  </li>
-                                  <li>
-                                      <a href="#">&raquo;</a>
-                                  </li>
-                              </ul>
+                          <!-- Page Header -->
+                          <div class="row">
+                              <div class="col-lg-12">
+                                  <h1 class="page-header">
+                                      Photo Album
+                                      <small>sModelA.AlbumName</small>
+                                  </h1>
+                              </div>
                           </div>
-                      </div>
-                      <!-- /.row -->
+                          <!-- /.row -->
+
+                          @{int cnt = 0;}
+                          @foreach (var item in Model)
+                          {
+                              if (cnt % 3 == 0)
+                              {
+                                  @Html.Raw("<div>")
+                              }
+
+                              <div class="col-md-4 portfolio-item">
+                                  <a href="@Html.DisplayFor(modelItem => item.Location)@Html.DisplayFor(modelItem => item.Filename)">
+                                      <img src="/Thumbnails/@Html.DisplayFor(modelItem => item.ThumbnailFilename)" class="img-responsive" alt="A generic square placeholder image with a white border around it, making it resemble a photograph taken with an old instant camera">
+                                  </a>
+
+                                  <div class="row col-md-12 portfolio-item">
+                                      <div class="span collapse-group">
+                                          <p class="collapse">
+                                              <b>Date Taken:</b> @Html.DisplayFor(modelItem => item.DateTaken) <br />
+                                              <b>Dimensions:</b> @Html.DisplayFor(modelItem => item.Dimensions)<br />
+                                              <b>Camera Maker:</b> @Html.DisplayFor(modelItem => item.CameraMaker)<br />
+                                              <b>Camera Model:</b> @Html.DisplayFor(modelItem => item.CameraModel)<br />
+                                              <b>F Stop:</b> @Html.DisplayFor(modelItem => item.FStop)<br />
+                                              <b>Exposure:</b> @Html.DisplayFor(modelItem => item.Exposure)<br />
+                                              <b>ISO:</b> @Html.DisplayFor(modelItem => item.ISO)<br />
+                                              <b>Focal Length:</b> @Html.DisplayFor(modelItem => item.FocalLength)<br />
+                                          </p>
+                                          <p><a class="btn" href="#">View details &raquo;</a></p>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              cnt += 1;
+                              if (cnt % 3 == 0)
+                              {
+                                  @Html.Raw("</div><div class='col-md-12'></div>")
+                              }
+                          }
+
+                          <!-- Empty divs where there are not enough images to fill the last line-->
+                          @if (cnt % 3 != 0)
+                          {
+                              for (int a = 1; a < cnt % 3; a++)
+                              {
+                                  <div class="col-md-4 portfolio-item" style="height:350px"></div>
+                              }
+                              @Html.Raw("</div>")
+                          }
+
+                          <div class='col-md-12'>
+                              <p><a class="btn btn-primary" href="/Photos/Index" role="button"> &laquo; Back to Albums</a></p>
+                          </div>
 
 
-    <p><a class="btn btn-primary" href="/Photos/Index" role="button"> &laquo; Back to Albums</a></p>
+                          <script type='text/javascript'>
+                              // More Details toggle
+                              $(window).load(function () {
+                                  $('.row .btn').on('click', function (e) {
+                                      e.preventDefault();
+                                      var $this = $(this);
+                                      var $collapse = $this.closest('.collapse-group').find('.collapse');
+                                      $collapse.collapse('toggle');
+                                  });
+                              });
+                          </script>
+
