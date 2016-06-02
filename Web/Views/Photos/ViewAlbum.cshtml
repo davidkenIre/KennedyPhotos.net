@@ -27,6 +27,7 @@
                                   <div class="row col-md-12 portfolio-item">
                                       <div class="span collapse-group">
                                           <p class="collapse">
+                                              <b>Filename:</b> @Html.DisplayFor(modelItem => item.Filename) <br />
                                               <b>Date Taken:</b> @Html.DisplayFor(modelItem => item.DateTaken) <br />
                                               <b>Dimensions:</b> @Html.DisplayFor(modelItem => item.Dimensions)<br />
                                               <b>Camera Maker:</b> @Html.DisplayFor(modelItem => item.CameraMaker)<br />
@@ -36,7 +37,8 @@
                                               <b>ISO:</b> @Html.DisplayFor(modelItem => item.ISO)<br />
                                               <b>Focal Length:</b> @Html.DisplayFor(modelItem => item.FocalLength)<br />
                                           </p>
-                                          <p><a class="btn" href="#">View details &raquo;</a></p>
+                                          <br />
+                                          <p><a class="btn btn-info btn-sm" href="#">View details &raquo;</a></p>
                                       </div>
                                   </div>
                               </div>

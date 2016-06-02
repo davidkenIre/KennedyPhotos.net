@@ -23,6 +23,7 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Download status in the View albums page
 // TODO: Take a look at the image processor website - see if there are any interesting API's we can use
 // TODO: Schedule Cleanup and refresh modules
+// TODO: Too many refreshes if multiple pictures dropped in
 
 namespace PhotoWatcherLib
 {
@@ -52,7 +53,14 @@ namespace PhotoWatcherLib
             byte[] photoBytes = File.ReadAllBytes(OriginalImagePath); // change imagePath with a valid image path
             int quality = 70;
             ISupportedImageFormat format = new PngFormat { Quality = 70 };
-            var size = new Size(ThumbnailMax, ThumbnailMax);
+
+            // Finds height and width of original image, before calculating an appropiate thumbnail size
+            Image imgOriginal = Image.FromFile(OriginalImagePath);
+            float OriginalHeight = imgOriginal.Height;
+            float OriginalWidth = imgOriginal.Width;
+            int ThumbnailHeight = ThumbnailMax;
+            int ThumbnailWidth = (int)((OriginalWidth / OriginalHeight) * (float)ThumbnailMax);
+            var size = new Size(ThumbnailHeight, ThumbnailWidth);
 
             using (var inStream = new MemoryStream(photoBytes))
             {
@@ -61,12 +69,21 @@ namespace PhotoWatcherLib
                     // Initialize the ImageFactory using the overload to preserve EXIF metadata.
                     using (var imageFactory = new ImageFactory(preserveExifData: true))
                     {
+                        // How should the image be resized?
+                        //var resizeLayer = new ImageProcessor.Imaging.ResizeLayer(size, ImageProcessor.Imaging.ResizeMode.Max, ImageProcessor.Imaging.AnchorPosition.Center);
+
                         // Do your magic here
                         imageFactory.Load(inStream)
-                            .Resize(size)
+                            //.Resize(resizeLayer)
+                            .Constrain(size)
                             .Format(format)
                             .Quality(quality)
+                            .AutoRotate()
                             .Save(outStream);
+                        //if (OriginalHeight > OriginalWidth)
+                        //  imageFactory.Rotate(90);
+
+                        //imageFactory
                     }
                     FileStream file = new FileStream(ThumbnailImagePath, FileMode.Create, System.IO.FileAccess.Write);
                     outStream.CopyTo(file);
@@ -283,10 +300,6 @@ namespace PhotoWatcherLib
                             ChangeMade = true;
                             AddFile(FileName);
                         }
-                    } else
-                    {
-                        // File does exist
-
                     }
                 }
 
@@ -294,16 +307,15 @@ namespace PhotoWatcherLib
                 {
                     ChangeMade = this.FullDirectoryScan(d, ChangeMade);
                 }
-
-                // Use an OR operator to bubble up the ChangeMade flag in the recusion operation
-                return ChangeMade || ChangeMadeIn;
             }
 
             catch (System.Exception e1)
             {
                 WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
-                throw new Exception("Error Performing Directory Scan");
             }
+
+            // Use an OR operator to bubble up the ChangeMade flag in the recusion operation
+            return ChangeMade || ChangeMadeIn;
         }
 
         /// <summary>
