@@ -18,12 +18,10 @@ using ImageProcessor.Imaging.Formats;
 // TODO: What happens when a thumbnail gets deleted - when does it get recreated?
 // TODO: Database Created by and updated by
 // TODO: str_to_date in SQL is not stable because the date format is dependant on the local
-// TODO: Log File should be kept at a certain length
 // TODO: Can get 3 empty divs at the end of a listing
 // TODO: Download status in the View albums page
-// TODO: Take a look at the image processor website - see if there are any interesting API's we can use
 // TODO: Schedule Cleanup and refresh modules
-// TODO: Too many refreshes if multiple pictures dropped in
+// TODO: Importer does not work if there is a single ' in the directory Name
 
 namespace PhotoWatcherLib
 {
@@ -90,52 +88,7 @@ namespace PhotoWatcherLib
                 }
             }
         }
-
-        ///// <summary>
-        ///// Create a thumbnail.  Code taken from http://www.beansoftware.com/ASP.NET-FAQ/Create-Thumbnail-Image.aspx
-        ///// </summary>
-        ///// <param name="ThumbnailMax"></param>
-        ///// <param name="OriginalImagePath"></param>
-        ///// <param name="ThumbnailImagePath"></param>
-        //public void CreateThumbnail1(int ThumbnailMax, string OriginalImagePath, string ThumbnailImagePath)
-        //{
-        //    // Loads original image from file
-        //    Image imgOriginal = Image.FromFile(OriginalImagePath);
-        //    // Finds height and width of original image
-        //    float OriginalHeight = imgOriginal.Height;
-        //    float OriginalWidth = imgOriginal.Width;
-        //    // Finds height and width of resized image
-        //    int ThumbnailWidth;
-        //    int ThumbnailHeight;
-        //    if (OriginalHeight > OriginalWidth)  // Portrait
-        //    {
-        //        ThumbnailHeight = ThumbnailMax;
-        //        ThumbnailWidth = (int)((OriginalWidth / OriginalHeight) * (float)ThumbnailMax);
-        //    }
-        //    else                                 // Landscape
-        //    {
-        //        ThumbnailWidth = ThumbnailMax;
-        //        ThumbnailHeight = (int)((OriginalHeight / OriginalWidth) * (float)ThumbnailMax);
-        //    }
-        //    // Create new bitmap that will be used for thumbnail
-        //    Bitmap ThumbnailBitmap = new Bitmap(ThumbnailWidth, ThumbnailHeight);
-        //    Graphics ResizedImage = Graphics.FromImage(ThumbnailBitmap);
-        //    // Resized image will have best possible quality
-        //    ResizedImage.InterpolationMode = InterpolationMode.HighQualityBicubic;
-        //    ResizedImage.CompositingQuality = CompositingQuality.HighQuality;
-        //    ResizedImage.SmoothingMode = SmoothingMode.HighQuality;
-        //    // Draw resized image
-        //    ResizedImage.DrawImage(imgOriginal, 0, 0, ThumbnailWidth, ThumbnailHeight);
-
-        //    // Save thumbnail to file
-        //    ThumbnailBitmap.Save(ThumbnailImagePath);
-
-        //    // Dispose Objects
-        //    imgOriginal.Dispose();
-        //    ResizedImage.Dispose();
-        //    ThumbnailBitmap.Dispose();
-        //}
-
+        
         /// <summary>
         ///  Called when the PhotoWatcherService detects a phisical delete of a file
         /// </summary>
@@ -258,11 +211,20 @@ namespace PhotoWatcherLib
                 WriteLog("Checking for changes in the Album directory");
             } while (FullDirectoryScan(sourcePath, false) == true);
 
-            // Revove photos from database which are no longer available
+            // Remove photos from database which are no longer available
             dbDML("update photo set active='N' where to_remove = 'Y';");
             dbDML("update album set active='N' where album_id not in (select distinct album_id from photo where active = 'Y');");
             dbDML("update album set active='Y' where album_id in (select distinct album_id from photo where active = 'Y');");
-          
+
+            // Remove Old Log Files
+            string[] files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\");
+            foreach (string file in files)
+            {
+                FileInfo fi = new FileInfo(file);
+                if (fi.LastAccessTime < DateTime.Now.AddMonths(-1))
+                    fi.Delete();
+            }
+
             WriteLog("Finished Performing Album Refresh");
         }
 
@@ -525,7 +487,7 @@ namespace PhotoWatcherLib
         /// <param name="Message"></param>
         public void WriteLog(string Message)
         {
-            using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\PhotoWatcher.log"))
+            using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\PhotoWatcher_" + DateTime.Today.ToString("yyyyMMdd") + ".log"))
             {
                 sw.Write(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")) + ": ");
                 sw.WriteLine(Message);

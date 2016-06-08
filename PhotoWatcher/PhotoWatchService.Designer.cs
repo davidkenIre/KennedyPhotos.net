@@ -22,6 +22,8 @@ namespace PhotoWatcher
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+        PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
+
 
         /// <summary>
         /// Clean up any resources being used.

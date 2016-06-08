@@ -33,6 +33,7 @@ namespace Photos.Controllers
         public ActionResult ViewAlbum(int Id)
         {
             List<Photo> _PhotoListing = _db.GetAllPhotos(Id);
+            ViewBag.AlbumName = _PhotoListing[0].AlbumName;  // Get the Album Name from the first element in the listing
             return View(_PhotoListing.ToList());
 
         }
