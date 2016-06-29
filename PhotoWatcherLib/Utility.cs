@@ -22,6 +22,9 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Download status in the View albums page
 // TODO: Schedule Cleanup and refresh modules
 // TODO: Importer does not work if there is a single ' in the directory Name
+// TODO: Implement Security
+// TODO: Move credentials to a better location
+// TODO: Common menu code across all pages in website
 
 namespace PhotoWatcherLib
 {
