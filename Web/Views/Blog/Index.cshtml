@@ -1,5 +1,17 @@
-﻿
-@{
-    ViewBag.Title = "Index";
-}
+﻿<!DOCTYPE html>
+@model IEnumerable<Photos.Models.Blog>
 
+            @foreach (var item in Model)
+            {
+
+                <h2>
+                    <a href="#">@item.Title</a>
+                </h2>
+                <p class="lead">
+                    by <a href="index.php">@item.Author</a>
+                </p>
+                <p><span class="glyphicon glyphicon-time"></span> Posted on @item.DatePosted</p>
+                <p>@Html.Raw(item.BlogText)</p>
+                <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                <hr>
+            }

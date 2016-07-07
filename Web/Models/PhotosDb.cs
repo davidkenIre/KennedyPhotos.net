@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using MySql.Data;
@@ -123,7 +122,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            MySqlCommand cmd = new MySqlCommand("select a.*, p.* from photo p, album a where a.album_id = p.album_id and a.album_id = " + AlbumId + " and a.active = 'Y' and p.active = 'Y'", conn);
+            MySqlCommand cmd = new MySqlCommand("select a.*, p.* from photo p, album a where a.album_id = p.album_id and a.album_id = " + AlbumId + " and a.active = 'Y' and p.active = 'Y' order by p.date_taken, p.filename", conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
@@ -156,6 +155,58 @@ namespace Photos.Models
             conn.Close();
 
             return _photos;
+        }
+
+        /// <summary>
+        /// Retrive a list of all albums from the database
+        /// </summary>
+        /// <param name="Limit">No. of Blog Entries to return</param>
+        /// <returns></returns>
+        public List<Blog> GetBlogs(int Limit)
+        {
+            // Connect to MySQL and load all the photos
+            MySql.Data.MySqlClient.MySqlConnection conn;
+            string myConnectionString;
+
+            // Get the connection password
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+
+            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+            conn = new MySql.Data.MySqlClient.MySqlConnection();
+            conn.ConnectionString = myConnectionString;
+            conn.Open();
+
+            //Create Command
+            string SQL = "select * from blog where active = 'Y' order by created_date desc";
+            if (Limit != 0)
+            {
+                SQL += " Limit " + Limit;
+            }
+
+            MySqlCommand cmd = new MySqlCommand(SQL, conn);
+            //Create a data reader and Execute the command
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+
+            //Read the data and store them in the list
+            List<Blog> _blogs = new List<Blog>();
+            while (dataReader.Read())
+            {
+                Blog item = new Blog()
+                {
+                    Id = dataReader["blog_id"].ToString(),
+                    Title = dataReader["Title"].ToString(),
+                    Author = dataReader["Author"].ToString(),
+                    DatePosted = dataReader["dte_posted"].ToString(),
+                    BlogText = dataReader["Blog_Text"].ToString(),                    
+                };
+                _blogs.Add(item);
+            }
+
+            //close Data Reader
+            dataReader.Close();
+            conn.Close();
+
+            return _blogs;
         }
     }
 }
