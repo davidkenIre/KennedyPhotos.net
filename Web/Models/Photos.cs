@@ -60,6 +60,7 @@ namespace Photos.Models
 
                 //blogtext = value.Replace("[[", "<img class=\"img-responsive\" src=\"");
                 //blogtext = blogtext.Replace("]]", "\" alt = \"\">");
+                blogtext = value;
             }
         }
     }

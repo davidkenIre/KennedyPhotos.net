@@ -40,13 +40,14 @@ namespace Photos.Controllers
         }
 
         [HttpPost]
-        public ActionResult Save(string title, String author, string dateposted, string blogtext)
+        [ValidateInput(false)]
+        public ActionResult Save(string title, String author, string dateposted, string blogtexthtml)
         {
             Blog blog = new Blog();
             blog.Title = title;
             blog.Author = author;
             blog.DatePosted = dateposted;
-            blog.BlogText = blogtext;
+            blog.BlogText = blogtexthtml;
 
             string Id = _db.SaveBlogEntry(blog);
 
