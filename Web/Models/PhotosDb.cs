@@ -216,7 +216,7 @@ namespace Photos.Models
             // Get the connection password
             string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
             string myConnectionString;
-            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";default command timeout=0";
             conn.ConnectionString = myConnectionString;
             conn.Open();
 

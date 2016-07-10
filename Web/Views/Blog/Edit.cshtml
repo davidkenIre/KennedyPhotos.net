@@ -62,7 +62,8 @@
             <br />
             <div class="btn-group" role="group" aria-label="...">
                 <input type="submit" class="btn btn-primary" value="Save" id="btnsubmit" name="btnsubmit"/>
-                <button type="button" class="btn btn-default">Cancel</button>
+                <input type="submit" class="btn btn-default" value="Save &amp; Return" id="btnsubmitreturn" name="btnsubmitreturn" />
+                <a class="btn btn-default" href="/Blog/Index" role="button"> &laquo; Back to Blog</a>
             </div>
 
 
@@ -72,6 +73,11 @@
 
                 // Submit button clicked - copy the content of the wysiwyg editor into a hidden field
                 $('#btnsubmit').click(function () {
+                    $('#blogtexthtml').html(
+                        $("#blogtext").html()
+                    );
+                });
+                $('#btnsubmitreturn').click(function () {
                     $('#blogtexthtml').html(
                         $("#blogtext").html()
                     );
