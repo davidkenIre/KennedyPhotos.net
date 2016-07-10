@@ -208,5 +208,39 @@ namespace Photos.Models
 
             return _blogs;
         }
+
+        public string SaveBlogEntry(Blog blog)
+        {
+            MySql.Data.MySqlClient.MySqlConnection conn;
+            conn = new MySql.Data.MySqlClient.MySqlConnection();
+            // Get the connection password
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+            string myConnectionString;
+            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+            conn.ConnectionString = myConnectionString;
+            conn.Open();
+
+            //if (blog.Id == string.IsNullOrWhiteSpace()) {
+            // Insert
+            string SQL = "insert into blog(created_date, created_by, title, author, dte_posted, blog_text) values(now(), 'TEMPUSER', '" + blog.Title + "', '" + blog.Author + "', now(), '" + blog.BlogText + "');";
+            MySqlCommand cmd = new MySqlCommand(SQL, conn);
+            cmd.ExecuteNonQuery();
+
+            // Get the ID
+            SQL = "select LAST_INSERT_ID() AS MYID from blog;";
+            cmd = new MySqlCommand(SQL, conn);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            dataReader.Read();
+            string Id = dataReader["MYID"].ToString();
+            //}
+            //else
+            //{
+
+
+            //}
+
+            conn.Close();
+            return Id;
+        }
     }
 }

@@ -58,8 +58,8 @@ namespace Photos.Models
                 // 2. Replace all "]]" with " alt="">
                 //< img class="img-responsive" src="/BlogImages/Blog00001.jpg" alt="">
 
-                blogtext = value.Replace("[[", "<img class=\"img-responsive\" src=\"");
-                blogtext = blogtext.Replace("]]", "\" alt = \"\">");
+                //blogtext = value.Replace("[[", "<img class=\"img-responsive\" src=\"");
+                //blogtext = blogtext.Replace("]]", "\" alt = \"\">");
             }
         }
     }
