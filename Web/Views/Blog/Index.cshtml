@@ -1,20 +1,22 @@
-﻿<!DOCTYPE html>
-@model IEnumerable<Photos.Models.Blog>
-
-            @foreach (var item in Model)
+﻿@model IEnumerable<Photos.Models.Blog>
+    @foreach (var item in Model)
             {
-
-                <h2>
-                    <a href="#">@item.Title</a>
-                </h2>
+        <h2>
+            <a href="#">@item.Title</a>
+        </h2>
                 <p class="lead">
                     by <a href="index.php">@item.Author</a>
                 </p>
                 <p><span class="glyphicon glyphicon-time"></span> Posted on @item.DatePosted</p>
                 <p>@Html.Raw(item.BlogText)</p>
                 <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                <a class="btn btn-default" href="/Blog/Edit/@item.Id">Edit</a>
                 <hr>
-            }
+    }
 
 
-        
+                      <br />
+                      <div class="btn-group" role="group" aria-label="...">
+                          <a class="btn btn-primary" href="/Blog/Edit/0" role="button">Create New Entry</a>
+                      </div>
+

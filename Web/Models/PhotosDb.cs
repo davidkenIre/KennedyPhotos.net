@@ -209,6 +209,55 @@ namespace Photos.Models
             return _blogs;
         }
 
+
+        /// <summary>
+        /// Retrive a single blog entry from the database
+        /// </summary>
+        /// <param name="BlogId">the blog Id to load</param>
+        /// <returns></returns>
+        public Blog GetBlog(int BlogId)
+        {
+            // Connect to MySQL and load all the photos
+            MySql.Data.MySqlClient.MySqlConnection conn;
+            string myConnectionString;
+
+            // Get the connection password
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+
+            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+            conn = new MySql.Data.MySqlClient.MySqlConnection();
+            conn.ConnectionString = myConnectionString;
+            conn.Open();
+
+            //Create Command
+            string SQL = "select * from blog where blog_id = " + BlogId;
+            MySqlCommand cmd = new MySqlCommand(SQL, conn);
+            //Create a data reader and Execute the command
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+
+            //Read the data and store them in the list            
+            Blog _blog = new Blog();
+            if (dataReader.Read()) 
+            {
+                _blog.Id = dataReader["blog_id"].ToString();
+                _blog.Title = dataReader["Title"].ToString();
+                _blog.Author = dataReader["Author"].ToString();
+                _blog.DatePosted = dataReader["dte_posted"].ToString();
+                _blog.BlogText = dataReader["Blog_Text"].ToString();
+            }
+
+            //close Data Reader
+            dataReader.Close();
+            conn.Close();
+
+            return _blog;
+        }
+
+        /// <summary>
+        /// Insert or Update a blog entry
+        /// </summary>
+        /// <param name="blog">The Blog model</param>
+        /// <returns></returns>
         public string SaveBlogEntry(Blog blog)
         {
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -216,28 +265,33 @@ namespace Photos.Models
             // Get the connection password
             string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
             string myConnectionString;
+            string Id = "";
+            string SQL;
             myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";default command timeout=0";
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            //if (blog.Id == string.IsNullOrWhiteSpace()) {
-            // Insert
-            string SQL = "insert into blog(created_date, created_by, title, author, dte_posted, blog_text) values(now(), 'TEMPUSER', '" + blog.Title + "', '" + blog.Author + "', now(), '" + blog.BlogText + "');";
-            MySqlCommand cmd = new MySqlCommand(SQL, conn);
-            cmd.ExecuteNonQuery();
+            
+            if (blog.Id == "0") {
+                // Insert
+                SQL = "insert into blog(created_date, created_by, title, author, dte_posted, blog_text) values(now(), 'TEMPUSER', '" + blog.Title + "', '" + blog.Author + "', now(), '" + blog.BlogText + "');";
+                MySqlCommand cmd = new MySqlCommand(SQL, conn);
+                cmd.ExecuteNonQuery();
 
-            // Get the ID
-            SQL = "select LAST_INSERT_ID() AS MYID from blog;";
-            cmd = new MySqlCommand(SQL, conn);
-            MySqlDataReader dataReader = cmd.ExecuteReader();
-            dataReader.Read();
-            string Id = dataReader["MYID"].ToString();
-            //}
-            //else
-            //{
-
-
-            //}
+                // Get the ID
+                SQL = "select LAST_INSERT_ID() AS MYID from blog;";
+                cmd = new MySqlCommand(SQL, conn);
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+                dataReader.Read();
+                Id = dataReader["MYID"].ToString();
+            }
+            else
+            {
+                SQL = "update blog set title = '" + blog.Title + "', author = '" + blog.Author + "', dte_posted = now(), blog_text = '" + blog.BlogText + "', updated_by = 'TEMPUSER', updated_date = now() where blog_id = " + blog.Id;
+                MySqlCommand cmd = new MySqlCommand(SQL, conn);
+                cmd.ExecuteNonQuery();
+                Id = blog.Id;
+            }
 
             conn.Close();
             return Id;

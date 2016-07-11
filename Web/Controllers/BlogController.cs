@@ -27,29 +27,39 @@ namespace Photos.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="BlogID">A Blog ID</param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult Edit()
+        public ActionResult Edit(int Id)
         {
-            //List<Photo> _PhotoListing = _db.GetAllPhotos(Id);
-            //ViewBag.AlbumName = _PhotoListing[0].AlbumName;  // Get the Album Name from the first element in the listing
-            //return View(_PhotoListing.ToList());
-            return View();
+            ViewBag.Id = Id;
+            // If Id <> 0 then load existing blog data
+            if (Id > 0 )
+            {
+                // Load Blog entry from the database
+                Blog _blog = _db.GetBlog(Id);
+                return View(_blog);
+            } else
+            {
+                return View(new Blog());
+            }
 
+            
         }
+
 
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult Save(string title, String author, string dateposted, string blogtexthtml)
+        public ActionResult Save(string Id, string title, String author, string dateposted, string blogtexthtml)
         {
             Blog blog = new Blog();
+            blog.Id = Id;
             blog.Title = title;
             blog.Author = author;
             blog.DatePosted = dateposted;
             blog.BlogText = blogtexthtml;
 
-            string Id = _db.SaveBlogEntry(blog);
+            Id = _db.SaveBlogEntry(blog);
 
             return RedirectToAction("Edit", "Blog", new { id = Id });
         }
