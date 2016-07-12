@@ -1,0 +1,15 @@
+﻿@model Photos.Models.Blog
+<div class="page-header">
+    <h1>View Blog</h1>
+</div>
+
+<h2>
+    <a href="#">@Model.Title</a>
+</h2>
+<p class="lead">
+    by <a href="index.php">@Model.Author</a>
+</p>
+<p><span class="glyphicon glyphicon-time"></span> Posted on @Model.DatePosted</p>
+<p>@Html.Raw(Model.BlogText)</p>
+<a class="btn btn-primary" href="/Blog/Index"><span class="glyphicon glyphicon-chevron"></span>View Blogs</a>
+
