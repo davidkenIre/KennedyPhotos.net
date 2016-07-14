@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LattuceWebsite", "Web\LattuceWebsite.csproj", "{FA4A64B9-2B45-48C7-A7C5-72FBC84312C9}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatchService", "PhotoWatcher\PhotoWatchService.csproj", "{09D3CFE4-C3DC-4E25-90BC-B657D1BAEC59}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatchLibrary", "PhotoWatcherLib\PhotoWatchLibrary.csproj", "{CCB24DC5-2775-421A-91C8-6C232E594227}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestEventGenerator", "TestEventGenerator\TestEventGenerator.csproj", "{331CE0AF-5189-48DF-B679-6EA39B5FC175}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lattuce", "WebNew\Lattuce.csproj", "{AB925228-4038-46A2-AEFA-F1DD4B2C85FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +17,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA4A64B9-2B45-48C7-A7C5-72FBC84312C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA4A64B9-2B45-48C7-A7C5-72FBC84312C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA4A64B9-2B45-48C7-A7C5-72FBC84312C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA4A64B9-2B45-48C7-A7C5-72FBC84312C9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{09D3CFE4-C3DC-4E25-90BC-B657D1BAEC59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{09D3CFE4-C3DC-4E25-90BC-B657D1BAEC59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09D3CFE4-C3DC-4E25-90BC-B657D1BAEC59}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -29,10 +33,6 @@ Global
 		{331CE0AF-5189-48DF-B679-6EA39B5FC175}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{331CE0AF-5189-48DF-B679-6EA39B5FC175}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{331CE0AF-5189-48DF-B679-6EA39B5FC175}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB925228-4038-46A2-AEFA-F1DD4B2C85FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB925228-4038-46A2-AEFA-F1DD4B2C85FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB925228-4038-46A2-AEFA-F1DD4B2C85FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB925228-4038-46A2-AEFA-F1DD4B2C85FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

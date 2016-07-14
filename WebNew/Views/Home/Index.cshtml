@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Photos.Models.Album>
+<div class="row">
+    <div class="col-md-4" style="background: rgba(107, 107, 107, 0.5); height:250px">
+        <h2 style="color: white">Cameras</h2>
+        <a href="http://lattuce.duckdns.org:171/" style="color:white">Realtime Front</a><br />
+        <a href="http://lattuce.duckdns.org:170/" style="color:white">Realtime Back</a><br />
+        <a href="http://lattuce.duckdns.org:5648" style="color:white">Realtime Both</a><br />
+        <a href="http://lattuce.duckdns.org:5648/desktopclient.html?u=admin&p=0d7ee64a4d929ae564711f5bf341ca51" style="color:white">Recorded Video</a><br />
+        </ol>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-7" style="background: rgba(107, 107, 107, 0.5); height:250px">
+        <h2 style="color: white">Recent Albums</h2>
+
+        @foreach (var item in Model)
+        {
+            <a href="/Photos/ViewAlbum/@item.Id" style="color:white">@item.AlbumName</a><br />
+        }
+        <br />
+
+        <p><a class="btn btn-default" href="/Photos/Index" role="button">See All Albums</a></p>
+    </div>
+    </div>
+
+
+
