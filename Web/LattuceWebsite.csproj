@@ -181,7 +181,6 @@
     <Content Include="Views\Blog\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Menu.cshtml" />
     <Content Include="Views\Blog\Edit.cshtml" />
-    <Content Include="Views\Blog\View.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Fonts\glyphicons-halflings-regular.woff2" />

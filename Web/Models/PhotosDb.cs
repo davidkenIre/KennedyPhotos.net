@@ -230,7 +230,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            string SQL = "select blog_id, Title, Author, Blog_Text, GREATEST(CREATED_DATE, UPDATED_DATE) as dte_posted from blog where blog_id = " + BlogId;
+            string SQL = "select * from blog where blog_id = " + BlogId;
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
@@ -295,30 +295,6 @@ namespace Photos.Models
 
             conn.Close();
             return Id;
-        }
-
-        /// <summary>
-        /// Delete a blog entry
-        /// </summary>
-        /// <param name="Id">The Blog Id</param>
-        /// <returns></returns>
-        public void DeleteBlogEntry(string Id)
-        {
-            MySql.Data.MySqlClient.MySqlConnection conn;
-            conn = new MySql.Data.MySqlClient.MySqlConnection();
-            // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
-            string myConnectionString;
-            string SQL;
-            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";default command timeout=0";
-            conn.ConnectionString = myConnectionString;
-            conn.Open();
-
-            SQL = "update blog set active = 'N', updated_by = 'TEMPUSER', updated_date = now() where blog_id = " + Id;
-            MySqlCommand cmd = new MySqlCommand(SQL, conn);
-            cmd.ExecuteNonQuery();
-
-            conn.Close();
         }
     }
 }

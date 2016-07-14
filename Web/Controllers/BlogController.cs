@@ -30,28 +30,6 @@ namespace Photos.Controllers
         /// <param name="BlogID">A Blog ID</param>
         /// <returns></returns>
         [HttpGet]
-        public ActionResult View(int Id)
-        {
-            ViewBag.Id = Id;
-            // If Id <> 0 then load existing blog data
-            if (Id > 0)
-            {
-                // Load Blog entry from the database
-                Blog _blog = _db.GetBlog(Id);
-                return View(_blog);
-            }
-            else
-            {
-                return View(new Blog());
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="BlogID">A Blog ID</param>
-        /// <returns></returns>
-        [HttpGet]
         public ActionResult Edit(int Id)
         {
             ViewBag.Id = Id;
@@ -65,36 +43,25 @@ namespace Photos.Controllers
             {
                 return View(new Blog());
             }
+
+            
         }
 
-        /// <summary>
-        /// Save a Blog Post
-        /// </summary>
-        /// <param name="Id"></param>
-        /// <param name="title"></param>
-        /// <param name="author"></param>
-        /// <param name="dateposted"></param>
-        /// <param name="blogtexthtml"></param>
-        /// <returns></returns>
+
         [HttpPost]
         [ValidateInput(false)]
-        public ActionResult Save(string Id, string title, String author, string blogtexthtml, string btnsubmit)
+        public ActionResult Save(string Id, string title, String author, string dateposted, string blogtexthtml)
         {
-            switch (btnsubmit)
-            {
-                case "Save":
-                    Blog blog = new Blog();
-                    blog.Id = Id;
-                    blog.Title = title;
-                    blog.Author = author;
-                    blog.BlogText = blogtexthtml;
-                    Id = _db.SaveBlogEntry(blog);
-                    return RedirectToAction("Edit", "Blog", new { id = Id });
-                case "Delete":
-                    _db.DeleteBlogEntry(Id);
-                    return RedirectToAction("Index", "Blog");
-            }
-            return RedirectToAction("Index", "Blog");
+            Blog blog = new Blog();
+            blog.Id = Id;
+            blog.Title = title;
+            blog.Author = author;
+            blog.DatePosted = dateposted;
+            blog.BlogText = blogtexthtml;
+
+            Id = _db.SaveBlogEntry(blog);
+
+            return RedirectToAction("Edit", "Blog", new { id = Id });
         }
 
     }
