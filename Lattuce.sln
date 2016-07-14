@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatchLibrary", "PhotoW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestEventGenerator", "TestEventGenerator\TestEventGenerator.csproj", "{331CE0AF-5189-48DF-B679-6EA39B5FC175}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lattuce", "WebNew\Lattuce.csproj", "{AB925228-4038-46A2-AEFA-F1DD4B2C85FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lattuce", "Web\Lattuce.csproj", "{AB925228-4038-46A2-AEFA-F1DD4B2C85FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

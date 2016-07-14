@@ -5,26 +5,35 @@ using System.Web;
 using System.Web.Mvc;
 using Photos.Models;
 
-namespace Photos.Controllers
+namespace WebApplication1.Controllers
 {
     public class HomeController : Controller
     {
+
         PhotosDb _db = new PhotosDb();
-        //
-        // GET: /Home/
 
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
-
-        //
-        // GET: /Photo/
         [HttpGet]
+        [Authorize]
         public ActionResult Index()
         {
             List<Album> _AlbumListing = _db.GetAlbums(5);
             return View(_AlbumListing.ToList());
+        }
+
+
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
         }
     }
 }
