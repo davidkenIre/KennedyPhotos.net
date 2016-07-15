@@ -216,6 +216,10 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\aspnet-WebApplication1-20160714064917.mdf" />
+    <Content Include="App_Data\aspnet-WebApplication1-20160714064917_log.ldf">
+      <DependentUpon>aspnet-WebApplication1-20160714064917.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\3-col-portfolio.css" />
     <Content Include="Content\blog-home.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -225,7 +229,7 @@
     <Content Include="Content\ie10-viewport-bug-workaround.css" />
     <Content Include="Content\jumbotron.css" />
     <Content Include="favicon.ico" />
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Images\HomepageBackground.png" />
@@ -312,7 +316,7 @@
     <Content Include="Content\Less\wells.less" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Fonts\glyphicons-halflings-regular.woff2" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ie10-viewport-bug-workaround.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -364,24 +368,20 @@
     <Content Include="Views\Blog\Edit.cshtml" />
     <Content Include="Views\Blog\Index.cshtml" />
     <Content Include="Views\Blog\View.cshtml" />
-    <Content Include="Views\Blog\_Layout.cshtml" />
     <Content Include="Views\Blog\_ViewStart.cshtml" />
     <Content Include="Views\Photos\Index.cshtml" />
     <Content Include="Views\Photos\ViewAlbum.cshtml" />
-    <Content Include="Views\Photos\_Layout.cshtml" />
     <Content Include="Views\Photos\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Menu.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\_Layout.cshtml" />
+    <Content Include="Views\Shared\_LayoutHome.cshtml" />
     <Content Include="Views\Home\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
