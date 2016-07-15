@@ -78,6 +78,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
+    <Reference Include="MySql.Data.Entity.EF6, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
     <Reference Include="PhotoWatcherLib">
       <HintPath>lib\PhotoWatcherLib.dll</HintPath>
     </Reference>
@@ -220,6 +221,8 @@
     <Content Include="App_Data\aspnet-WebApplication1-20160714064917_log.ldf">
       <DependentUpon>aspnet-WebApplication1-20160714064917.mdf</DependentUpon>
     </Content>
+    <Content Include="Artifacts\SQL\01_photos_ddl.sql" />
+    <Content Include="Artifacts\SQL\02_photos_dml.sql" />
     <Content Include="Content\3-col-portfolio.css" />
     <Content Include="Content\blog-home.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -317,6 +320,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Artifacts\REG\Lattuce.reg" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ie10-viewport-bug-workaround.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -376,6 +380,7 @@
     <Content Include="Views\Shared\_LayoutHome.cshtml" />
     <Content Include="Views\Home\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Blog\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
