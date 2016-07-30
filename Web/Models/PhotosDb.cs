@@ -14,7 +14,7 @@ namespace Photos.Models
         /// Get a single album from the database
         /// </summary>
         /// <returns></returns>
-        public Album GetAlbum(int Id)
+        public Album GetAlbum(int Id, string UserID)
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -29,7 +29,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            string SQL = "select * from album where album_id = " + Id + " and active = 'Y'";
+            string SQL = "select * from album a, albumaccess aa where a.album_id = " + Id + " and a.active = 'Y' and aa.album_id = a.album_id and aa.userid = '" + UserID + "'";
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
@@ -56,7 +56,7 @@ namespace Photos.Models
         /// Retrive a list of all albums from the database
         /// </summary>
         /// <returns></returns>
-        public List<Album> GetAlbums(int Limit)
+        public List<Album> GetAlbums(int Limit, string UserID)
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -71,7 +71,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            string SQL = "select * from album where active = 'Y' order by created_date desc";
+            string SQL = "select a.album_name, a.description, a.location, a.album_id,  DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date from album a, albumaccess aa where a.active = 'Y' and a.album_id = aa.album_id and aa.userid = '" + UserID + "' order by a.created_date desc";
             if (Limit != 0) {
                 SQL += " Limit " + Limit;
             }
@@ -107,7 +107,7 @@ namespace Photos.Models
         /// along with a list of associated albums
         /// </summary>
         /// <returns></returns>
-        public List<Photo> GetAllPhotos(int AlbumId)
+        public List<Photo> GetAllPhotos(int AlbumId, string UserID)
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -122,7 +122,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            MySqlCommand cmd = new MySqlCommand("select a.*, p.* from photo p, album a where a.album_id = p.album_id and a.album_id = " + AlbumId + " and a.active = 'Y' and p.active = 'Y' order by p.date_taken, p.filename", conn);
+            MySqlCommand cmd = new MySqlCommand("select a.*, p.* from photo p, album a, albumaccess aa where a.album_id = p.album_id and a.album_id = " + AlbumId + " and a.active = 'Y' and p.active = 'Y' and aa.userid = '" + UserID + "'  and a.album_id = aa.album_id order by p.date_taken, p.filename", conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
@@ -162,7 +162,7 @@ namespace Photos.Models
         /// </summary>
         /// <param name="Limit">No. of Blog Entries to return</param>
         /// <returns></returns>
-        public List<Blog> GetBlogs(int Limit)
+        public List<Blog> GetBlogs(int Limit, string UserID)
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -177,7 +177,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            string SQL = "select * from blog where active = 'Y' order by created_date desc";
+            string SQL = "select b.* from blog b, blogaccess ba where b.blog_id = ba.blog_id and ba.userid = '" + UserID + "' and b.active = 'Y' order by b.created_date desc";
             if (Limit != 0)
             {
                 SQL += " Limit " + Limit;
@@ -215,7 +215,7 @@ namespace Photos.Models
         /// </summary>
         /// <param name="BlogId">the blog Id to load</param>
         /// <returns></returns>
-        public Blog GetBlog(int BlogId)
+        public Blog GetBlog(int BlogId, string UserID)
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -230,7 +230,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            string SQL = "select blog_id, Title, Author, Blog_Text, GREATEST(CREATED_DATE, UPDATED_DATE) as dte_posted from blog where blog_id = " + BlogId;
+            string SQL = "select b.blog_id, Title, Author, Blog_Text, GREATEST(CREATED_DATE, UPDATED_DATE) as dte_posted from blog b where b.blog_id = " + BlogId + " and b.blog_id = ba.blog_id and ba.user_id = '" + UserID + "' ";
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();

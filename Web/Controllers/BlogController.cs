@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Photos.Models;
 using System.IO;
+using Microsoft.AspNet.Identity;
 
 
 namespace Photos.Controllers
@@ -18,9 +19,10 @@ namespace Photos.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [Authorize]
         public ActionResult Index()
         {
-            List<Blog> _BlogListing = _db.GetBlogs(0);
+            List<Blog> _BlogListing = _db.GetBlogs(0, User.Identity.GetUserId());
             return View(_BlogListing.ToList());
         }
 
@@ -30,6 +32,7 @@ namespace Photos.Controllers
         /// <param name="BlogID">A Blog ID</param>
         /// <returns></returns>
         [HttpGet]
+        [Authorize]
         public ActionResult View(int Id)
         {
             ViewBag.Id = Id;
@@ -37,7 +40,7 @@ namespace Photos.Controllers
             if (Id > 0)
             {
                 // Load Blog entry from the database
-                Blog _blog = _db.GetBlog(Id);
+                Blog _blog = _db.GetBlog(Id, User.Identity.GetUserId());
                 return View(_blog);
             }
             else
@@ -52,6 +55,7 @@ namespace Photos.Controllers
         /// <param name="BlogID">A Blog ID</param>
         /// <returns></returns>
         [HttpGet]
+        [Authorize]
         public ActionResult Edit(int Id)
         {
             ViewBag.Id = Id;
@@ -59,7 +63,7 @@ namespace Photos.Controllers
             if (Id > 0 )
             {
                 // Load Blog entry from the database
-                Blog _blog = _db.GetBlog(Id);
+                Blog _blog = _db.GetBlog(Id, User.Identity.GetUserId());
                 return View(_blog);
             } else
             {
@@ -77,6 +81,7 @@ namespace Photos.Controllers
         /// <param name="blogtexthtml"></param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize]
         [ValidateInput(false)]
         public ActionResult Save(string Id, string title, String author, string blogtexthtml, string btnsubmit)
         {

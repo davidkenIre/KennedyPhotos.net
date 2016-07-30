@@ -23,8 +23,6 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Schedule Cleanup and refresh modules
 // TODO: Importer does not work if there is a single ' in the directory Name
 // TODO: Implement Security
-// TODO: Move credentials to a better location
-// TODO: Common menu code across all pages in website
 
 namespace PhotoWatcherLib
 {
@@ -38,9 +36,16 @@ namespace PhotoWatcherLib
         /// </summary>
         public Utility()
         {
-            MySQLConn = new MySql.Data.MySqlClient.MySqlConnection();
-            MySQLConn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "") + ";";
-            MySQLConn.Open();
+            try
+            {
+                MySQLConn = new MySql.Data.MySqlClient.MySqlConnection();
+                MySQLConn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "") + ";";
+                MySQLConn.Open();
+            }
+            catch (Exception e1)
+            {
+                WriteLog("Error: Could not connect to the Database - " + e1.Message);
+            }
         }
 
         /// <summary>
@@ -51,6 +56,8 @@ namespace PhotoWatcherLib
         /// <param name="ThumbnailImagePath"></param>
         public void CreateThumbnail(int ThumbnailMax, string OriginalImagePath, string ThumbnailImagePath)
         {
+            try { 
+
             byte[] photoBytes = File.ReadAllBytes(OriginalImagePath); // change imagePath with a valid image path
             int quality = 70;
             ISupportedImageFormat format = new PngFormat { Quality = 70 };
@@ -90,6 +97,11 @@ namespace PhotoWatcherLib
                     outStream.CopyTo(file);
                 }
             }
+            }
+            catch (Exception e1)
+            {
+                WriteLog("Error: Could not create thumbnail - " + e1.Message);
+            }
         }
         
         /// <summary>
@@ -111,11 +123,13 @@ namespace PhotoWatcherLib
                 dbDML("update album set active='N' where album_id not in (select distinct album_id from photo where active = 'Y');");
                 dbDML("update album set active='Y' where album_id in (select distinct album_id from photo where active = 'Y');");
             }
+
             catch (Exception e1)
             {
-                WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
+                WriteLog("Error: Could not remove file - " + e1.Message);
             }
-        }
+
+}
 
         /// <summary>
         /// Only allow certain character types in a string
@@ -194,9 +208,9 @@ namespace PhotoWatcherLib
             }
             catch (Exception e1)
             {
-                WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
-            }
-        }
+                WriteLog("Error: Could not add file - " + e1.Message);
+    }
+}
 
         /// <summary>
         /// This subroutine will do a full scan of the album directory, add new files to the database, 
@@ -205,6 +219,7 @@ namespace PhotoWatcherLib
         /// <param name="sourcePath"></param>
         public void RefreshAlbums(string sourcePath)
         {
+            try { 
             WriteLog("Performing an Album Refresh");
             dbDML("update photo set to_remove = 'Y';");
 
@@ -229,6 +244,11 @@ namespace PhotoWatcherLib
             }
 
             WriteLog("Finished Performing Album Refresh");
+            }
+            catch (Exception e1)
+            {
+                WriteLog("Error: Could not refresh album - " + e1.Message);
+            }
         }
 
         public void PerformCleanup()
@@ -273,10 +293,9 @@ namespace PhotoWatcherLib
                     ChangeMade = this.FullDirectoryScan(d, ChangeMade);
                 }
             }
-
-            catch (System.Exception e1)
+            catch (Exception e1)
             {
-                WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
+                WriteLog("Error: Could not perform directory scan - " + e1.Message);
             }
 
             // Use an OR operator to bubble up the ChangeMade flag in the recusion operation
@@ -290,6 +309,7 @@ namespace PhotoWatcherLib
         /// <returns></returns>
         private bool AlreadyExists(string FileName)
         {
+            try { 
             // Remove the Base directory from the filename
             string BaseDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "");
             BaseDirectory = BaseDirectory.ToLower();
@@ -328,18 +348,29 @@ namespace PhotoWatcherLib
             // at the end of the scans, this is probably a funny place to put this update - should really move it to somewhere 
             // more appropiate, but the nice thing about doing it here is that you have the PhotoID
             dbDML("update photo set to_remove='N' where photo_id = " + PhotoID);
+            }
+            catch (Exception e1)
+            {
+                WriteLog("Error: Could not perform check to see if metadata already exists - " + e1.Message);
+            }
             return true;
         }
 
         // Executes a DML statement
         public void dbDML(string SQL)
         {
-            // Create Command
-            MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
+            try { 
+                // Create Command
+                MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
 
-            //Create a data reader and Execute the command
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
+                //Create a data reader and Execute the command
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+            }
+            catch (Exception e1)
+            {
+                WriteLog("Error: Could not execute database command - " + e1.Message);
+            }
         }
 
         /// <summary>
@@ -351,31 +382,36 @@ namespace PhotoWatcherLib
         public int GetAlbum(string AlbumName)
         {
             int AlbumID = 0;
-
-            // Create Command
-            MySqlCommand cmd1 = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", MySQLConn);
-            // Create a data reader and Execute the command
-            MySqlDataReader dataReader = cmd1.ExecuteReader();
-
-            // Read the the Album ID, if it cannot be create and read again
-            if (!dataReader.Read())
+            try
             {
-                dataReader.Close();
-                // Create Album, then select back the newly created Album_id
-                MySqlCommand cmd2 = new MySqlCommand("insert into Album (album_name, location, created_date, created_by) values ('" + AlbumName + "', '/Albums/" + AlbumName + "/', now(), 'TEMPUSER')", MySQLConn);
-                cmd2.ExecuteNonQuery();
+                // Create Command
+                MySqlCommand cmd1 = new MySqlCommand("select Album_ID from album where upper(Album_Name) = '" + AlbumName.ToUpper() + "' and active = 'Y'", MySQLConn);
+                // Create a data reader and Execute the command
+                MySqlDataReader dataReader = cmd1.ExecuteReader();
 
-                dataReader = cmd1.ExecuteReader();  // Try the Album ID select again, should work this time!
-                dataReader.Read();
-                Int32.TryParse(dataReader["Album_ID"].ToString(), out AlbumID);
-                dataReader.Close();
+                // Read the the Album ID, if it cannot be create and read again
+                if (!dataReader.Read())
+                {
+                    dataReader.Close();
+                    // Create Album, then select back the newly created Album_id
+                    MySqlCommand cmd2 = new MySqlCommand("insert into Album (album_name, location, created_date, created_by) values ('" + AlbumName + "', '/Albums/" + AlbumName + "/', now(), 'TEMPUSER')", MySQLConn);
+                    cmd2.ExecuteNonQuery();
+
+                    dataReader = cmd1.ExecuteReader();  // Try the Album ID select again, should work this time!
+                    dataReader.Read();
+                    Int32.TryParse(dataReader["Album_ID"].ToString(), out AlbumID);
+                    dataReader.Close();
+                }
+                else
+                {
+                    Int32.TryParse(dataReader["Album_ID"].ToString(), out AlbumID);
+                    dataReader.Close();
+                }                
             }
-            else
+            catch (Exception e1)
             {
-                Int32.TryParse(dataReader["Album_ID"].ToString(), out AlbumID);
-                dataReader.Close();
+                WriteLog("Error: Could not get album ID - " + e1.Message);
             }
-
             return AlbumID;
         }
 
@@ -386,25 +422,31 @@ namespace PhotoWatcherLib
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        public static bool IsImage(string fileName)
+        public bool IsImage(string fileName)
         {
-            string targetExtension = System.IO.Path.GetExtension(fileName);
-            if (String.IsNullOrEmpty(targetExtension))
-                return false;
-            else
-                targetExtension = "*" + targetExtension.ToLowerInvariant();
+            try { 
+                string targetExtension = System.IO.Path.GetExtension(fileName);
+                if (String.IsNullOrEmpty(targetExtension))
+                    return false;
+                else
+                    targetExtension = "*" + targetExtension.ToLowerInvariant();
 
-            List<string> recognisedImageExtensions = new List<string>();
+                List<string> recognisedImageExtensions = new List<string>();
 
-            foreach (System.Drawing.Imaging.ImageCodecInfo imageCodec in System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders())
-                recognisedImageExtensions.AddRange(imageCodec.FilenameExtension.ToLowerInvariant().Split(";".ToCharArray()));
+                foreach (System.Drawing.Imaging.ImageCodecInfo imageCodec in System.Drawing.Imaging.ImageCodecInfo.GetImageEncoders())
+                    recognisedImageExtensions.AddRange(imageCodec.FilenameExtension.ToLowerInvariant().Split(";".ToCharArray()));
 
-            foreach (string extension in recognisedImageExtensions)
-            {
-                if (extension.Equals(targetExtension))
+                foreach (string extension in recognisedImageExtensions)
                 {
-                    return true;
+                    if (extension.Equals(targetExtension))
+                    {
+                        return true;
+                    }
                 }
+            }
+            catch (Exception e1)
+            {
+                WriteLog("Error: Could not determine if file is an image - " + e1.Message);
             }
             return false;
         }
@@ -417,15 +459,22 @@ namespace PhotoWatcherLib
         /// <returns></returns>
         private int CalculateChecksum(string Filename)
         {
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(Filename))
+            try { 
+                using (var md5 = MD5.Create())
                 {
-                    byte[] MD5ChecksumArray = md5.ComputeHash(stream);
-                    string MD5Checksum = System.Text.Encoding.UTF8.GetString(MD5ChecksumArray, 0, MD5ChecksumArray.Length);
-                    return BitConverter.ToInt32(MD5ChecksumArray, 0);
+                    using (var stream = File.OpenRead(Filename))
+                    {
+                        byte[] MD5ChecksumArray = md5.ComputeHash(stream);
+                        string MD5Checksum = System.Text.Encoding.UTF8.GetString(MD5ChecksumArray, 0, MD5ChecksumArray.Length);
+                        return BitConverter.ToInt32(MD5ChecksumArray, 0);
+                    }
                 }
             }
+            catch (Exception e1)
+            {
+                WriteLog("Error: Could not calculate checksum - " + e1.Message);
+            }
+            return 0;
         }
 
         /// <summary>
@@ -434,24 +483,30 @@ namespace PhotoWatcherLib
         /// </summary>
         private void CleanThumbnailDir()
         {
-            string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
-            MySqlCommand cmd;
-            MySqlDataReader dataReader;
-            string SQL;
+            try { 
+                string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
+                MySqlCommand cmd;
+                MySqlDataReader dataReader;
+                string SQL;
 
-            // Add new Photos to the database
-            foreach (string FileName in Directory.GetFiles(ThumbnailDirectory, "."))
-            {
-                SQL = "select photo_id from photo p where lower(thumbnail_filename)='" + Path.GetFileName(FileName.ToLower()) + "'";
-                cmd = new MySqlCommand(SQL, MySQLConn);
-                dataReader = cmd.ExecuteReader();
-
-                if (!dataReader.Read())
+                // Add new Photos to the database
+                foreach (string FileName in Directory.GetFiles(ThumbnailDirectory, "."))
                 {
-                    // Delete
-                    File.Delete(FileName);
+                    SQL = "select photo_id from photo p where lower(thumbnail_filename)='" + Path.GetFileName(FileName.ToLower()) + "'";
+                    cmd = new MySqlCommand(SQL, MySQLConn);
+                    dataReader = cmd.ExecuteReader();
+
+                    if (!dataReader.Read())
+                    {
+                        // Delete
+                        File.Delete(FileName);
+                    }
+                    dataReader.Close();
                 }
-                dataReader.Close();
+            }
+            catch (Exception e1)
+            {
+                WriteLog("Error: Could not clean thumbnail directory - " + e1.Message);
             }
         }
 
@@ -462,8 +517,6 @@ namespace PhotoWatcherLib
         {
             try
             {
-
-
                 string TempFolder = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "TempDirectory", "");
                 var Dirs = new DirectoryInfo(TempFolder).GetDirectories();
                 foreach (var Dir in Dirs)
@@ -476,12 +529,10 @@ namespace PhotoWatcherLib
                 }
             }
 
-            catch (System.Exception e1)
+            catch (Exception e1)
             {
-                WriteLog("Message: (" + e1.Message + ") Base Exception: (" + e1.GetBaseException().ToString() + ") Inner Exception: (" + e1.InnerException + ")");
-                throw new Exception("Error cleaning downloaded directory");
+                WriteLog("Error: Could not clean downloaded directory - " + e1.Message);
             }
-
         }
 
         /// <summary>
@@ -490,10 +541,17 @@ namespace PhotoWatcherLib
         /// <param name="Message"></param>
         public void WriteLog(string Message)
         {
-            using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\PhotoWatcher_" + DateTime.Today.ToString("yyyyMMdd") + ".log"))
+            try
             {
-                sw.Write(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")) + ": ");
-                sw.WriteLine(Message);
+                using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\PhotoWatcher_" + DateTime.Today.ToString("yyyyMMdd") + ".log"))
+                {
+                    sw.Write(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")) + ": ");
+                    sw.WriteLine(Message);
+                }
+            }
+            catch 
+            {
+                // Cant write a log entry!!
             }
         }
 
@@ -504,44 +562,51 @@ namespace PhotoWatcherLib
         /// <returns>The physical location of the newly zipped archive</returns>
         public string ZipFolder(int Id)
         {
-            // Get the album name from the id passed in
-            MySqlCommand cmd;
-            MySqlDataReader dataReader;
-            string SQL = "select album_name from album a where album_id = " + Id;
-            cmd = new MySqlCommand(SQL, MySQLConn);
-            dataReader = cmd.ExecuteReader();
-            dataReader.Read();
-            string AlbumName = dataReader["album_name"].ToString();
-            dataReader.Close();
-            cmd.Dispose();
+            string ZipDirectory = "";
+            string ZipName = "";
+            try { 
+                // Get the album name from the id passed in
+                MySqlCommand cmd;
+                MySqlDataReader dataReader;
+                string SQL = "select album_name from album a where album_id = " + Id;
+                cmd = new MySqlCommand(SQL, MySQLConn);
+                dataReader = cmd.ExecuteReader();
+                dataReader.Read();
+                string AlbumName = dataReader["album_name"].ToString();
+                dataReader.Close();
+                cmd.Dispose();
 
-            // Build up the physical location of the album
-            string Location = Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "") + AlbumName + "\\";
+                // Build up the physical location of the album
+                string Location = Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "") + AlbumName + "\\";
 
-            // Get the Zip Name
-            Guid g = Guid.NewGuid();
-            string ZipDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "TempDirectory", "") + "\\" + g.ToString() + "\\";
-            string ZipName = AlbumName + ".zip";
+                // Get the Zip Name
+                Guid g = Guid.NewGuid();
+                ZipDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "TempDirectory", "") + "\\" + g.ToString() + "\\";
+                ZipName = AlbumName + ".zip";
             
-            // Create the temporary directory
-            Directory.CreateDirectory(ZipDirectory);
+                // Create the temporary directory
+                Directory.CreateDirectory(ZipDirectory);
 
-            // Add all active files into the new archive
-            SQL = "select filename from photo p where album_id = " + Id + " and active='Y'";
-            cmd = new MySqlCommand(SQL, MySQLConn);
-            dataReader = cmd.ExecuteReader();
+                // Add all active files into the new archive
+                SQL = "select filename from photo p where album_id = " + Id + " and active='Y'";
+                cmd = new MySqlCommand(SQL, MySQLConn);
+                dataReader = cmd.ExecuteReader();
 
-            using (ZipArchive archive = ZipFile.Open(ZipDirectory + ZipName, ZipArchiveMode.Update)) {
-                while (dataReader.Read())
-                {
-                    string FileName = dataReader["filename"].ToString();
-                    archive.CreateEntryFromFile(Location + FileName, FileName);
+                using (ZipArchive archive = ZipFile.Open(ZipDirectory + ZipName, ZipArchiveMode.Update)) {
+                    while (dataReader.Read())
+                    {
+                        string FileName = dataReader["filename"].ToString();
+                        archive.CreateEntryFromFile(Location + FileName, FileName);
+                    }
                 }
-            }
             
-            dataReader.Close();
-            cmd.Dispose();
-
+                dataReader.Close();
+                cmd.Dispose();
+            }
+            catch (Exception e1)
+            {
+                WriteLog("Error: Could not zip folder - " + e1.Message);
+            }
             return ZipDirectory + ZipName;
         }
     }

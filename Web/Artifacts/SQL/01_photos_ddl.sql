@@ -140,15 +140,53 @@ CREATE INDEX IX_RoleId
     ON AspNetUserRoles(RoleId ASC);
 
     
-
+create table albumaccess (
+UserId                   VARCHAR (128) NOT NULL,    
+Album_ID                 int,
+    created_date		datetime not null, 
+    created_by			varchar(100) not null,
+    updated_date		datetime,
+    updated_by			varchar(100));  
     
-	
+create table blogaccess (
+UserId                   VARCHAR (128) NOT NULL,    
+blog_ID                 int,
+    created_date		datetime not null, 
+    created_by			varchar(100) not null,
+    updated_date		datetime,
+    updated_by			varchar(100));      
+    
+select * from albumaccess;
 
+delete from albumaccess;
+
+insert into  blogaccess (userid, blog_id, created_date, created_by) select 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', blog_id, now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3' from blog;
+
+insert into  albumaccess (userid, album_id, created_date, created_by) select '961d9497-e8ad-41dd-9ddf-7766caa6aa69', album_id, now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3' from album where album_id in (16);
+
+select * from AspNetUsers;
+
+select * from album;
+
+SELECT
+  DATE_FORMAT(album_date, '%d-%M-%Y') AS your_date from album;
+
+update album set updated_by = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', updated_date = now(), description = 'Ellies baptism', album_date = STR_TO_DATE('23-4-2016', '%d-%m-%Y') where album_id = 16;
+
+select a.album_name, a.description, a.location, a.album_id,  DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date from album a, albumaccess aa where a.active = 'Y' and a.album_id = aa.album_id and aa.userid = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3' order by a.created_date desc;
+    
+    
+select b.* from blog b, blogaccess ba where b.blog_id = ba.blog_id where ba.user_id = '" + UserID + "' and b.active = 'Y' order by created_date desc;
+
+
+select b.* from blog b, blogaccess ba where b.blog_id = ba.blog_id and ba.user_id = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3' and b.active = 'Y' order by b.created_date desc;
+
+select * from blogaccess;
     
     
 insert into user(created_date, created_by, username, password, roles) values (now(), 'TEMPUSER', 'davidken', 'davidken', 'admin');    
     
-    
+select a.*, p.* from photo p, album a, albumaccess aa where a.album_id = p.album_id and a.album_id = 18 and a.active = 'Y' and p.active = 'Y' and aa.userid = '3c1f4e8b-5786-425a-a1b4-43f171eba16d'  and a.album_id = aa.album_id     order by p.date_taken, p.filename;
     
     
 select LAST_INSERT_ID() from blog;

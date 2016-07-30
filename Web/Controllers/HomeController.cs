@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Photos.Models;
+using Microsoft.AspNet.Identity;
 
 namespace WebApplication1.Controllers
 {
@@ -16,12 +17,13 @@ namespace WebApplication1.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            List<Album> _AlbumListing = _db.GetAlbums(5);
+            List<Album> _AlbumListing = _db.GetAlbums(5, User.Identity.GetUserId());
             return View(_AlbumListing.ToList());
         }
 
 
 
+        [Authorize]
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
@@ -29,6 +31,7 @@ namespace WebApplication1.Controllers
             return View();
         }
 
+        [Authorize]
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";
