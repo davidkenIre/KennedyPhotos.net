@@ -156,15 +156,21 @@ blog_ID                 int,
     updated_date		datetime,
     updated_by			varchar(100));      
     
+select * from albumaccess where userid = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3';
+
 select * from albumaccess;
 
 delete from albumaccess;
 
 insert into  blogaccess (userid, blog_id, created_date, created_by) select 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', blog_id, now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3' from blog;
 
-insert into  albumaccess (userid, album_id, created_date, created_by) select '961d9497-e8ad-41dd-9ddf-7766caa6aa69', album_id, now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3' from album where album_id in (16);
+insert into  albumaccess (userid, album_id, created_date, created_by) select 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', album_id, now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3' from album where active = 'Y';
+
+delete from albumaccess where album_id = 7 and userid = '5e55524b-d9b2-44ee-a006-baa69ee6e1fd';
 
 select * from AspNetUsers;
+
+delete from AspNetUsers where id = '961d9497-e8ad-41dd-9ddf-7766caa6aa69';
 
 select * from album;
 

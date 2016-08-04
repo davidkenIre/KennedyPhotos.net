@@ -7,7 +7,7 @@
         {
     <div>
         <div>
-            <a href="#">@item.Title</a>
+            <h2>@item.Title</h2>
             <div class="btn-group pull-right" role="group" aria-label="...">
                 <a class="btn btn-primary" href="/Blog/View/@item.Id" role="button"><span class="glyphicon glyphicon-eye-open"></span> View</a>
                 <a class="btn btn-default" href="/Blog/Edit/@item.Id" role="button"><span class="glyphicon glyphicon-edit"></span> Edit</a>
@@ -16,7 +16,7 @@
     </div>
     <div>
         <div>
-            by <a href="index.php">@item.Author</a>
+            by @item.Author
             <span class="glyphicon glyphicon-time"></span> Posted on @item.DatePosted
         </div>
     </div>

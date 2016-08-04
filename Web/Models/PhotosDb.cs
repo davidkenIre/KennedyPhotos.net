@@ -230,7 +230,7 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            string SQL = "select b.blog_id, Title, Author, Blog_Text, GREATEST(CREATED_DATE, UPDATED_DATE) as dte_posted from blog b where b.blog_id = " + BlogId + " and b.blog_id = ba.blog_id and ba.user_id = '" + UserID + "' ";
+            string SQL = "select b.blog_id, Title, Author, Blog_Text, GREATEST(b.CREATED_DATE, b.UPDATED_DATE) as dte_posted from blog b, blogaccess ba where b.blog_id = " + BlogId + " and b.blog_id = ba.blog_id and ba.userid = '" + UserID + "' ";
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
