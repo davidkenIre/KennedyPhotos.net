@@ -94,7 +94,7 @@ namespace Photos.Controllers
                     blog.Author = author;
                     blog.BlogText = blogtexthtml;
                     Id = _db.SaveBlogEntry(blog);
-                    return RedirectToAction("Edit", "Blog", new { id = Id });
+                    return RedirectToAction("View", "Blog", new { id = Id });
                 case "Delete":
                     _db.DeleteBlogEntry(Id);
                     return RedirectToAction("Index", "Blog");

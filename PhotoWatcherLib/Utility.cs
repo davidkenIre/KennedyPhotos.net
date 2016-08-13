@@ -18,11 +18,10 @@ using ImageProcessor.Imaging.Formats;
 // TODO: What happens when a thumbnail gets deleted - when does it get recreated?
 // TODO: Database Created by and updated by
 // TODO: str_to_date in SQL is not stable because the date format is dependant on the local
-// TODO: Can get 3 empty divs at the end of a listing
 // TODO: Download status in the View albums page
 // TODO: Schedule Cleanup and refresh modules
 // TODO: Importer does not work if there is a single ' in the directory Name
-// TODO: auto grant blogs and albums to admins
+// TODO: Auto grant blogs and albums to admins
 // TODO: Allow blog creator to assign security
 // TODO: Posted on on the blog listing screen only runs off the date updated field
 

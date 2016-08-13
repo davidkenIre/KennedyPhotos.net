@@ -162,7 +162,7 @@ select * from albumaccess;
 
 delete from albumaccess;
 
-insert into  blogaccess (userid, blog_id, created_date, created_by) select 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', blog_id, now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3' from blog;
+insert into  blogaccess (userid, blog_id, created_date, created_by) select 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', blog_id, now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3' from blog where blog_id = 15;
 
 insert into  albumaccess (userid, album_id, created_date, created_by) select 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', album_id, now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3' from album where active = 'Y';
 
@@ -216,6 +216,6 @@ select photo_id from photo p where lower(thumbnail_filename)='0b72aee9-2c56-414b
 
 select * from photo;
 
-select * from album;
+select * from blog;
 
 update photo set active = 'Y' where filename = 'IMG_1710.JPG';

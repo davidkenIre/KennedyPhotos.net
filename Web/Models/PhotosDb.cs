@@ -122,7 +122,20 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            MySqlCommand cmd = new MySqlCommand("select a.*, p.* from photo p, album a, albumaccess aa where a.album_id = p.album_id and a.album_id = " + AlbumId + " and a.active = 'Y' and p.active = 'Y' and aa.userid = '" + UserID + "'  and a.album_id = aa.album_id order by p.date_taken, p.filename", conn);
+            string Sql = @"select a.album_id, a.album_name, DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date, 
+                a.description, a.location, p.photo_id, p.filename, p.thumbnail_filename, 
+                DATE_FORMAT(p.date_taken, '%d-%M-%Y') as date_taken, p.fStop, p.exposure, 
+                p.iso, p.focal_length, p.dimensions, p.Camera_maker, p.Camera_model, p.checksum 
+                from photo p, album a, albumaccess aa 
+                where a.album_id = p.album_id 
+                and a.album_id = " + AlbumId + @" 
+                and a.active = 'Y' 
+                and p.active = 'Y' 
+                and aa.userid = '" + UserID + @"'  
+                and a.album_id = aa.album_id 
+                order by p.date_taken, p.filename";
+
+            MySqlCommand cmd = new MySqlCommand(Sql, conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
 
