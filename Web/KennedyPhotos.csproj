@@ -44,34 +44,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.AI.Agent.Intercept, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.1\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.AI.DependencyCollector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.0.0\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.AI.PerfCounterCollector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.0.0\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.AI.ServerTelemetryChannel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.0.0\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.AI.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.2.0.0\lib\net45\Microsoft.AI.Web.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.AI.WindowsServer, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.2.0.0\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.ApplicationInsights, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.ApplicationInsights.2.0.0\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -223,7 +195,6 @@
     </Content>
     <Content Include="Artifacts\SQL\01_photos_ddl.sql" />
     <Content Include="Artifacts\SQL\02_photos_dml.sql" />
-    <Content Include="blueimp\.gitignore" />
     <Content Include="Content\blueimp\css\blueimp-gallery-indicator.css" />
     <Content Include="Content\blueimp\css\blueimp-gallery-video.css" />
     <Content Include="Content\blueimp\css\blueimp-gallery.css" />
@@ -236,7 +207,6 @@
     <Content Include="Content\blueimp\img\play-pause.svg" />
     <Content Include="Content\blueimp\img\video-play.png" />
     <Content Include="Content\blueimp\img\video-play.svg" />
-    <Content Include="blueimp\index.html" />
     <Content Include="Content\blueimp\js\blueimp-gallery-fullscreen.js" />
     <Content Include="Content\blueimp\js\blueimp-gallery-indicator.js" />
     <Content Include="Content\blueimp\js\blueimp-gallery-video.js" />
@@ -249,7 +219,6 @@
     <Content Include="Content\blueimp\js\jquery.blueimp-gallery.js" />
     <Content Include="Content\blueimp\js\jquery.blueimp-gallery.min.js" />
     <Content Include="Content\blueimp\js\vendor\jquery.js" />
-    <Content Include="blueimp\LICENSE.txt" />
     <Content Include="Content\3-col-portfolio.css" />
     <Content Include="Content\blog-home.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -264,14 +233,9 @@
     <Content Include="Content\Site.css" />
     <Content Include="Images\HomepageBackground.png" />
     <Content Include="Images\PhotosBackground.png" />
-    <Content Include="Scripts\ai.0.22.9-build00167.js" />
-    <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
     <Content Include="Scripts\bootstrap-wysiwyg.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="ApplicationInsights.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\Less\alerts.less" />
@@ -353,8 +317,6 @@
     <Content Include="Content\blueimp\css\blueimp-gallery.min.css.map" />
     <Content Include="Content\blueimp\js\blueimp-gallery.min.js.map" />
     <Content Include="Content\blueimp\js\jquery.blueimp-gallery.min.js.map" />
-    <Content Include="blueimp\package.json" />
-    <Content Include="blueimp\README.md" />
     <None Include="Properties\PublishProfiles\Lattuce.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ie10-viewport-bug-workaround.js" />
