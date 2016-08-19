@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Win32;
 
 namespace WebApplication1.Models
 {
@@ -20,8 +21,11 @@ namespace WebApplication1.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        // Get the connection string - including password from the registry
+        static string ConnectionString = "Server=10.10.1.100;Database=photos;Uid=root;Pwd=" + Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base(ConnectionString, throwIfV1Schema: false)
         {
         }
 
