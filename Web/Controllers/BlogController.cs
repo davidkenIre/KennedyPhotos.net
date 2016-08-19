@@ -22,8 +22,10 @@ namespace Photos.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            List<Blog> _BlogListing = _db.GetBlogs(0, User.Identity.GetUserId());
-            return View(_BlogListing.ToList());
+            //var RoleController = new RoleController(); // DependencyResolver.Current.GetService<RoleController>();
+            //List<Blog> _BlogListing = _db.GetBlogs(0, User.Identity.GetUserId(), RoleController.isAdminUser());
+            List<Blog> _BlogListing = _db.GetBlogs(0, User.Identity.GetUserId(), false);
+            return View(_BlogListing.ToList());            
         }
 
         /// <summary>

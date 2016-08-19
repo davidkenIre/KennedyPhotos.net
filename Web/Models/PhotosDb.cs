@@ -29,6 +29,8 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
+
+
             string SQL = "select * from album a, albumaccess aa where a.album_id = " + Id + " and a.active = 'Y' and aa.album_id = a.album_id and aa.userid = '" + UserID + "'";
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
@@ -175,7 +177,7 @@ namespace Photos.Models
         /// </summary>
         /// <param name="Limit">No. of Blog Entries to return</param>
         /// <returns></returns>
-        public List<Blog> GetBlogs(int Limit, string UserID)
+        public List<Blog> GetBlogs(int Limit, string UserID, Boolean isAdmin)
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -190,7 +192,21 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            string SQL = "select b.* from blog b, blogaccess ba where b.blog_id = ba.blog_id and ba.userid = '" + UserID + "' and b.active = 'Y' order by b.created_date desc";
+            string SQL = "";
+            if (isAdmin)
+            {
+                SQL = "select b.* from blog b " +
+                      "where b.active = 'Y' " +
+                      "order by b.created_date desc ";
+            } else
+            {
+                SQL = "select b.* from blog b, blogaccess ba " +
+                         "where b.blog_id = ba.blog_id " +
+                         "and ba.userid = '" + UserID + "' " +
+                         "and b.active = 'Y' " +
+                         "order by b.created_date desc ";
+            }
+
             if (Limit != 0)
             {
                 SQL += " Limit " + Limit;
