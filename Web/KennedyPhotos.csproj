@@ -205,7 +205,6 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PhotosController.cs" />
-    <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -224,6 +223,7 @@
     </Content>
     <Content Include="Artifacts\SQL\01_photos_ddl.sql" />
     <Content Include="Artifacts\SQL\02_photos_dml.sql" />
+    <Content Include="blueimp\.gitignore" />
     <Content Include="Content\blueimp\css\blueimp-gallery-indicator.css" />
     <Content Include="Content\blueimp\css\blueimp-gallery-video.css" />
     <Content Include="Content\blueimp\css\blueimp-gallery.css" />
@@ -236,6 +236,7 @@
     <Content Include="Content\blueimp\img\play-pause.svg" />
     <Content Include="Content\blueimp\img\video-play.png" />
     <Content Include="Content\blueimp\img\video-play.svg" />
+    <Content Include="blueimp\index.html" />
     <Content Include="Content\blueimp\js\blueimp-gallery-fullscreen.js" />
     <Content Include="Content\blueimp\js\blueimp-gallery-indicator.js" />
     <Content Include="Content\blueimp\js\blueimp-gallery-video.js" />
@@ -248,6 +249,7 @@
     <Content Include="Content\blueimp\js\jquery.blueimp-gallery.js" />
     <Content Include="Content\blueimp\js\jquery.blueimp-gallery.min.js" />
     <Content Include="Content\blueimp\js\vendor\jquery.js" />
+    <Content Include="blueimp\LICENSE.txt" />
     <Content Include="Content\3-col-portfolio.css" />
     <Content Include="Content\blog-home.css" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -262,7 +264,6 @@
     <Content Include="Content\Site.css" />
     <Content Include="Images\HomepageBackground.png" />
     <Content Include="Images\PhotosBackground.png" />
-    <Content Include="lib\PhotoWatcherLib.dll" />
     <Content Include="Scripts\ai.0.22.9-build00167.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
     <Content Include="Scripts\bootstrap-wysiwyg.js" />
@@ -352,6 +353,8 @@
     <Content Include="Content\blueimp\css\blueimp-gallery.min.css.map" />
     <Content Include="Content\blueimp\js\blueimp-gallery.min.js.map" />
     <Content Include="Content\blueimp\js\jquery.blueimp-gallery.min.js.map" />
+    <Content Include="blueimp\package.json" />
+    <Content Include="blueimp\README.md" />
     <None Include="Properties\PublishProfiles\Lattuce.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ie10-viewport-bug-workaround.js" />
@@ -413,9 +416,8 @@
     <Content Include="Views\Home\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Blog\_Layout.cshtml" />
+    <None Include="Views\Photos\ViewAlbum.cshtml.old" />
     <Content Include="Views\Shared\_LayoutPhotos.cshtml" />
-    <Content Include="Views\Role\Create.cshtml" />
-    <Content Include="Views\Role\Index.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

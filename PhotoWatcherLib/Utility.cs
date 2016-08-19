@@ -21,7 +21,7 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Download status in the View albums page
 // TODO: Schedule Cleanup and refresh modules
 // TODO: Importer does not work if there is a single ' in the directory Name
-// TODO: Auto grant blogs and albums to admins - https://code.msdn.microsoft.com/ASPNET-MVC-5-Security-And-44cbdb97
+// TODO: Auto grant blogs and albums to admins
 // TODO: Allow blog creator to assign security
 // TODO: Posted on on the blog listing screen only runs off the date updated field
 
