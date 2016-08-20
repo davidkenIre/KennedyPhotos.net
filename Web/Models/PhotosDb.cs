@@ -301,14 +301,14 @@ namespace Photos.Models
 
             // Create Command
             string SQL = @"select b.blog_id, Title, Author, Blog_Text, 
-	            GREATEST(b.CREATED_DATE, b.UPDATED_DATE) as dte_posted
+                DATE_FORMAT(GREATEST(b.CREATED_DATE, ifnull(b.UPDATED_DATE, b.CREATED_DATE)), '%d-%M-%Y') as dte_posted
             from blog b, blogaccess ba
             where b.blog_id =  " + BlogId + @" 
             and b.blog_id = ba.blog_id
             and ba.userid = '" + UserID + @"'  
             union
             select b.blog_id, Title, Author, Blog_Text, 
-	            GREATEST(b.CREATED_DATE, b.UPDATED_DATE) as dte_posted
+                DATE_FORMAT(GREATEST(b.CREATED_DATE, ifnull(b.UPDATED_DATE, b.CREATED_DATE)), '%d-%M-%Y') as dte_posted
             from blog b, aspnetroles ar2, aspnetuserroles aur2
             where b.blog_id =  " + BlogId + @" 
             and aur2.userid = '" + UserID + @"'  

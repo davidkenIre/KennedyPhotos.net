@@ -25,6 +25,7 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Posted on on the blog listing screen only runs off the date updated field
 // TODO: Make all connections use the web.config connection string
 // TODO: Make the blog screen look ok for people who cannot create blogs
+// TODO: Transform not happening for <system.data> during publish to prod
 
 namespace PhotoWatcherLib
 {
