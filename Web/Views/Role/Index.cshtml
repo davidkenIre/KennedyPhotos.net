@@ -1,0 +1,28 @@
+﻿@model IEnumerable<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>
+<div class="page-header">
+    <h1>Create User Roles</h1>
+</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Role Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+            {
+            <tr>
+                <td>@item.Name</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.ActionLink("Click to Create New Role", "Create", "Role")
+
+
+
+
+
+
+

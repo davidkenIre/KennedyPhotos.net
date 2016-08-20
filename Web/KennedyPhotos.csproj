@@ -177,6 +177,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PhotosController.cs" />
+    <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -189,10 +190,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\aspnet-WebApplication1-20160714064917.mdf" />
-    <Content Include="App_Data\aspnet-WebApplication1-20160714064917_log.ldf">
-      <DependentUpon>aspnet-WebApplication1-20160714064917.mdf</DependentUpon>
-    </Content>
     <Content Include="Artifacts\SQL\01_photos_ddl.sql" />
     <Content Include="Artifacts\SQL\02_photos_dml.sql" />
     <Content Include="Content\blueimp\css\blueimp-gallery-indicator.css" />
@@ -233,6 +230,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Images\HomepageBackground.png" />
     <Content Include="Images\PhotosBackground.png" />
+    <Content Include="lib\PhotoWatcherLib.dll" />
     <Content Include="Scripts\bootstrap-wysiwyg.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -333,7 +331,10 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Views\Blog\_Layout.cshtml" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -377,11 +378,14 @@
     <Content Include="Views\Shared\_LayoutHome.cshtml" />
     <Content Include="Views\Home\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Blog\_Layout.cshtml" />
-    <None Include="Views\Photos\ViewAlbum.cshtml.old" />
+    <Content Include="Views\Role\Create.cshtml" />
+    <Content Include="Views\Role\Index.cshtml" />
+    <Content Include="Views\Role\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_LayoutPhotos.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Fonts\glyphicons-halflings-regular.ttf" />

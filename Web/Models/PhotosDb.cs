@@ -29,7 +29,19 @@ namespace Photos.Models
             conn.Open();
 
             //Create Command
-            string SQL = "select * from album a, albumaccess aa where a.album_id = " + Id + " and a.active = 'Y' and aa.album_id = a.album_id and aa.userid = '" + UserID + "'";
+            string SQL = "";
+            SQL = "select * from ( " +
+                  "select a.* from album a, albumaccess aa " +
+                  "where a.album_id = " + Id +
+                  "and a.active = 'Y' " +
+                  "and aa.album_id = a.album_id " +
+                  "and aa.userid = '" + UserID + "'" +
+                  "union " +
+                  "select a.* from album a, aspnetroles ar2, aspnetuserroles aur2 " +
+                  "where aur2.userid = '" + UserID + "' " +
+                  "and aur2.RoleId = ar2.Id " +
+                  "and ar2.Name = 'Admin' " +
+                  "and a.active = 'Y') as a)";
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
@@ -70,8 +82,24 @@ namespace Photos.Models
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            //Create Command
-            string SQL = "select a.album_name, a.description, a.location, a.album_id,  DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date from album a, albumaccess aa where a.active = 'Y' and a.album_id = aa.album_id and aa.userid = '" + UserID + "' order by a.created_date desc";
+            // Create Command
+            string SQL = "";
+            SQL = "select * from (select a.created_date, a.album_name, a.description, a.location, " +
+            "    a.album_id, DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date " +
+            "from album a, albumaccess aa " +
+            "where a.active = 'Y' " +
+            "and a.album_id = aa.album_id " +
+            "and aa.userid = '" + UserID + "' " +
+            "union " +
+            "select a.created_date, a.album_name, a.description, a.location, " +
+            "    a.album_id, DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date " +
+            "from album a, aspnetroles ar2, aspnetuserroles aur2 " +
+            "where aur2.userid = '" + UserID + "' " +
+            "and aur2.RoleId = ar2.Id " +
+            "and ar2.Name = 'Admin' " +
+            "and a.active = 'Y') as a " +
+            "order by a.created_date desc";
+
             if (Limit != 0) {
                 SQL += " Limit " + Limit;
             }
@@ -121,19 +149,33 @@ namespace Photos.Models
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            //Create Command
-            string Sql = @"select a.album_id, a.album_name, DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date, 
-                a.description, a.location, p.photo_id, p.filename, p.thumbnail_filename, 
-                DATE_FORMAT(p.date_taken, '%d-%M-%Y') as date_taken, p.fStop, p.exposure, 
-                p.iso, p.focal_length, p.dimensions, p.Camera_maker, p.Camera_model, p.checksum 
-                from photo p, album a, albumaccess aa 
-                where a.album_id = p.album_id 
-                and a.album_id = " + AlbumId + @" 
-                and a.active = 'Y' 
-                and p.active = 'Y' 
-                and aa.userid = '" + UserID + @"'  
-                and a.album_id = aa.album_id 
-                order by p.date_taken, p.filename";
+            // Create Command
+            string Sql = @"select * from (
+            select a.album_id, a.album_name, DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date,
+            a.description, a.location, p.photo_id, p.filename, p.thumbnail_filename,
+            DATE_FORMAT(p.date_taken, '%d-%M-%Y') as date_taken, p.fStop, p.exposure,
+            p.iso, p.focal_length, p.dimensions, p.Camera_maker, p.Camera_model, p.checksum
+            from photo p, album a, albumaccess aa
+            where a.album_id = p.album_id
+            and a.album_id = " + AlbumId + @" 
+            and a.active = 'Y'
+            and p.active = 'Y'
+            and aa.userid = '" + UserID + @"'  
+            and a.album_id = aa.album_id
+            union
+            select a.album_id, a.album_name, DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date,
+            a.description, a.location, p.photo_id, p.filename, p.thumbnail_filename,
+            DATE_FORMAT(p.date_taken, '%d-%M-%Y') as date_taken, p.fStop, p.exposure,
+            p.iso, p.focal_length, p.dimensions, p.Camera_maker, p.Camera_model, p.checksum
+            from photo p, album a, aspnetroles ar2, aspnetuserroles aur2
+            where a.album_id = p.album_id
+            and a.album_id = " + AlbumId + @" 
+            and a.active = 'Y'
+            and p.active = 'Y'
+            and aur2.userid = '" + UserID + @"'  
+            and aur2.RoleId = ar2.Id
+            and ar2.Name = 'Admin') as a
+            order by date_taken, filename";
 
             MySqlCommand cmd = new MySqlCommand(Sql, conn);
             //Create a data reader and Execute the command
@@ -189,8 +231,23 @@ namespace Photos.Models
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            //Create Command
-            string SQL = "select b.* from blog b, blogaccess ba where b.blog_id = ba.blog_id and ba.userid = '" + UserID + "' and b.active = 'Y' order by b.created_date desc";
+            // Create the SQL command - This is a union statement because if the user is an Administrator
+            //                          we do not want to restrict the blogs returned
+            string SQL = "";
+            SQL = "select * from ( " +
+            "select b1.* from blog b1, blogaccess ba1 " +
+            "where b1.blog_id = ba1.blog_id " +
+            "and ba1.userid = '" + UserID + "' " +
+            "and b1.active = 'Y' " +
+            "union " +
+            "select b2.* from blog b2, aspnetroles ar2, aspnetuserroles aur2 " +
+            "where " +
+            "aur2.userid = '" + UserID + "' " +
+            "and aur2.RoleId = ar2.Id " +
+            "and ar2.Name = 'Admin' " +
+            "and b2.active = 'Y') As blogscombined ";
+
+            // Sometimes we only want to return a certain amount of blogs
             if (Limit != 0)
             {
                 SQL += " Limit " + Limit;
@@ -210,7 +267,7 @@ namespace Photos.Models
                     Title = dataReader["Title"].ToString(),
                     Author = dataReader["Author"].ToString(),
                     DatePosted = dataReader["dte_posted"].ToString(),
-                    BlogText = dataReader["Blog_Text"].ToString(),                    
+                    BlogText = dataReader["Blog_Text"].ToString(),
                 };
                 _blogs.Add(item);
             }
@@ -242,8 +299,22 @@ namespace Photos.Models
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            //Create Command
-            string SQL = "select b.blog_id, Title, Author, Blog_Text, GREATEST(b.CREATED_DATE, b.UPDATED_DATE) as dte_posted from blog b, blogaccess ba where b.blog_id = " + BlogId + " and b.blog_id = ba.blog_id and ba.userid = '" + UserID + "' ";
+            // Create Command
+            string SQL = @"select b.blog_id, Title, Author, Blog_Text, 
+	            GREATEST(b.CREATED_DATE, b.UPDATED_DATE) as dte_posted
+            from blog b, blogaccess ba
+            where b.blog_id =  " + BlogId + @" 
+            and b.blog_id = ba.blog_id
+            and ba.userid = '" + UserID + @"'  
+            union
+            select b.blog_id, Title, Author, Blog_Text, 
+	            GREATEST(b.CREATED_DATE, b.UPDATED_DATE) as dte_posted
+            from blog b, aspnetroles ar2, aspnetuserroles aur2
+            where b.blog_id =  " + BlogId + @" 
+            and aur2.userid = '" + UserID + @"'  
+            and aur2.RoleId = ar2.Id
+            and ar2.Name = 'Admin'";
+
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
             MySqlDataReader dataReader = cmd.ExecuteReader();
