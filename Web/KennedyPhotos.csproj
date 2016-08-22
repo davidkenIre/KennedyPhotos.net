@@ -340,6 +340,7 @@
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -382,6 +383,8 @@
     <Content Include="Views\Role\Index.cshtml" />
     <Content Include="Views\Role\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_LayoutPhotos.cshtml" />
+    <Content Include="Views\Blog\_PartialBlog.cshtml" />
+    <Content Include="Views\Photos\_PartialAlbum.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

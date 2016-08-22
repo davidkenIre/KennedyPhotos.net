@@ -245,7 +245,8 @@ namespace Photos.Models
             "aur2.userid = '" + UserID + "' " +
             "and aur2.RoleId = ar2.Id " +
             "and ar2.Name = 'Admin' " +
-            "and b2.active = 'Y') As blogscombined ";
+            "and b2.active = 'Y') As blogscombined " +
+            "order by blogscombined.created_date desc";
 
             // Sometimes we only want to return a certain amount of blogs
             if (Limit != 0)

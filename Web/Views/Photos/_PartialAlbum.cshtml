@@ -1,0 +1,9 @@
+﻿@model IEnumerable<Photos.Models.Album>
+<h2 style="color: white">Recent Albums</h2>
+
+@foreach (var item in Model)
+{
+    <a href="/Photos/ViewAlbum/@item.Id" style="color:white">@item.AlbumName</a><br />
+}
+<br />
+<p><a class="btn btn-default" href="/Photos/Index" role="button">See All Albums</a></p>

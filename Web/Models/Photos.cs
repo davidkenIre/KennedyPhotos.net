@@ -16,8 +16,7 @@ namespace Photos.Models
         public string AlbumDate { get; set; }
         public string Description { get; set; }
     }
-
-
+    
     /// <summary>
     /// This class represents a single Photo
     /// </summary>
@@ -48,21 +47,23 @@ namespace Photos.Models
         public string Title { get; set; }
         public string Author { get; set; }
         public string DatePosted { get; set; }
-        private string blogtext;
-        public string BlogText {
-            get { return blogtext; }
-            set
-            {
-                // Format the URL's for display in a Browser
-                // 1. Replace all "[[" with <img class="img-responsive" src="
-                // 2. Replace all "]]" with " alt="">
-                //< img class="img-responsive" src="/BlogImages/Blog00001.jpg" alt="">
-
-                //blogtext = value.Replace("[[", "<img class=\"img-responsive\" src=\"");
-                //blogtext = blogtext.Replace("]]", "\" alt = \"\">");
-                blogtext = value;
-            }
-        }
+        //private string blogtext;
+        public string BlogText { get; set; }
+        //get { return blogtext; }
+        //    set
+        //    {
+        //        blogtext = value;
+        //    }
+        //}
     }
+
+    /// <summary>
+    /// This class represents an Album
+    /// </summary>
+    //public class BlogAlbum
+    //{
+    //    public Photos.Models.Album {get; }
+    //    public Photos.Models.Blogs {get; }
+    //}
 }
- 
+

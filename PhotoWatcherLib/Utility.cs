@@ -22,7 +22,6 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Schedule Cleanup and refresh modules
 // TODO: Importer does not work if there is a single ' in the directory Name
 // TODO: Allow blog creator to assign security
-// TODO: Posted on on the blog listing screen only runs off the date updated field
 // TODO: Make all connections use the web.config connection string
 // TODO: Make the blog screen look ok for people who cannot create blogs
 // TODO: Transform not happening for <system.data> during publish to prod

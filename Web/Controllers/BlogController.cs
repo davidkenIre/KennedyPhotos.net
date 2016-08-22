@@ -7,7 +7,6 @@ using Photos.Models;
 using System.IO;
 using Microsoft.AspNet.Identity;
 
-
 namespace Photos.Controllers
 {
     public class BlogController : Controller
@@ -24,6 +23,14 @@ namespace Photos.Controllers
         {
             List<Blog> _BlogListing = _db.GetBlogs(0, User.Identity.GetUserId());
             return View(_BlogListing.ToList());
+        }
+
+        [HttpGet]
+        [Authorize]
+        public ActionResult _PartialBlog()
+        {
+            List<Blog> _BlogListing = _db.GetBlogs(5, User.Identity.GetUserId());
+            return PartialView(_BlogListing.ToList());
         }
 
         /// <summary>

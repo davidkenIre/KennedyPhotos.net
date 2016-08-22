@@ -17,8 +17,7 @@ namespace WebApplication1.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            List<Album> _AlbumListing = _db.GetAlbums(5, User.Identity.GetUserId());
-            return View(_AlbumListing.ToList());
+            return View();
         }
 
 
