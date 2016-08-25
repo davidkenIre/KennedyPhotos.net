@@ -385,6 +385,7 @@
     <Content Include="Views\Shared\_LayoutPhotos.cshtml" />
     <Content Include="Views\Blog\_PartialBlog.cshtml" />
     <Content Include="Views\Photos\_PartialAlbum.cshtml" />
+    <Content Include="Views\Photos\_EditAlbumDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

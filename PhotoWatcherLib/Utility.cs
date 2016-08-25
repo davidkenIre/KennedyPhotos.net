@@ -24,7 +24,7 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Allow blog creator to assign security
 // TODO: Make all connections use the web.config connection string
 // TODO: Make the blog screen look ok for people who cannot create blogs
-// TODO: Transform not happening for <system.data> during publish to prod
+// TODO: Transform not happening for <system.data> during publish to prod - HAVE MADE A CHANGE, ensure effective during next builds
 
 namespace PhotoWatcherLib
 {

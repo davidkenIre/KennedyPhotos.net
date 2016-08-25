@@ -2,12 +2,41 @@
 @model IEnumerable<Photos.Models.Album>
 
 
+<script>
+    $('#modalWrapper').on('shown.bs.modal', function () {
+        //editAlbum(albumId)
+    })
+
+    function editAlbum(albumId) {
+        $.ajax({
+            url: '/Photos/_EditAlbumDetails/' + albumId, // The method name + paramater
+            success: function (data) {
+                $('#modalWrapper').html(data); // This should be an empty div where you can inject your new html (the partial view)
+                $('#editModal').modal("show");
+            },
+            close: function(event, ui) { 
+                alert();
+                $(this).dialog('close');
+            } 
+        });
+    }
+
+
+</script>
+
     <div class="page-header">
         <h1>All Albums</h1>
     </div>
+
+
+    <!-- Modal dialog which allows a user update Album Date and Description -->
+    <div id="modalWrapper">
+    </div>
+
+
     <table class="table table-striped">
         <thead>
-            <tr>                
+            <tr>
                 <th>Album Name</th>
                 <th>Date</th>
                 <th>Description</th>
@@ -21,7 +50,17 @@
                     <td style="width:250px"><a href="/Photos/ViewAlbum/@item.Id">@item.AlbumName</a></td>
                     <td style="width:150px">@item.AlbumDate</td>
                     <td>@item.Description</td>
-                    <td style="width:100px">
+                    <td style="width:180px">
+
+
+
+                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
+                        {
+                            <a href="#" onclick="editAlbum(@item.Id)"  class="btn btn-default btn-sm" data-toggle="modal" data-target="#editModal">Edit <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                        }
+
+
+
                         <a href="@Url.Action("DownloadAlbum", "Photos", new { id = item.Id })" class="btn btn-default btn-sm">
                             Download <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
                         </a>
@@ -31,7 +70,7 @@
         </tbody>
     </table>
 
-    
+
 
 
 

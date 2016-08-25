@@ -14,12 +14,6 @@
         <label for="email">Author</label>
         <input type="text" class="form-control" id="author" name="author" value="@Model.Author">
     </div>
-
-    @*<div class="form-group">
-            <label for="date">Date Posted</label>
-            <input type="datetime" class="form-control" id="dateposted" name="dateposted" value="@Model.DatePosted">
-
-        </div>*@
     <div class="form-group">
         <label>Date Posted</label>
         <div class="form-group btn-toolbar" data-role="editor-toolbar" data-target="#editor">
@@ -28,8 +22,6 @@
                 <a class="btn btn-default" data-edit="italic" title="" data-original-title="Italic (Ctrl/Cmd+I)"><i class="glyphicon glyphicon-italic"></i></a>
                 <a class="btn btn-default" data-edit="underline" title="" data-original-title="Underline (Ctrl/Cmd+U)"><i class="glyphicon glyphicon-text-width"></i></a>
             </div>
-
-
             <div class="btn-group">
                 <a class="btn btn-default" data-edit="insertunorderedlist" title="" data-original-title="Bullet list"><i class="glyphicon glyphicon-list"></i></a>
                 <a class="btn btn-default" data-edit="insertorderedlist" title="" data-original-title="Number list"><i class="glyphicon glyphicon-list-alt"></i></a>
@@ -42,7 +34,6 @@
                 <a class="btn btn-default" data-edit="justifyright" title="" data-original-title="Align Right (Ctrl/Cmd+R)"><i class="glyphicon glyphicon-align-right"></i></a>
                 <a class="btn btn-default" data-edit="justifyfull" title="" data-original-title="Justify (Ctrl/Cmd+J)"><i class="glyphicon glyphicon-align-justify"></i></a>
             </div>
-
             <div class="btn-group">
                 <a class="btn btn-default" title="" id="pictureBtn" data-original-title="Insert picture (or just drag &amp; drop)">
                     <i class="glyphicon glyphicon-picture"></i>

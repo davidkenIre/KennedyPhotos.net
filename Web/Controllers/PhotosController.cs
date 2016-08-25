@@ -33,7 +33,44 @@ namespace Photos.Controllers
             List<Album> _AlbumListing = _db.GetAlbums(5, User.Identity.GetUserId());
             return PartialView(_AlbumListing.ToList());
         }
+        
+        /// <summary>
+        /// Used to return a partial view that allows the user to update 
+        /// the album description and date
+        /// Also disables the cache on the partial view
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Authorize]
+        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
+        public ActionResult _EditAlbumDetails(int Id)
+        {
+            Album _Album = _db.GetAlbum(Id, User.Identity.GetUserId());
+            return PartialView(_Album);
+        }
 
+   
+
+
+        /// <summary>
+        /// Used to return a partial view that allows the user to update 
+        /// the album description and date
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        public ActionResult Save(string AlbumId, string AlbumDate, string Description)
+        {
+            Album album = new Album();
+            album.Id = AlbumId;
+            album.AlbumDate = AlbumDate;
+            album.Description = Description;
+            _db.SaveAlbum(album);
+            return RedirectToAction("Index", "Photos");
+        }
+        
         /// <summary>
         /// Get a Photo Listing
         /// </summary>

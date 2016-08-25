@@ -32,16 +32,17 @@ namespace Photos.Models
             string SQL = "";
             SQL = "select * from ( " +
                   "select a.* from album a, albumaccess aa " +
-                  "where a.album_id = " + Id +
+                  "where a.album_id = " + Id + " " +
                   "and a.active = 'Y' " +
                   "and aa.album_id = a.album_id " +
-                  "and aa.userid = '" + UserID + "'" +
+                  "and aa.userid = '" + UserID + "' " +
                   "union " +
                   "select a.* from album a, aspnetroles ar2, aspnetuserroles aur2 " +
                   "where aur2.userid = '" + UserID + "' " +
+                  "and a.album_id = " + Id + " " +
                   "and aur2.RoleId = ar2.Id " +
                   "and ar2.Name = 'Admin' " +
-                  "and a.active = 'Y') as a)";
+                  "and a.active = 'Y') as a";
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
@@ -210,6 +211,31 @@ namespace Photos.Models
             conn.Close();
 
             return _photos;
+        }
+
+        /// <summary>
+        /// Update Album Details (Date and Description)
+        /// </summary>
+        /// <param name="album">The Album model</param>
+        /// <returns></returns>
+        public void SaveAlbum(Album album)
+        {
+            MySql.Data.MySqlClient.MySqlConnection conn;
+            conn = new MySql.Data.MySqlClient.MySqlConnection();
+            // Get the connection password
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+            string myConnectionString;
+            string Id = "";
+            string SQL;
+            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";default command timeout=0";
+            conn.ConnectionString = myConnectionString;
+            conn.Open();
+
+            SQL = "update album set description = '" + album.Description + "', updated_date = now(), updated_by = 'TEMPUSER' where album_id = " + album.Id;
+            MySqlCommand cmd = new MySqlCommand(SQL, conn);
+            cmd.ExecuteNonQuery();
+
+            conn.Close();
         }
 
         /// <summary>
