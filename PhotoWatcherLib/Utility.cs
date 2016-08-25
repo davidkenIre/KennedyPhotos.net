@@ -25,6 +25,8 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Make all connections use the web.config connection string
 // TODO: Make the blog screen look ok for people who cannot create blogs
 // TODO: Transform not happening for <system.data> during publish to prod - HAVE MADE A CHANGE, ensure effective during next builds
+// TODO: Edit Album Details - Implement Date Picker control: Source from http://www.eyecon.ro/bootstrap-datepicker/#
+// TODO: Edit Album Details - Date popup not working properly in chrome
 
 namespace PhotoWatcherLib
 {

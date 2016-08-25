@@ -222,6 +222,8 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\datepicker\css\datepicker.css" />
+    <Content Include="Content\datepicker\js\bootstrap-datepicker.js" />
     <Content Include="Content\ie10-viewport-bug-workaround.css" />
     <Content Include="Content\jumbotron.css" />
     <Content Include="favicon.ico" />
@@ -315,6 +317,7 @@
     <Content Include="Content\blueimp\css\blueimp-gallery.min.css.map" />
     <Content Include="Content\blueimp\js\blueimp-gallery.min.js.map" />
     <Content Include="Content\blueimp\js\jquery.blueimp-gallery.min.js.map" />
+    <Content Include="Content\datepicker\less\datepicker.less" />
     <None Include="Properties\PublishProfiles\Lattuce.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ie10-viewport-bug-workaround.js" />

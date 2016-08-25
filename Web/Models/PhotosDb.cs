@@ -31,13 +31,13 @@ namespace Photos.Models
             //Create Command
             string SQL = "";
             SQL = "select * from ( " +
-                  "select a.* from album a, albumaccess aa " +
+                  "select a.album_id, album_name, description, location, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date from album a, albumaccess aa " +
                   "where a.album_id = " + Id + " " +
                   "and a.active = 'Y' " +
                   "and aa.album_id = a.album_id " +
                   "and aa.userid = '" + UserID + "' " +
                   "union " +
-                  "select a.* from album a, aspnetroles ar2, aspnetuserroles aur2 " +
+                  "select a.album_id, album_name, description, location, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date from album a, aspnetroles ar2, aspnetuserroles aur2 " +
                   "where aur2.userid = '" + UserID + "' " +
                   "and a.album_id = " + Id + " " +
                   "and aur2.RoleId = ar2.Id " +
@@ -86,14 +86,14 @@ namespace Photos.Models
             // Create Command
             string SQL = "";
             SQL = "select * from (select a.created_date, a.album_name, a.description, a.location, " +
-            "    a.album_id, DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date " +
+            "    a.album_id, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date " +
             "from album a, albumaccess aa " +
             "where a.active = 'Y' " +
             "and a.album_id = aa.album_id " +
             "and aa.userid = '" + UserID + "' " +
             "union " +
             "select a.created_date, a.album_name, a.description, a.location, " +
-            "    a.album_id, DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date " +
+            "    a.album_id, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date " +
             "from album a, aspnetroles ar2, aspnetuserroles aur2 " +
             "where aur2.userid = '" + UserID + "' " +
             "and aur2.RoleId = ar2.Id " +
@@ -152,9 +152,9 @@ namespace Photos.Models
 
             // Create Command
             string Sql = @"select * from (
-            select a.album_id, a.album_name, DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date,
+            select a.album_id, a.album_name, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date,
             a.description, a.location, p.photo_id, p.filename, p.thumbnail_filename,
-            DATE_FORMAT(p.date_taken, '%d-%M-%Y') as date_taken, p.fStop, p.exposure,
+            DATE_FORMAT(p.date_taken, '%d-%b-%Y') as date_taken, p.fStop, p.exposure,
             p.iso, p.focal_length, p.dimensions, p.Camera_maker, p.Camera_model, p.checksum
             from photo p, album a, albumaccess aa
             where a.album_id = p.album_id
@@ -164,9 +164,9 @@ namespace Photos.Models
             and aa.userid = '" + UserID + @"'  
             and a.album_id = aa.album_id
             union
-            select a.album_id, a.album_name, DATE_FORMAT(a.album_date, '%d-%M-%Y') as album_date,
+            select a.album_id, a.album_name, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date,
             a.description, a.location, p.photo_id, p.filename, p.thumbnail_filename,
-            DATE_FORMAT(p.date_taken, '%d-%M-%Y') as date_taken, p.fStop, p.exposure,
+            DATE_FORMAT(p.date_taken, '%d-%b-%Y') as date_taken, p.fStop, p.exposure,
             p.iso, p.focal_length, p.dimensions, p.Camera_maker, p.Camera_model, p.checksum
             from photo p, album a, aspnetroles ar2, aspnetuserroles aur2
             where a.album_id = p.album_id
@@ -231,7 +231,7 @@ namespace Photos.Models
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            SQL = "update album set description = '" + album.Description + "', updated_date = now(), updated_by = 'TEMPUSER' where album_id = " + album.Id;
+            SQL = "update album set description = '" + album.Description + "', album_date = STR_TO_DATE('" + album.AlbumDate + "','%d-%b-%Y') , updated_date = now(), updated_by = 'TEMPUSER' where album_id = " + album.Id;
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             cmd.ExecuteNonQuery();
 

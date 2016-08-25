@@ -45,6 +45,7 @@ namespace Photos.Controllers
         [Authorize]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
         public ActionResult _EditAlbumDetails(int Id)
+        //public ActionResult _EditAlbumDetails()
         {
             Album _Album = _db.GetAlbum(Id, User.Identity.GetUserId());
             return PartialView(_Album);
