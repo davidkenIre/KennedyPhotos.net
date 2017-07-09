@@ -27,6 +27,19 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Transform not happening for <system.data> during publish to prod - HAVE MADE A CHANGE, ensure effective during next builds
 // TODO: Edit Album Details - Implement Date Picker control: Source from http://www.eyecon.ro/bootstrap-datepicker/#
 // TODO: Edit Album Details - Date popup not working properly in chrome
+// TODO: Getting an error when creating a new blog and issueing a big save
+// TODO: Fix the following issue where a dir scan did not complete properly
+//       26-Sep-2016 18:15:30: Adding File: d:\media\photos\albums\Iceland Honeymoon 2016\thumb_IMG_2888_1024.jpg
+//       26-Sep-2016 18:15:30: Adding File: d:\media\photos\albums\Iceland Honeymoon 2016\thumb_IMG_2889_1024.jpg
+//       26-Sep-2016 18:15:31: Adding File: d:\media\photos\albums\Iceland Honeymoon 2016\thumb_IMG_2890_1024.jpg
+//       26-Sep-2016 18:18:25: Checking for changes in the Album directory
+//       26-Sep-2016 18:29:54: Finished Performing Album Refresh
+//       26-Sep-2016 18:44:22: Performing an Album Refresh
+//       26-Sep-2016 18:44:22: Checking for changes in the Album directory
+//       26-Sep-2016 19:01:04: Error: Could not perform directory scan - Could not find a part of the path 'd:\media\photos\albums\New folder'.
+//       26-Sep-2016 19:05:30: Finished Performing Album Refresh
+// TODO: Old logs seem to be getting deleted
+
 
 namespace PhotoWatcherLib
 {

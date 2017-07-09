@@ -13,19 +13,24 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="Date">Date</label>
-                        <input type="date" class="date-picker form-control" name="AlbumDate" id="AlbumDate" placeholder="dd-Mon-yyyy" value="@Model.AlbumDate"  data-date-format="mm/dd/yy">
+                        <input type="date" class="date-picker form-control" name="AlbumDate" id="AlbumDate" placeholder="dd-M-yyyy" value="@Model.AlbumDate"  data-date-format="dd-M-yyyy">
                         <span class="add-on"><i class="icon-th"></i></span>
                     </div>
 
                     <div class="form-group">
                         <label for="Date">Description</label>
-                        <input type="text" class="form-control" name="Description" id="Description" placeholder="Description" value="@Model.Description">
+                        <input type="text" class="form-control" name="Description" id="Description" placeholder="Description" value="@Model.Description">                        
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" id="approve-btn" class="btn bg-primary">Save</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
+
+                <script type="text/javascript">
+                    
+                </script>
+
             </form>
         </div>
     </div>
@@ -33,13 +38,10 @@
 
 
 <script type="text/javascript">
-    //$(function(){
-    //    $('#AlbumDate').datepicker({
-    //        format: 'mm-dd-yyyy'
-    //    });
-    //});
-
     $(function () {
+        $("AlbumDate").datepicker({});
+
+
         $('#approve-btn').click(function () {
             $('#modal-container').modal('hide');
         });

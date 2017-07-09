@@ -224,14 +224,13 @@ namespace Photos.Models
             conn = new MySql.Data.MySqlClient.MySqlConnection();
             // Get the connection password
             string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
-            string myConnectionString;
-            string Id = "";
+            string myConnectionString;            
             string SQL;
             myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";default command timeout=0";
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            SQL = "update album set description = '" + album.Description + "', album_date = STR_TO_DATE('" + album.AlbumDate + "','%d-%b-%Y') , updated_date = now(), updated_by = 'TEMPUSER' where album_id = " + album.Id;
+            SQL = "update album set description = '" + album.Description + "', album_date = STR_TO_DATE('" + album.AlbumDate + "','%Y-%c-%d') , updated_date = now(), updated_by = 'TEMPUSER' where album_id = " + album.Id;
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             cmd.ExecuteNonQuery();
 
