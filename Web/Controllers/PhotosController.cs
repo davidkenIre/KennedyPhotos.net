@@ -107,7 +107,8 @@ namespace Photos.Controllers
         [Authorize]
         public ActionResult DownloadAlbum(int Id)
         {
-            PhotoWatcherLib.Utility Utility = new PhotoWatcherLib.Utility();
+            
+            Photo.Utility Utility = new Photo.Utility();
             string file = Utility.ZipFolder(Id);
 
             string contentType = "application/zip";

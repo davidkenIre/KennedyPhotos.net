@@ -22,7 +22,7 @@ namespace PhotoWatcher
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-        PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
+        Photo.Utility U = new Photo.Utility();
 
 
         /// <summary>
@@ -131,7 +131,8 @@ namespace PhotoWatcher
         /// </summary>
         private void PerformRefresh()
         {
-            PhotoWatcherLib.Utility U = new PhotoWatcherLib.Utility();
+            Photo.Utility U = new Photo.Utility();
+            
             U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", ""));
             U.PerformCleanup();
         }
