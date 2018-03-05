@@ -32,14 +32,14 @@ namespace TestEventGenerator
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Photo.Utility U = new Photo.Utility();
+            Photos.Utility U = new Photos.Utility();
             
             U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", ""));
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Photo.Utility U = new Photo.Utility();
+            Photos.Utility U = new Photos.Utility();
             U.PerformCleanup();
         }
     }

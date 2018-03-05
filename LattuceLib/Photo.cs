@@ -42,7 +42,7 @@ using ImageProcessor.Imaging.Formats;
 // TODO: Old logs seem to be getting deleted
 
 
-namespace Photo
+namespace Photos
 {
     public class Utility
     {

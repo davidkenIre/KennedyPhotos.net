@@ -108,7 +108,7 @@ namespace Photos.Controllers
         public ActionResult DownloadAlbum(int Id)
         {
             
-            Photo.Utility Utility = new Photo.Utility();
+            Photos.Utility Utility = new Photos.Utility();
             string file = Utility.ZipFolder(Id);
 
             string contentType = "application/zip";
