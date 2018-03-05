@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestEventGenerator", "TestE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KennedyPhotos", "Web\KennedyPhotos.csproj", "{AB925228-4038-46A2-AEFA-F1DD4B2C85FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LattuceLib", "..\LattuceLib\LattuceLib.csproj", "{CCB24DC5-2775-421A-91C8-6C232E594227}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LattuceLib", "LattuceLib\LattuceLib.csproj", "{CCB24DC5-2775-421A-91C8-6C232E594227}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
