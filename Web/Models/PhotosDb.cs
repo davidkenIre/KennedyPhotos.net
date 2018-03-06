@@ -21,7 +21,7 @@ namespace Photos.Models
             string myConnectionString;
 
             // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "");
 
             myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
             conn = new MySql.Data.MySqlClient.MySqlConnection();
@@ -76,7 +76,7 @@ namespace Photos.Models
             string myConnectionString;
 
             // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "");
 
             myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
             conn = new MySql.Data.MySqlClient.MySqlConnection();
@@ -143,7 +143,7 @@ namespace Photos.Models
             string myConnectionString;
 
             // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "");
 
             myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password +";";
             conn = new MySql.Data.MySqlClient.MySqlConnection();
@@ -223,7 +223,7 @@ namespace Photos.Models
             MySql.Data.MySqlClient.MySqlConnection conn;
             conn = new MySql.Data.MySqlClient.MySqlConnection();
             // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "");
             string myConnectionString;            
             string SQL;
             myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";default command timeout=0";
@@ -249,7 +249,7 @@ namespace Photos.Models
             string myConnectionString;
 
             // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "");
 
             myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
             conn = new MySql.Data.MySqlClient.MySqlConnection();
@@ -318,7 +318,7 @@ namespace Photos.Models
             string myConnectionString;
 
             // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "");
 
             myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
             conn = new MySql.Data.MySqlClient.MySqlConnection();
@@ -373,7 +373,7 @@ namespace Photos.Models
             MySql.Data.MySqlClient.MySqlConnection conn;
             conn = new MySql.Data.MySqlClient.MySqlConnection();
             // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "");
             string myConnectionString;
             string Id = "";
             string SQL;
@@ -417,7 +417,7 @@ namespace Photos.Models
             MySql.Data.MySqlClient.MySqlConnection conn;
             conn = new MySql.Data.MySqlClient.MySqlConnection();
             // Get the connection password
-            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "");
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "");
             string myConnectionString;
             string SQL;
             myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";default command timeout=0";

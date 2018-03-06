@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KennedyPhotos", "Web\Kenned
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LattuceLib", "LattuceLib\LattuceLib.csproj", "{CCB24DC5-2775-421A-91C8-6C232E594227}"
 EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Artifacts", "SQLScripts\Artifacts.sqlproj", "{77705532-378E-492E-80DB-97DAA917D5AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,12 @@ Global
 		{CCB24DC5-2775-421A-91C8-6C232E594227}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCB24DC5-2775-421A-91C8-6C232E594227}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCB24DC5-2775-421A-91C8-6C232E594227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77705532-378E-492E-80DB-97DAA917D5AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77705532-378E-492E-80DB-97DAA917D5AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77705532-378E-492E-80DB-97DAA917D5AD}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{77705532-378E-492E-80DB-97DAA917D5AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77705532-378E-492E-80DB-97DAA917D5AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77705532-378E-492E-80DB-97DAA917D5AD}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

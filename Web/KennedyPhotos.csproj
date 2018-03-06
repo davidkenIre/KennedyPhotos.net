@@ -188,8 +188,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Artifacts\SQL\01_photos_ddl.sql" />
-    <Content Include="Artifacts\SQL\02_photos_dml.sql" />
     <Content Include="Content\blueimp\css\blueimp-gallery-indicator.css" />
     <Content Include="Content\blueimp\css\blueimp-gallery-video.css" />
     <Content Include="Content\blueimp\css\blueimp-gallery.css" />
@@ -310,7 +308,6 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="Artifacts\REG\Lattuce.reg" />
     <Content Include="Content\blueimp\css\blueimp-gallery.less" />
     <Content Include="Content\blueimp\css\blueimp-gallery.min.css.map" />
     <Content Include="Content\blueimp\js\blueimp-gallery.min.js.map" />

@@ -57,7 +57,7 @@ namespace Photos
             try
             {
                 MySQLConn = new MySql.Data.MySqlClient.MySqlConnection();
-                MySQLConn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "") + ";";
+                MySQLConn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "") + ";";
                 MySQLConn.Open();
             }
             catch (Exception e1)
@@ -201,8 +201,8 @@ namespace Photos
                     CameraModel = image.ImageTag.Model;
                 
                     // Create the thumbnail                    
-                    string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
-                    int ThumbnailSize = (int)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Thumbnailsize", "");
+                    string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "ThumbnailDirectory", "");
+                    int ThumbnailSize = (int)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Thumbnailsize", "");
                     Guid g = Guid.NewGuid();
                     CreateThumbnail(ThumbnailSize, FileName, ThumbnailDirectory + g.ToString() + Path.GetExtension(FileName).ToString());
 
@@ -329,7 +329,7 @@ namespace Photos
         {
             try { 
             // Remove the Base directory from the filename
-            string BaseDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "");
+            string BaseDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "BaseDirectory", "");
             BaseDirectory = BaseDirectory.ToLower();
 
             string FileNameURL = FileName.ToLower();
@@ -502,7 +502,7 @@ namespace Photos
         private void CleanThumbnailDir()
         {
             try { 
-                string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
+                string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "ThumbnailDirectory", "");
                 MySqlCommand cmd;
                 MySqlDataReader dataReader;
                 string SQL;
@@ -535,7 +535,7 @@ namespace Photos
         {
             try
             {
-                string TempFolder = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "TempDirectory", "");
+                string TempFolder = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "TempDirectory", "");
                 var Dirs = new DirectoryInfo(TempFolder).GetDirectories();
                 foreach (var Dir in Dirs)
                 {
@@ -595,11 +595,11 @@ namespace Photos
                 cmd.Dispose();
 
                 // Build up the physical location of the album
-                string Location = Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "") + AlbumName + "\\";
+                string Location = Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "BaseDirectory", "") + AlbumName + "\\";
 
                 // Get the Zip Name
                 Guid g = Guid.NewGuid();
-                ZipDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "TempDirectory", "") + "\\" + g.ToString() + "\\";
+                ZipDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "TempDirectory", "") + "\\" + g.ToString() + "\\";
                 ZipName = AlbumName + ".zip";
             
                 // Create the temporary directory

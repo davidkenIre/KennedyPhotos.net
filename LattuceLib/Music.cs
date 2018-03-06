@@ -15,33 +15,6 @@ using System.IO.Compression;
 using ImageProcessor;
 using ImageProcessor.Imaging.Formats;
 
-// TODO: Seperate this out into LattuceLibrary
-// TODO: What happens when a thumbnail gets deleted - when does it get recreated?
-// TODO: Database Created by and updated by
-// TODO: str_to_date in SQL is not stable because the date format is dependant on the local
-// TODO: Download status in the View albums page
-// TODO: Schedule Cleanup and refresh modules
-// TODO: Importer does not work if there is a single ' in the directory Name
-// TODO: Allow blog creator to assign security
-// TODO: Make all connections use the web.config connection string
-// TODO: Make the blog screen look ok for people who cannot create blogs
-// TODO: Transform not happening for <system.data> during publish to prod - HAVE MADE A CHANGE, ensure effective during next builds
-// TODO: Edit Album Details - Implement Date Picker control: Source from http://www.eyecon.ro/bootstrap-datepicker/#
-// TODO: Edit Album Details - Date popup not working properly in chrome
-// TODO: Getting an error when creating a new blog and issueing a big save
-// TODO: Fix the following issue where a dir scan did not complete properly
-//       26-Sep-2016 18:15:30: Adding File: d:\media\photos\albums\Iceland Honeymoon 2016\thumb_IMG_2888_1024.jpg
-//       26-Sep-2016 18:15:30: Adding File: d:\media\photos\albums\Iceland Honeymoon 2016\thumb_IMG_2889_1024.jpg
-//       26-Sep-2016 18:15:31: Adding File: d:\media\photos\albums\Iceland Honeymoon 2016\thumb_IMG_2890_1024.jpg
-//       26-Sep-2016 18:18:25: Checking for changes in the Album directory
-//       26-Sep-2016 18:29:54: Finished Performing Album Refresh
-//       26-Sep-2016 18:44:22: Performing an Album Refresh
-//       26-Sep-2016 18:44:22: Checking for changes in the Album directory
-//       26-Sep-2016 19:01:04: Error: Could not perform directory scan - Could not find a part of the path 'd:\media\photos\albums\New folder'.
-//       26-Sep-2016 19:05:30: Finished Performing Album Refresh
-// TODO: Old logs seem to be getting deleted
-
-
 namespace Music
 {
     public class Utility
@@ -57,7 +30,7 @@ namespace Music
             try
             {
                 MySQLConn = new MySql.Data.MySqlClient.MySqlConnection();
-                MySQLConn.ConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Password", "") + ";";
+                MySQLConn.ConnectionString = "Server=lattuce-dc;Database=music;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "") + ";";
                 MySQLConn.Open();
             }
             catch (Exception e1)
@@ -65,6 +38,82 @@ namespace Music
                 WriteLog("Error: Could not connect to the Database - " + e1.Message);
             }
         }
+
+        /// <summary>
+        /// Write a generic string to the Log file
+        /// </summary>
+        /// <param name="Message"></param>
+        public void WriteLog(string Message)
+        {
+            try
+            {
+                using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\Music_" + DateTime.Today.ToString("yyyyMMdd") + ".log"))
+                {
+                    sw.Write(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")) + ": ");
+                    sw.WriteLine(Message);
+                }
+            }
+            catch
+            {
+                // Cant write a log entry!!
+            }
+        }
+
+        /// <summary>
+        /// Executes a DML statement
+        /// </summary>
+        /// <param name="SQL"></param>
+        public void dbDML(string SQL)
+        {
+            try
+            {
+                // Create Command
+                MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
+
+                //Create a data reader and Execute the command
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+            }
+            catch (Exception e1)
+            {
+                WriteLog("Error: Could not execute database command - " + e1.Message);
+            }
+        }
+
+
+        /// <summary>
+        ///  Called when the PhotoWatcherService detects a phisical delete of a file
+        /// </summary>
+        public void SyncMusicFromKodi()
+        {
+            //  try
+            //  {
+
+           WriteLog("Starting Sync");
+                // Get an Album ID (It may be necessary to create a new Album)
+                // The Album name should match the name of the directory containing the photos
+               // FileInfo fInfo = new FileInfo(FileName);
+            //    int AlbumID = GetAlbum(fInfo.Directory.Name);
+
+                // Connect to MySQL and mark file removed
+                dbDML("insert into music.song(created_date, created_by, album_name, song_name, play_count) select now(), 'TEMPUSER', a.strAlbum, s.strTitle, 0 from mymusic60.song s, mymusic60.album a where s.idAlbum = a.idAlbum and concat(a.strAlbum, 'z|z', s.strTitle) not in (select concat(a.strAlbum, 'z|z', s.strTitle) from music.song)");
+            //  }
+
+            //   catch (Exception e1)
+            //    {
+            WriteLog("Ending Sync");   
+            
+            //     }
+
+        }
+
+
+
+
+
+
+
+
 
         /// <summary>
         /// Create a thumbnail.  Function uses package taken from http://imageprocessor.org/
@@ -201,8 +250,8 @@ namespace Music
                     CameraModel = image.ImageTag.Model;
                 
                     // Create the thumbnail                    
-                    string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
-                    int ThumbnailSize = (int)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "Thumbnailsize", "");
+                    string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "ThumbnailDirectory", "");
+                    int ThumbnailSize = (int)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Thumbnailsize", "");
                     Guid g = Guid.NewGuid();
                     CreateThumbnail(ThumbnailSize, FileName, ThumbnailDirectory + g.ToString() + Path.GetExtension(FileName).ToString());
 
@@ -329,7 +378,7 @@ namespace Music
         {
             try { 
             // Remove the Base directory from the filename
-            string BaseDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "");
+            string BaseDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "BaseDirectory", "");
             BaseDirectory = BaseDirectory.ToLower();
 
             string FileNameURL = FileName.ToLower();
@@ -374,23 +423,7 @@ namespace Music
             return true;
         }
 
-        // Executes a DML statement
-        public void dbDML(string SQL)
-        {
-            try { 
-                // Create Command
-                MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
-
-                //Create a data reader and Execute the command
-                cmd.ExecuteNonQuery();
-                cmd.Dispose();
-            }
-            catch (Exception e1)
-            {
-                WriteLog("Error: Could not execute database command - " + e1.Message);
-            }
-        }
-
+ 
         /// <summary>
         /// Get an Album ID from the database.  If the album 
         /// does not exist, create a new record and return that ID
@@ -502,7 +535,7 @@ namespace Music
         private void CleanThumbnailDir()
         {
             try { 
-                string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "ThumbnailDirectory", "");
+                string ThumbnailDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "ThumbnailDirectory", "");
                 MySqlCommand cmd;
                 MySqlDataReader dataReader;
                 string SQL;
@@ -535,7 +568,7 @@ namespace Music
         {
             try
             {
-                string TempFolder = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "TempDirectory", "");
+                string TempFolder = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "TempDirectory", "");
                 var Dirs = new DirectoryInfo(TempFolder).GetDirectories();
                 foreach (var Dir in Dirs)
                 {
@@ -553,25 +586,7 @@ namespace Music
             }
         }
 
-        /// <summary>
-        /// Write a generic string to the Log file
-        /// </summary>
-        /// <param name="Message"></param>
-        public void WriteLog(string Message)
-        {
-            try
-            {
-                using (StreamWriter sw = File.AppendText(AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\PhotoWatcher_" + DateTime.Today.ToString("yyyyMMdd") + ".log"))
-                {
-                    sw.Write(DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss", System.Globalization.CultureInfo.GetCultureInfo("en-US")) + ": ");
-                    sw.WriteLine(Message);
-                }
-            }
-            catch 
-            {
-                // Cant write a log entry!!
-            }
-        }
+
 
         /// <summary>
         /// Zip a folder
@@ -595,11 +610,11 @@ namespace Music
                 cmd.Dispose();
 
                 // Build up the physical location of the album
-                string Location = Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", "") + AlbumName + "\\";
+                string Location = Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "BaseDirectory", "") + AlbumName + "\\";
 
                 // Get the Zip Name
                 Guid g = Guid.NewGuid();
-                ZipDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "TempDirectory", "") + "\\" + g.ToString() + "\\";
+                ZipDirectory = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "TempDirectory", "") + "\\" + g.ToString() + "\\";
                 ZipName = AlbumName + ".zip";
             
                 // Create the temporary directory

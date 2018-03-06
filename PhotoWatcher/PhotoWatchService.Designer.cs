@@ -133,7 +133,7 @@ namespace PhotoWatcher
         {
             Photos.Utility U = new Photos.Utility();
             
-            U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", ""));
+            U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "BaseDirectory", ""));
             U.PerformCleanup();
         }
     }

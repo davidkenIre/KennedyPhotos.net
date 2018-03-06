@@ -34,13 +34,19 @@ namespace TestEventGenerator
         {
             Photos.Utility U = new Photos.Utility();
             
-            U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\LattuceWebsite", "BaseDirectory", ""));
+            U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "BaseDirectory", ""));
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             Photos.Utility U = new Photos.Utility();
             U.PerformCleanup();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Music.Utility U = new Music.Utility();
+            U.SyncMusicFromKodi();
         }
     }
 }
