@@ -313,7 +313,7 @@
     <Content Include="Content\blueimp\js\blueimp-gallery.min.js.map" />
     <Content Include="Content\blueimp\js\jquery.blueimp-gallery.min.js.map" />
     <Content Include="Content\datepicker\less\datepicker.less" />
-    <None Include="Properties\PublishProfiles\Lattuce.pubxml" />
+    <None Include="Properties\PublishProfiles\KennedyPhotos.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ie10-viewport-bug-workaround.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
