@@ -87,6 +87,7 @@ namespace Music
         /// </summary>
         public void SyncMusicFromKodi() {
             try  {
+                Console.WriteLine("Starting music sync from Kodi");
                 WriteLog("Starting music sync from Kodi");
 
                 // Add new music from Kodi to the Master table
@@ -108,8 +109,10 @@ namespace Music
                       "where s.idAlbum = a.idAlbum " +
                       "and s.idPath = p.idPath)");
 
+                Console.WriteLine("Finished music sync from Kodi");
                 WriteLog("Finished music sync from Kodi");
             } catch (Exception e1) {
+                Console.WriteLine("Error syncing music from Kodi to Master table: " + e1.Message);
                 WriteLog("Error syncing music from Kodi to Master table: " + e1.Message);   
             }
         }
