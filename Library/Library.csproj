@@ -7,8 +7,8 @@
     <ProjectGuid>{CCB24DC5-2775-421A-91C8-6C232E594227}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LattuceLib</RootNamespace>
-    <AssemblyName>LattuceLib</AssemblyName>
+    <RootNamespace>Library</RootNamespace>
+    <AssemblyName>Library</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

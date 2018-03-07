@@ -7,11 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoWatchService", "PhotoW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestEventGenerator", "TestEventGenerator\TestEventGenerator.csproj", "{331CE0AF-5189-48DF-B679-6EA39B5FC175}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KennedyPhotos", "Web\KennedyPhotos.csproj", "{AB925228-4038-46A2-AEFA-F1DD4B2C85FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Website", "Web\Website.csproj", "{AB925228-4038-46A2-AEFA-F1DD4B2C85FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LattuceLib", "LattuceLib\LattuceLib.csproj", "{CCB24DC5-2775-421A-91C8-6C232E594227}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library", "Library\Library.csproj", "{CCB24DC5-2775-421A-91C8-6C232E594227}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Artifacts", "SQLScripts\Artifacts.sqlproj", "{77705532-378E-492E-80DB-97DAA917D5AD}"
+Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "Scripts", "Scripts\Scripts.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,12 +36,10 @@ Global
 		{CCB24DC5-2775-421A-91C8-6C232E594227}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCB24DC5-2775-421A-91C8-6C232E594227}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCB24DC5-2775-421A-91C8-6C232E594227}.Release|Any CPU.Build.0 = Release|Any CPU
-		{77705532-378E-492E-80DB-97DAA917D5AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{77705532-378E-492E-80DB-97DAA917D5AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{77705532-378E-492E-80DB-97DAA917D5AD}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{77705532-378E-492E-80DB-97DAA917D5AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{77705532-378E-492E-80DB-97DAA917D5AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{77705532-378E-492E-80DB-97DAA917D5AD}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

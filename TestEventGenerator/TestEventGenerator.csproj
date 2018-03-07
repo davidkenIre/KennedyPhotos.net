@@ -108,9 +108,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LattuceLib\LattuceLib.csproj">
+    <ProjectReference Include="..\Library\Library.csproj">
       <Project>{ccb24dc5-2775-421a-91c8-6c232e594227}</Project>
-      <Name>LattuceLib</Name>
+      <Name>Library</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -279,3 +279,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+/Scripts
+/Scripts11
+/Scripts_

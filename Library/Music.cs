@@ -71,6 +71,7 @@ namespace Music
                 MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
 
                 //Create a data reader and Execute the command
+                cmd.CommandTimeout = 0;
                 cmd.ExecuteNonQuery();
                 cmd.Dispose();
             }
@@ -92,7 +93,7 @@ namespace Music
                 dbDML("insert into music.song " +
                       "(created_date, created_by, album_name, song_name, path, filename, play_count) " +
                       "select now(), 'TEMPUSER', a.strAlbum, s.strTitle, p.strPath, s.strFileName, 0 " +
-                      "from mymusic60.song s, mymusic60.album a, mymusic60 path p " +
+                      "from mymusic60.song s, mymusic60.album a, mymusic60.path p " +
                       "where s.idAlbum = a.idAlbum " +
                       "and s.idPath = p.idPath " +
                       "and concat(p.strPath, 'z|z', s.strFileName) not in " +
