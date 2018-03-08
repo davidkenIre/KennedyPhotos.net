@@ -5,7 +5,7 @@
 import datetime
 import mysql.connector
 
-cnx = mysql.connector.connect(user='root', password='pa5CAL01D',
+cnx = mysql.connector.connect(user='root', password='',
                               host='lattuce-dc',
                               database='music')
 

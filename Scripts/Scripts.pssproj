@@ -34,6 +34,7 @@
     <Compile Include="Powershell\Time.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Python\TestMYSQLRead.py" />
     <Content Include="SQL\Music\01_music_ddl.sql" />
     <Content Include="SQL\Photo\01_photos_ddl.sql" />
     <Content Include="SQL\Photo\02_photos_dml.sql" />
