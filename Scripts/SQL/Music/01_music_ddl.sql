@@ -1,3 +1,7 @@
+drop table playlist_song;
+
+drop table playlist;
+
 drop table song;
 
 create table song (
@@ -11,82 +15,33 @@ create table song (
     path varchar(500),
     filename varchar(500),
     play_count integer not null,
-    primary key (song_id)
-) 
+    active varchar(1) not null,
+    primary key (song_id),
+    fulltext (album_name)
+)
 CHARACTER SET utf8
 COLLATE utf8_general_ci
-    ;
-    
-    CREATE  INDEX album_name_ind ON song (album_name);
-    
-    CREATE  INDEX song_name_ind ON song (song_name);
-    
-    CREATE  INDEX path_ind ON song (path);
-    
-    CREATE  INDEX filename_ind ON song (filename);
-    
+ENGINE=MyISAM;
 
-select * from music.song;
+create table playlist (
+	playlist_id integer auto_increment,
+    created_date date not null,
+    created_by varchar(100) not null,
+    updated_date date,
+    updated_by varchar(100),
+    playlist_name varchar(500),
+    active varchar(1) not null,
+    primary key (playlist_id)
+); 
 
-select * from mymusic60.song;
-
-select * from mymusic60.album;
-
--- New Music
-insert into music.song (created_date, created_by, album_name, song_name, path, filename, play_count) 
-select now(), 'TEMPUSER', a.strAlbum, s.strTitle, p.strPath, s.strFileName, 0
-from mymusic60.song s, mymusic60.album a, mymusic60.path p
-where s.idAlbum = a.idAlbum
-and s.idPath = p.idPath
-and concat(p.strPath, 'z|z', s.strFileName) not in 
-	(select concat(ts.path, 'z|z', ts.filename)
-    from music.song ts);
-    
--- Deleted Music    
-
-delete from music.song
-where concat(Path, 'z|z', FileName) not in 
-	( select
-    concat(p.strPath, 'z|z', s.strFileName)
-    from mymusic60.song s, mymusic60.album a, mymusic60.path p
-where s.idAlbum = a.idAlbum
-and s.idPath = p.idPath);
-
--- 20405
-select count(*)
-from mymusic60.song s, mymusic60.album a
-where s.idAlbum = a.idAlbum
-union all
-select count(*)
-from music.song;
-
-insert into music.song (album_name, song_name) values ('s', 'd');
-
-select concat('a', 'f', 'm') from mymusic60.song;
-
-
-insert into song (created_date, created_by, album_name, song_name, play_count) 
-select now(), 'TEMPUSER';
-
-select count(*) from music.song;
-
-
-delete from music.song where album_name = 'Believe';
-
-commit;
-
-
-                insert into music.song 
-                (created_date, created_by, album_name, song_name, path, filename, play_count) 
-                     
-                     select now(), 'TEMPUSER', a.strAlbum, s.strTitle, p.strPath, s.strFileName, 0 
-                      from mymusic60.song s, mymusic60.album a, mymusic60 path p 
-                      where s.idAlbum = a.idAlbum 
-                      and s.idPath = p.idPath;
-                      
-                      
-                      and concat(p.strPath, 'z|z', s.strFileName) not in 
-                      (select concat(ts.path, 'z|z', ts.filename) from music.song ts;
-                      
-                      );
-
+create table playlist_song (
+	playlist_song_id integer auto_increment,
+    created_date date not null,
+    created_by varchar(100) not null,
+    updated_date date,
+    updated_by varchar(100),
+    playlist_id integer,
+    song_id integer,
+    active varchar(1) not null,
+    primary key (playlist_song_id)
+);

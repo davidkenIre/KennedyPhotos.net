@@ -30,7 +30,7 @@ namespace Music
             try
             {
                 MySQLConn = new MySql.Data.MySqlClient.MySqlConnection();
-                MySQLConn.ConnectionString = "Server=lattuce-dc;Database=music;Uid=root;Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "Password", "") + ";";
+                MySQLConn.ConnectionString = "Server=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLServer", "") + ";Database=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "LattuceMusicSchema", "") + ";Uid=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLUsername", "") + ";Pwd=" + (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLPassword", "") + ";";
                 MySQLConn.Open();
             }
             catch (Exception e1)
@@ -92,16 +92,16 @@ namespace Music
 
                 // Add new music from Kodi to the Master table
                 dbDML("insert into music.song " +
-                      "(created_date, created_by, album_name, song_name, path, filename, play_count) " +
-                      "select now(), 'TEMPUSER', a.strAlbum, s.strTitle, p.strPath, s.strFileName, 0 " +
+                      "(created_date, created_by, album_name, song_name, path, filename, play_count, active) " +
+                      "select curdate(), user(), a.strAlbum, s.strTitle, p.strPath, s.strFileName, 0, 'Y' " +
                       "from mymusic60.song s, mymusic60.album a, mymusic60.path p " +
                       "where s.idAlbum = a.idAlbum " +
                       "and s.idPath = p.idPath " +
                       "and concat(p.strPath, 'z|z', s.strFileName) not in " +
-                      "(select concat(ts.path, 'z|z', ts.filename) from music.song ts)");
+                      "(select concat(ts.path, 'z|z', ts.filename) from music.song ts where active = 'Y')");
 
                 // Delete from master table where music does not exist in Lodi
-                dbDML("delete from music.song " +
+                dbDML("update music.song set active = 'N', date_updated = curdate(), updated_by = user() " +
                       "where concat(Path, 'z|z', FileName) not in " +
                       "(select " +
                       "concat(p.strPath, 'z|z', s.strFileName) " +

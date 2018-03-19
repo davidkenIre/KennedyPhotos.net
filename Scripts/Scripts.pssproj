@@ -27,15 +27,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Powershell\DeleteJunkFiles.ps1" />
+    <Compile Include="Powershell\KeepAlive.ps1" />
     <Compile Include="Powershell\KodiMusicPlaylists.ps1" />
     <Compile Include="Powershell\Backup.ps1" />
     <Compile Include="Powershell\Reboot.ps1" />
-    <Compile Include="Powershell\RefreshPlaylists.ps1" />
     <Compile Include="Powershell\Time.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Python\TestMYSQLRead.py" />
     <Content Include="SQL\Music\01_music_ddl.sql" />
+    <Content Include="SQL\Music\02_music_dml.sql" />
     <Content Include="SQL\Photo\01_photos_ddl.sql" />
     <Content Include="SQL\Photo\02_photos_dml.sql" />
     <Content Include="Registry\Lattuce.reg" />
