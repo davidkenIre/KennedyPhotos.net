@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Photos.Models.Song>
+<div class="page-header">
+    <h1>All Songs</h1>
+</div>
+
+
+<table>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.Album</td>
+            <td>@item.Title</td>
+            <td>@item.Location</td>
+        </tr>
+    }
+</table>
+

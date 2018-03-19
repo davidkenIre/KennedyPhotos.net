@@ -17,7 +17,10 @@ create table song (
     play_count integer not null,
     active varchar(1) not null,
     primary key (song_id),
-    fulltext (album_name)
+    fulltext (album_name),
+    fulltext (song_name),
+    fulltext (path),
+    fulltext (filename)
 )
 CHARACTER SET utf8
 COLLATE utf8_general_ci

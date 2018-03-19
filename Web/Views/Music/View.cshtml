@@ -1,0 +1,12 @@
+﻿@model Photos.Models.Blog
+<div class="page-header">
+    <h1>@Model.Title</h1>
+</div>
+
+<p class="lead">
+    by <a href="index.php">@Model.Author</a>
+</p>
+<p><span class="glyphicon glyphicon-time"></span> Last Update @Model.DatePosted</p>
+<p>@Html.Raw(Model.BlogText)</p>
+<a class="btn btn-primary" href="/Blog/Index"><span class="glyphicon glyphicon-chevron"></span>View Blogs</a>
+

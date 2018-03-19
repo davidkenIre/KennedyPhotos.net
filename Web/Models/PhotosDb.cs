@@ -101,7 +101,8 @@ namespace Photos.Models
             "and a.active = 'Y') as a " +
             "order by a.created_date desc";
 
-            if (Limit != 0) {
+            if (Limit != 0)
+            {
                 SQL += " Limit " + Limit;
             }
 
@@ -129,6 +130,56 @@ namespace Photos.Models
             conn.Close();
 
             return _albums;
+        }
+
+
+        /// <summary>
+        /// Retrive a list of all Songs from the database
+        /// </summary>
+        /// <returns></returns>
+        public List<Song> GetSongs()
+        {
+            // Connect to MySQL and load all the photos
+            MySql.Data.MySqlClient.MySqlConnection conn;
+            string myConnectionString;
+
+            // Get the connection password
+            string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLPassword", "");
+
+            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+            conn = new MySql.Data.MySqlClient.MySqlConnection();
+            conn.ConnectionString = myConnectionString;
+            conn.Open();
+
+            // Create Command
+            string SQL = "";
+            SQL = "select * from music.song s " +
+            "where s.active = 'Y' " +
+            "order by s.album_name, s.song_name ";
+
+            MySqlCommand cmd = new MySqlCommand(SQL, conn);
+            //Create a data reader and Execute the command
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+
+            //Read the data and store them in the list
+            List<Song> _songs = new List<Song>();
+            while (dataReader.Read())
+            {
+                Song item = new Song()
+                {
+                    Id = dataReader["song_id"].ToString(),
+                    Title = dataReader["song_name"].ToString(),
+                    Album = dataReader["album_name"].ToString(),
+                    Location = dataReader["filename"].ToString(),
+                };
+                _songs.Add(item);
+            }
+
+            //close Data Reader
+            dataReader.Close();
+            conn.Close();
+
+            return _songs;
         }
 
         /// <summary>

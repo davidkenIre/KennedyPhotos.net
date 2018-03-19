@@ -49,21 +49,20 @@ namespace Photos.Models
         public string DatePosted { get; set; }
         //private string blogtext;
         public string BlogText { get; set; }
-        //get { return blogtext; }
-        //    set
-        //    {
-        //        blogtext = value;
-        //    }
-        //}
+
     }
 
+
+
     /// <summary>
-    /// This class represents an Album
+    /// This class represents a Song
     /// </summary>
-    //public class BlogAlbum
-    //{
-    //    public Photos.Models.Album {get; }
-    //    public Photos.Models.Blogs {get; }
-    //}
+    public class Song
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Album { get; set; }
+        public string Location { get; set; }
+    }
 }
 
