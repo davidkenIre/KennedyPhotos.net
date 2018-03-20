@@ -14,6 +14,21 @@ namespace Photos.Controllers
         PhotosDb _db = new PhotosDb();
 
         /// <summary>
+        /// Get a Playlist Listing
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Authorize]
+        public ActionResult Playlist()
+        {
+            List<Blog> _BlogListing = _db.GetBlogs(0, User.Identity.GetUserId());
+            return View(_BlogListing.ToList());
+        }
+
+
+
+
+        /// <summary>
         /// Get a Song Listing
         /// </summary>
         /// <returns></returns>

@@ -64,5 +64,16 @@ namespace Photos.Models
         public string Album { get; set; }
         public string Location { get; set; }
     }
+
+    /// <summary>
+    /// This class represents a Song
+    /// </summary>
+    public class Playlist
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string Album { get; set; }
+        public string Location { get; set; }
+    }
 }
 

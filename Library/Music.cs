@@ -43,7 +43,7 @@ namespace Music
         /// Write a generic string to the Log file
         /// </summary>
         /// <param name="Message"></param>
-        public void WriteLog(string Message)
+        private void WriteLog(string Message)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace Music
         /// Executes a DML statement
         /// </summary>
         /// <param name="SQL"></param>
-        public void dbDML(string SQL)
+        private void dbDML(string SQL)
         {
             try
             {
@@ -91,20 +91,18 @@ namespace Music
                 WriteLog("Starting music sync from Kodi");
 
                 // Add new music from Kodi to the Master table
-                dbDML("insert into music.song " +
-                      "(created_date, created_by, album_name, song_name, path, filename, play_count, active) " +
-                      "select curdate(), user(), a.strAlbum, s.strTitle, p.strPath, s.strFileName, 0, 'Y' " +
+                dbDML("insert into music.song (created_date, created_by, album_name, song_name, path, filename, play_count, kodi_idSong, active)  " +
+                      "select curdate(), user(), a.strAlbum, s.strTitle, p.strPath, s.strFileName, 0, s.idSong, 'Y' " +
                       "from mymusic60.song s, mymusic60.album a, mymusic60.path p " +
                       "where s.idAlbum = a.idAlbum " +
                       "and s.idPath = p.idPath " +
-                      "and concat(p.strPath, 'z|z', s.strFileName) not in " +
-                      "(select concat(ts.path, 'z|z', ts.filename) from music.song ts where active = 'Y')");
+                      "and s.idSong not in " +
+                      "(select ts.kodi_idSong from music.song ts");
 
                 // Delete from master table where music does not exist in Lodi
                 dbDML("update music.song set active = 'N', date_updated = curdate(), updated_by = user() " +
-                      "where concat(Path, 'z|z', FileName) not in " +
-                      "(select " +
-                      "concat(p.strPath, 'z|z', s.strFileName) " +
+                      "where s.kodi_idSong not in " +
+                      "(select s.idSong " +
                       "from mymusic60.song s, mymusic60.album a, mymusic60.path p " +
                       "where s.idAlbum = a.idAlbum " +
                       "and s.idPath = p.idPath)");

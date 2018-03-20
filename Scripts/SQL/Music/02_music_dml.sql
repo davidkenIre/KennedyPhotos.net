@@ -1,18 +1,18 @@
 -- New Music
-insert into music.song (created_date, created_by, album_name, song_name, path, filename, play_count, active) 
-select curdate(), user(), a.strAlbum, s.strTitle, p.strPath, s.strFileName, 0, 'Y'
+insert into music.song (created_date, created_by, album_name, song_name, path, filename, play_count, kodi_idSong, active) 
+select curdate(), user(), a.strAlbum, s.strTitle, p.strPath, s.strFileName, 0, s.idSong, 'Y'
 from mymusic60.song s, mymusic60.album a, mymusic60.path p
 where s.idAlbum = a.idAlbum
 and s.idPath = p.idPath
-and concat(p.strPath, 'z|z', s.strFileName) not in 
-	(select concat(ts.path, 'z|z', ts.filename)
+and s.idSong not in 
+	(select ts.kodi_idSong
     from music.song ts);
     
 -- Deleted Music    
-delete from music.song
-where concat(Path, 'z|z', FileName) not in 
+update music.song s set active = 'N', updated_date = curdate(), updated_by = user()
+where s.kodi_idSong not in 
 	( select
-    concat(p.strPath, 'z|z', s.strFileName)
+    s.idSong
     from mymusic60.song s, mymusic60.album a, mymusic60.path p
 where s.idAlbum = a.idAlbum
 and s.idPath = p.idPath);
@@ -32,3 +32,4 @@ insert into music.playlist_song (song_id, created_date, created_by, playlist_id,
 insert into music.playlist_song (song_id, created_date, created_by, playlist_id, active) values (16942, curdate(), user(), (select playlist_id from playlist where playlist_name = 'DKEN Playlist'), 'Y');
 insert into music.playlist_song (song_id, created_date, created_by, playlist_id, active) values (16967, curdate(), user(), (select playlist_id from playlist where playlist_name = 'DKEN Playlist'), 'Y');
 insert into music.playlist_song (song_id, created_date, created_by, playlist_id, active) values (16970, curdate(), user(), (select playlist_id from playlist where playlist_name = 'DKEN Playlist'), 'Y');
+

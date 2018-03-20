@@ -478,6 +478,7 @@
     <Content Include="Views\Music\Edit.cshtml" />
     <Content Include="Views\Music\Index.cshtml" />
     <Content Include="Views\Music\View.cshtml" />
+    <Content Include="Views\Music\Playlist.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
