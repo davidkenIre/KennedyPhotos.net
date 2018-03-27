@@ -7,9 +7,9 @@ drop table song;
 create table song (
 	song_id integer auto_increment,
     created_date date not null,
-    created_by varchar(100) not null,
+    created_by_id varchar(128) not null,
     updated_date date,
-    updated_by varchar(100),
+    updated_by_id varchar(128),
     album_name varchar(256),
     song_name varchar(500),
     path varchar(500),
@@ -27,9 +27,10 @@ CREATE UNIQUE index kodi_idsong_ind on song(kodi_idSong);
 create table playlist (
 	playlist_id integer auto_increment,
     created_date date not null,
-    created_by varchar(100) not null,
+    created_by_id varchar(128) not null,
     updated_date date,
-    updated_by varchar(100),
+    updated_by_id varchar(128),
+    owner_id varchar(128) not null,
     playlist_name varchar(500),
     active varchar(1) not null,
     primary key (playlist_id)
@@ -40,9 +41,9 @@ CREATE UNIQUE index playlist_name_ind on playlist(playlist_name);
 create table playlist_song (
 	playlist_song_id integer auto_increment,
     created_date date not null,
-    created_by varchar(100) not null,
+    created_by_id varchar(128) not null,
     updated_date date,
-    updated_by varchar(100),
+    updated_by_id varchar(128),
     playlist_id integer,
     song_id integer,
     active varchar(1) not null,

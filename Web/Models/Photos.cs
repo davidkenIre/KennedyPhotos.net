@@ -66,14 +66,14 @@ namespace Photos.Models
     }
 
     /// <summary>
-    /// This class represents a Song
+    /// This class represents a Playlist
     /// </summary>
     public class Playlist
     {
         public string Id { get; set; }
-        public string Title { get; set; }
-        public string Album { get; set; }
-        public string Location { get; set; }
+        public string PlaylistName { get; set; }
+        public string Owner { get; set; }
+        public string DatePosted { get; set; }
     }
 }
 

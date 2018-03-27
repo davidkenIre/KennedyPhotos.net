@@ -21,12 +21,9 @@ namespace Photos.Controllers
         [Authorize]
         public ActionResult Playlist()
         {
-            List<Blog> _BlogListing = _db.GetBlogs(0, User.Identity.GetUserId());
-            return View(_BlogListing.ToList());
+            List<Playlist> _PlaylistListing = _db.GetPlaylists(0, User.Identity.GetUserId());
+            return View(_PlaylistListing.ToList());
         }
-
-
-
 
         /// <summary>
         /// Get a Song Listing
@@ -62,12 +59,12 @@ namespace Photos.Controllers
             if (Id > 0)
             {
                 // Load Blog entry from the database
-                Blog _blog = _db.GetBlog(Id, User.Identity.GetUserId());
-                return View(_blog);
+                Playlist _playlist = _db.GetPlaylist(Id, User.Identity.GetUserId());
+                return View(_playlist);
             }
             else
             {
-                return View(new Blog());
+                return View(new Playlist());
             }
         }
 
@@ -85,16 +82,16 @@ namespace Photos.Controllers
             if (Id > 0 )
             {
                 // Load Blog entry from the database
-                Blog _blog = _db.GetBlog(Id, User.Identity.GetUserId());
-                return View(_blog);
+                Playlist _playlist = _db.GetPlaylist(Id, User.Identity.GetUserId());
+                return View(_playlist);
             } else
             {
-                return View(new Blog());
+                return View(new Playlist());
             }
         }
 
         /// <summary>
-        /// Save a Blog Post
+        /// Save a Playlist
         /// </summary>
         /// <param name="Id"></param>
         /// <param name="title"></param>
@@ -105,23 +102,22 @@ namespace Photos.Controllers
         [HttpPost]
         [Authorize]
         [ValidateInput(false)]
-        public ActionResult Save(string Id, string title, String author, string blogtexthtml, string btnsubmit)
+        public ActionResult Save(string Id, string playlistname, string btnsubmit)
         {
             switch (btnsubmit)
             {
                 case "Save":
-                    Blog blog = new Blog();
-                    blog.Id = Id;
-                    blog.Title = title;
-                    blog.Author = author;
-                    blog.BlogText = blogtexthtml;
-                    Id = _db.SaveBlogEntry(blog);
-                    return RedirectToAction("View", "Blog", new { id = Id });
+                    Playlist playlist = new Playlist();
+                    playlist.Id = Id;
+                    playlist.PlaylistName = playlistname;
+      
+                    Id = _db.SavePlaylistEntry(playlist);
+                    return RedirectToAction("View", "Music", new { id = Id });
                 case "Delete":
-                    _db.DeleteBlogEntry(Id);
-                    return RedirectToAction("Index", "Blog");
+                    _db.DeletePlaylistEntry(Id);
+                    return RedirectToAction("Index", "Music");
             }
-            return RedirectToAction("Index", "Blog");
+            return RedirectToAction("Index", "Music");
         }
 
     }
