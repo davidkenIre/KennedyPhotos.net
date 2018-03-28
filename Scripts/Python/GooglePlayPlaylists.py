@@ -28,13 +28,38 @@ api.login(GoogleUsername, GooglePassword, Mobileclient.FROM_MAC_ADDRESS) # => Tr
 # Table based playlists
 playlistsongcnx = mysql.connector.connect(user=(MySQLUsername), password=(MySQLPassword), host='lattuce-dc', database='music')
 playlistcnx = mysql.connector.connect(user=(MySQLUsername), password=(MySQLPassword), host='lattuce-dc', database='music')
+playlistcnxtodelete = mysql.connector.connect(user=(MySQLUsername), password=(MySQLPassword), host='lattuce-dc', database='music')
 playlistsongcursor = playlistsongcnx.cursor()
 playlistcursor = playlistcnx.cursor()
+playlistcursortodelete = playlistcnxtodelete.cursor()
 
-query = ("select s.album_name, s.song_name, s.filename, p.playlist_name from playlist p, playlist_song ps, song s where p.playlist_id = ps.playlist_id and ps.song_id = s.song_id and p.playlist_name = 'DKEN Playlist'")
+query = ("select s.album_name, s.song_name, s.filename, p.playlist_name from playlist p, playlist_song ps, song s where p.playlist_id = ps.playlist_id and ps.song_id = s.song_id")
 playlistsongcursor.execute(query)
-query = ("select playlist_name, playlist_id from playlist")
+query = ("select playlist_name, playlist_id from playlist p where p.active='Y'")
 playlistcursor.execute(query)
+query = ("select playlist_name, playlist_id from playlist p where p.active='N'")
+playlistcursortodelete.execute(query)
+
+# Delete playlists where active = N
+for (playlist_name, playlist_id) in playlistcursortodelete:
+    playlists = api.get_all_playlists()
+    for playlist in playlists:
+        if playlist['name'] == playlist_name:
+            id_to_delete = playlist['id']
+            print("Deleting Playlist:", playlist['name'], [id_to_delete])
+            api.delete_playlist(id_to_delete)
+playlistcursortodelete.close()
+
+
+# Delete playlists which dont exist in the database anymore
+#playlists = api.get_all_playlists()
+#for playlist in playlists:
+#
+#
+#    if playlist['name'] == playlist_name:
+#        id_to_delete = playlist['id']
+#        print("Deleting Playlist:", playlist['name'], [id_to_delete])
+#        api.delete_playlist(id_to_delete)
 
 
 # Recreate existing playlists

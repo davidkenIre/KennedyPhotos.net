@@ -475,10 +475,10 @@
     <Content Include="Views\Music\_Layout.cshtml" />
     <Content Include="Views\Music\_PartialMusic.cshtml" />
     <Content Include="Views\Music\_ViewStart.cshtml" />
-    <Content Include="Views\Music\Edit.cshtml" />
-    <Content Include="Views\Music\Index.cshtml" />
-    <Content Include="Views\Music\View.cshtml" />
-    <Content Include="Views\Music\Playlist.cshtml" />
+    <Content Include="Views\Music\PlaylistEdit.cshtml" />
+    <Content Include="Views\Music\SongList.cshtml" />
+    <Content Include="Views\Music\PlaylistView.cshtml" />
+    <Content Include="Views\Music\PlaylistList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

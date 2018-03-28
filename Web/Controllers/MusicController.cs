@@ -13,46 +13,44 @@ namespace Photos.Controllers
     {
         PhotosDb _db = new PhotosDb();
 
-        /// <summary>
-        /// Get a Playlist Listing
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Authorize]
-        public ActionResult Playlist()
-        {
-            List<Playlist> _PlaylistListing = _db.GetPlaylists(0, User.Identity.GetUserId());
-            return View(_PlaylistListing.ToList());
-        }
-
+        ////////////////////// Songs
+        
         /// <summary>
         /// Get a Song Listing
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Authorize]
-        public ActionResult Index()
+        public ActionResult SongList()
         {
             List<Song> _SongListing = _db.GetSongs();
             return View(_SongListing.ToList());
         }
 
+
+        ////////////////////// Playlists
+
+        /// <summary>
+        /// Get a Playlist Listing
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Authorize]
-        public ActionResult _PartialMusic()
+        public ActionResult PlaylistList()
         {
-            List<Blog> _BlogListing = _db.GetBlogs(5, User.Identity.GetUserId());
-            return PartialView(_BlogListing.ToList());
+            List<Playlist> _PlaylistListing = _db.GetPlaylists(0, User.Identity.GetUserId());
+            return View(_PlaylistListing.ToList());
         }
+
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="BlogID">A Blog ID</param>
+        /// <param name="Id">A Playlist ID</param>
         /// <returns></returns>
         [HttpGet]
         [Authorize]
-        public ActionResult View(int Id)
+        public ActionResult PlaylistView(int Id)
         {
             ViewBag.Id = Id;
             // If Id <> 0 then load existing blog data
@@ -71,11 +69,11 @@ namespace Photos.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="BlogID">A Blog ID</param>
+        /// <param name="Id">A Playlist ID</param>
         /// <returns></returns>
         [HttpGet]
         [Authorize]
-        public ActionResult Edit(int Id)
+        public ActionResult PlaylistEdit(int Id)
         {
             ViewBag.Id = Id;
             // If Id <> 0 then load existing blog data
@@ -94,15 +92,13 @@ namespace Photos.Controllers
         /// Save a Playlist
         /// </summary>
         /// <param name="Id"></param>
-        /// <param name="title"></param>
-        /// <param name="author"></param>
-        /// <param name="dateposted"></param>
-        /// <param name="blogtexthtml"></param>
+        /// <param name="playlistname"></param>
+        /// <param name="btnsubmit"></param>
         /// <returns></returns>
         [HttpPost]
         [Authorize]
         [ValidateInput(false)]
-        public ActionResult Save(string Id, string playlistname, string btnsubmit)
+        public ActionResult PlaylistSave(string Id, string playlistname, string btnsubmit)
         {
             switch (btnsubmit)
             {
@@ -112,13 +108,12 @@ namespace Photos.Controllers
                     playlist.PlaylistName = playlistname;
       
                     Id = _db.SavePlaylistEntry(playlist);
-                    return RedirectToAction("View", "Music", new { id = Id });
+                    return RedirectToAction("PlaylistView", "Music", new { id = Id });
                 case "Delete":
                     _db.DeletePlaylistEntry(Id);
-                    return RedirectToAction("Index", "Music");
+                    return RedirectToAction("PlaylistList", "Music");
             }
-            return RedirectToAction("Index", "Music");
+            return RedirectToAction("PlaylistList", "Music");
         }
-
     }
 }

@@ -73,7 +73,7 @@ namespace Photos.Models
         public string Id { get; set; }
         public string PlaylistName { get; set; }
         public string Owner { get; set; }
-        public string DatePosted { get; set; }
+        public string DateModified { get; set; }
     }
 }
 

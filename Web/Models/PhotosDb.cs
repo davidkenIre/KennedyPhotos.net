@@ -37,7 +37,7 @@ namespace Photos.Models
                   "and aa.album_id = a.album_id " +
                   "and aa.userid = '" + UserID + "' " +
                   "union " +
-                  "select a.album_id, album_name, description, location, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date from album a, aspnetroles ar2, aspnetuserroles aur2 " +
+                  "select a.album_id, album_name, description, location, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date from album a, user.aspnetroles ar2, user.aspnetuserroles aur2 " +
                   "where aur2.userid = '" + UserID + "' " +
                   "and a.album_id = " + Id + " " +
                   "and aur2.RoleId = ar2.Id " +
@@ -94,7 +94,7 @@ namespace Photos.Models
             "union " +
             "select a.created_date, a.album_name, a.description, a.location, " +
             "    a.album_id, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date " +
-            "from album a, aspnetroles ar2, aspnetuserroles aur2 " +
+            "from album a, user.aspnetroles ar2, user.aspnetuserroles aur2 " +
             "where aur2.userid = '" + UserID + "' " +
             "and aur2.RoleId = ar2.Id " +
             "and ar2.Name = 'Admin' " +
@@ -219,7 +219,7 @@ namespace Photos.Models
             a.description, a.location, p.photo_id, p.filename, p.thumbnail_filename,
             DATE_FORMAT(p.date_taken, '%d-%b-%Y') as date_taken, p.fStop, p.exposure,
             p.iso, p.focal_length, p.dimensions, p.Camera_maker, p.Camera_model, p.checksum
-            from photo p, album a, aspnetroles ar2, aspnetuserroles aur2
+            from photo p, album a, user.aspnetroles ar2, user.aspnetuserroles aur2
             where a.album_id = p.album_id
             and a.album_id = " + AlbumId + @" 
             and a.active = 'Y'
@@ -316,7 +316,7 @@ namespace Photos.Models
             "and ba1.userid = '" + UserID + "' " +
             "and b1.active = 'Y' " +
             "union " +
-            "select b2.* from blog b2, aspnetroles ar2, aspnetuserroles aur2 " +
+            "select b2.* from blog b2, user.aspnetroles ar2, user.aspnetuserroles aur2 " +
             "where " +
             "aur2.userid = '" + UserID + "' " +
             "and aur2.RoleId = ar2.Id " +
@@ -386,7 +386,7 @@ namespace Photos.Models
             union
             select b.blog_id, Title, Author, Blog_Text, 
                 DATE_FORMAT(GREATEST(b.CREATED_DATE, ifnull(b.UPDATED_DATE, b.CREATED_DATE)), '%d-%M-%Y') as dte_posted
-            from blog b, aspnetroles ar2, aspnetuserroles aur2
+            from blog b, user.aspnetroles ar2, user.aspnetuserroles aur2
             where b.blog_id =  " + BlogId + @" 
             and aur2.userid = '" + UserID + @"'  
             and aur2.RoleId = ar2.Id
@@ -508,7 +508,7 @@ namespace Photos.Models
             // Create the SQL command - This is a union statement because if the user is an Administrator
             //                          we do not want to restrict the blogs returned
             string SQL = "";
-            SQL = "select playlist_id, playlist_name, DATE_FORMAT(GREATEST(p.CREATED_DATE, ifnull(p.UPDATED_DATE, p.CREATED_DATE)), '%d-%M-%Y') as dte_posted, u.username from music.playlist p, photos.aspnetusers u where p.active='Y' and u.id = p.owner_id order by playlist_name";
+            SQL = "select playlist_id, playlist_name, DATE_FORMAT(GREATEST(p.CREATED_DATE, ifnull(p.UPDATED_DATE, p.CREATED_DATE)), '%d-%M-%Y') as modified_date, u.username from music.playlist p, user.aspnetusers u where p.active='Y' and u.id = p.owner_id order by playlist_name";
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
@@ -522,7 +522,7 @@ namespace Photos.Models
                 {
                     Id = dataReader["playlist_id"].ToString(),
                     PlaylistName = dataReader["playlist_name"].ToString(),
-                    DatePosted = dataReader["dte_posted"].ToString(),
+                    DateModified = dataReader["modified_date"].ToString(),
                     Owner = dataReader["username"].ToString(),
                 };
                 _playlists.Add(item);
@@ -558,8 +558,8 @@ namespace Photos.Models
             conn.Open();
 
             // Create Command
-            string SQL = @"select *
-            from music.playlist p";
+            string SQL = @"select p.playlist_id, p.playlist_name, a.username, DATE_FORMAT(GREATEST(p.CREATED_DATE, ifnull(p.UPDATED_DATE, p.CREATED_DATE)), '%d-%M-%Y') as modified_date 
+            from music.playlist p, user.aspnetusers a where p.owner_id = a.id and p.playlist_id = " + PlaylistId;
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
@@ -571,6 +571,8 @@ namespace Photos.Models
             {
                 _playlist.Id = dataReader["playlist_id"].ToString();
                 _playlist.PlaylistName = dataReader["playlist_name"].ToString();
+                _playlist.Owner = dataReader["username"].ToString();
+                _playlist.DateModified = dataReader["modified_date"].ToString();
             }
 
             //close Data Reader

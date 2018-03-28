@@ -36,5 +36,8 @@ insert into music.playlist_song (song_id, created_date, created_by_id, playlist_
 
 select * from music.playlist;
 
+
+update music.playlist set owner_id = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3';
+
 select playlist_id, playlist_name, DATE_FORMAT(GREATEST(p.CREATED_DATE, ifnull(p.UPDATED_DATE, p.CREATED_DATE)), '%d-%M-%Y') as dte_posted, u.username 
 from music.playlist p, photos.aspnetusers u where p.active='Y' and u.id = p.owner_id order by playlist_name

@@ -10,10 +10,10 @@ create table song (
     created_by_id varchar(128) not null,
     updated_date date,
     updated_by_id varchar(128),
-    album_name varchar(256),
-    song_name varchar(500),
-    path varchar(500),
-    filename varchar(500),
+    album_name varchar(256) not null,
+    song_name varchar(500) not null,
+    path varchar(500) not null,
+    filename varchar(500) not null,
     play_count integer not null,
     kodi_idSong integer not null,
     active varchar(1) not null,
@@ -31,7 +31,7 @@ create table playlist (
     updated_date date,
     updated_by_id varchar(128),
     owner_id varchar(128) not null,
-    playlist_name varchar(500),
+    playlist_name varchar(500) not null,
     active varchar(1) not null,
     primary key (playlist_id)
 ); 
@@ -44,8 +44,10 @@ create table playlist_song (
     created_by_id varchar(128) not null,
     updated_date date,
     updated_by_id varchar(128),
-    playlist_id integer,
-    song_id integer,
-    active varchar(1) not null,
+    playlist_id integer not null,
+    song_id integer not null,
+    active varchar(1) not null
     primary key (playlist_song_id)
 );
+
+CREATE UNIQUE index kodi_idsong_playlist_ind on playlist_song(song_id, playlist_id); 

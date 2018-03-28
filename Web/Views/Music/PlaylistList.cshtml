@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Photos.Models.Playlist>
+<div class="page-header">
+    <h1>All Playlists</h1>
+</div>
+
+@foreach (var item in Model)
+{
+    <div>
+        <div>
+            <h2>@item.PlaylistName</h2>
+            <div class="btn-group pull-right" role="group" aria-label="...">
+                <a class="btn btn-primary" href="/Music/PlaylistView/@item.Id" role="button"><span class="glyphicon glyphicon-eye-open"></span> View</a>
+                <a class="btn btn-default" href="/Music/PlaylistEdit/@item.Id" role="button"><span class="glyphicon glyphicon-edit"></span> Edit</a>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div>
+            Owner @item.Owner
+            <span class="glyphicon glyphicon-time"></span> Last Update @item.DateModified
+        </div>
+    </div>
+    <hr>
+}
+
+<br />
+<div class="btn-group" role="group" aria-label="...">
+    <a class="btn btn-primary" href="/Music/PlaylistEdit/0" role="button">Create New Playlist</a>
+</div>
+
