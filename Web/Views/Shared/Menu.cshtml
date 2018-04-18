@@ -27,9 +27,8 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Account <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="/Manage/ChangePassword">Change Password</a></li>
-                        <li><a href="/Account/Register">Register New Account</a></li>
-                        @if (ViewContext.HttpContext.User.IsInRole("Admin"))
-                        {
+                        @if (ViewContext.HttpContext.User.IsInRole("Admin")) {
+                            <li><a href="/Account/Register">Register New Account</a></li>
                             <li><a href="/Role/Index">View Roles</a></li>
                             <li class="divider"></li>
                             <li><a href="http://KennedyPhotos.net:170/">Realtime Back</a></li>

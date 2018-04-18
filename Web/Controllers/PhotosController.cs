@@ -45,16 +45,12 @@ namespace Photos.Controllers
         [Authorize]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
         public ActionResult _EditAlbumDetails(int Id)
-        //public ActionResult _EditAlbumDetails()
         {
             Album _Album = _db.GetAlbum(Id, User.Identity.GetUserId());
             return PartialView(_Album);
         }
 
-   
-
-
-        /// <summary>
+           /// <summary>
         /// Used to return a partial view that allows the user to update 
         /// the album description and date
         /// </summary>
@@ -62,12 +58,13 @@ namespace Photos.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public ActionResult Save(string AlbumId, string AlbumDate, string Description)
+        public ActionResult Save(string AlbumId, string AlbumDate, string Description, string Active)
         {
             Album album = new Album();
             album.Id = AlbumId;
             album.AlbumDate = AlbumDate;
             album.Description = Description;
+            album.Active = Active;
             _db.SaveAlbum(album);
             return RedirectToAction("Index", "Photos");
         }

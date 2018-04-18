@@ -30,7 +30,7 @@ create table playlist (
     created_by_id varchar(128) not null,
     updated_date date,
     updated_by_id varchar(128),
-    owner_id varchar(128) not null,
+    owner_idalbum varchar(128) not null,
     playlist_name varchar(500) not null,
     active varchar(1) not null,
     primary key (playlist_id)

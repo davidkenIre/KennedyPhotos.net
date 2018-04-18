@@ -31,13 +31,13 @@ namespace Photos.Models
             //Create Command
             string SQL = "";
             SQL = "select * from ( " +
-                  "select a.album_id, album_name, description, location, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date from album a, albumaccess aa " +
+                  "select a.album_id, album_name, description, location, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date, a.active from album a, albumaccess aa " +
                   "where a.album_id = " + Id + " " +
                   "and a.active = 'Y' " +
                   "and aa.album_id = a.album_id " +
                   "and aa.userid = '" + UserID + "' " +
                   "union " +
-                  "select a.album_id, album_name, description, location, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date from album a, user.aspnetroles ar2, user.aspnetuserroles aur2 " +
+                  "select a.album_id, album_name, description, location, DATE_FORMAT(a.album_date, '%d-%b-%Y') as album_date, a.active from album a, user.aspnetroles ar2, user.aspnetuserroles aur2 " +
                   "where aur2.userid = '" + UserID + "' " +
                   "and a.album_id = " + Id + " " +
                   "and aur2.RoleId = ar2.Id " +
@@ -55,7 +55,8 @@ namespace Photos.Models
                 Location = dataReader["location"].ToString(),
                 AlbumName = dataReader["album_name"].ToString(),
                 AlbumDate = dataReader["album_date"].ToString(),
-                Description = dataReader["description"].ToString()
+                Description = dataReader["description"].ToString(),
+                Active = dataReader["active"].ToString() 
             };                
 
             //close Data Reader
@@ -281,7 +282,7 @@ namespace Photos.Models
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            SQL = "update album set description = '" + album.Description + "', album_date = STR_TO_DATE('" + album.AlbumDate + "','%Y-%c-%d') , updated_date = now(), updated_by = 'TEMPUSER' where album_id = " + album.Id;
+            SQL = "update album set description = '" + album.Description + "', album_date = STR_TO_DATE('" + album.AlbumDate + "','%d-%b-%Y') , updated_date = now(), updated_by = 'TEMPUSER', active= '" + album.Active + "' where album_id = " + album.Id;
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             cmd.ExecuteNonQuery();
 

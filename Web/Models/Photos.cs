@@ -15,6 +15,7 @@ namespace Photos.Models
         public string AlbumName { get; set; }
         public string AlbumDate { get; set; }
         public string Description { get; set; }
+        public string Active { get; set; }
     }
     
     /// <summary>

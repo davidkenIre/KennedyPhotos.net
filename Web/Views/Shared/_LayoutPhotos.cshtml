@@ -9,28 +9,28 @@
     <title>KennedyPhotos.net - Albums</title>
     <!-- Bootstrap Core CSS -->
     <link href="~/Content/bootstrap.min.css" rel="stylesheet">
+
     <!-- Custom CSS -->
     <link href="~/Content/blog-home.css" rel="stylesheet">
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-    <!-- /.container -->
     <!-- jQuery -->
     <script src="~/Scripts/jquery-1.12.4.js"></script>
     <!-- Bootstrap Core JavaScript -->
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/jquery.hotkeys.js"></script>
-    <script src="~/Scripts/bootstrap-wysiwyg.js"></script>
+    @*<script src="~/Scripts/bootstrap-wysiwyg.js"></script>*@
 
     <!-- Datepicker -->
-    <link href="~/Content/datepicker/less/datepicker.less" rel="stylesheet">
-    <script src="~/Content/datepicker/js/bootstrap-datepicker.js"></script>
-
-
+    <script type="text/javascript" src="~/Scripts/moment.min.js"></script>
+    <!-- include your less or built css files  -->
+    <link rel="stylesheet" href="/Content/bootstrap-datetimepicker.less" />
+    <script src="~/Scripts/bootstrap-datetimepicker.js"></script>
 </head>
 <body>
 
@@ -42,22 +42,12 @@
         <div class="row">
             <!-- Blog Entries Column -->
             <div class="col-md-12">
-
                 <!-- First Blog Post -->
                 @RenderBody()
-
-
-
             </div>
-            
         </div>
         <!-- /.row -->
         <hr>
-
-
-
-
     </div>
-
 </body>
 </html>

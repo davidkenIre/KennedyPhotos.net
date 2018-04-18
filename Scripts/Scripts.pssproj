@@ -31,6 +31,7 @@
     <Compile Include="Powershell\KeepAlive.ps1" />
     <Compile Include="Powershell\KodiMusicPlaylists.ps1" />
     <Compile Include="Powershell\Backup.ps1" />
+    <Compile Include="Powershell\MYSQLBackup.ps1" />
     <Compile Include="Powershell\Reboot.ps1" />
     <Compile Include="Powershell\Time.ps1" />
   </ItemGroup>
