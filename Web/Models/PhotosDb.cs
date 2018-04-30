@@ -156,6 +156,7 @@ namespace Photos.Models
             string SQL = "";
             SQL = "select * from music.song s " +
             "where s.active = 'Y' " +
+      //      "and s.album_name = 'F.A.C.T' " +
             "order by s.album_name, s.song_name ";
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
@@ -181,6 +182,45 @@ namespace Photos.Models
             conn.Close();
 
             return _songs;
+        }
+
+
+
+        /// <summary>
+        /// Retrive a list of all Songs from the database
+        /// </summary>
+        /// <returns></returns>
+        public bool AddSongToPlaylist(string PlayListID, string SongID)
+        {
+            try { 
+                // Connect to MySQL and load all the photos
+                MySql.Data.MySqlClient.MySqlConnection conn;
+                string myConnectionString;
+
+                // Get the connection password
+                string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLPassword", "");
+
+                myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+                conn = new MySql.Data.MySqlClient.MySqlConnection();
+                conn.ConnectionString = myConnectionString;
+                conn.Open();
+
+                // Create Command
+                string SQL = "";
+                SQL = "insert into music.playlist_song (created_date, created_by_id, playlist_id, song_id, active) values (now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3',  '" + PlayListID + "', '" + SongID + "','Y') ";
+
+                MySqlCommand cmd = new MySqlCommand(SQL, conn);
+                //Create a data reader and Execute the command
+                cmd.ExecuteNonQuery();
+
+     
+                conn.Close();
+
+                return true;
+            } catch
+            {
+                return false;
+            }
         }
 
         /// <summary>

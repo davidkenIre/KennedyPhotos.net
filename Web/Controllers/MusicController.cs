@@ -21,12 +21,35 @@ namespace Photos.Controllers
         /// <returns></returns>
         [HttpGet]
         [Authorize]
-        public ActionResult SongList()
+        public ActionResult Songs(int id)
         {
             List<Song> _SongListing = _db.GetSongs();
+            ViewBag.id = id;
             return View(_SongListing.ToList());
         }
 
+        /// <summary>
+        /// Get a Song Listing
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        public ActionResult AddSong(JSONMessage model)
+        {
+            var result = new JSONMessage();
+
+            if (_db.AddSongToPlaylist(model.PlaylistID, model.SongID)) {
+                return Json("Success");
+            } else {
+                return Json("Fail");
+            }
+        }
+
+        public class JSONMessage
+        {
+            public string PlaylistID { get; set; }
+            public string SongID{ get; set; }
+        }
 
         ////////////////////// Playlists
 
@@ -41,7 +64,6 @@ namespace Photos.Controllers
             List<Playlist> _PlaylistListing = _db.GetPlaylists(0, User.Identity.GetUserId());
             return View(_PlaylistListing.ToList());
         }
-
 
         /// <summary>
         /// 

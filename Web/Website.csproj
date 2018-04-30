@@ -545,7 +545,7 @@
     <Content Include="Views\Role\Create.cshtml" />
     <Content Include="Views\Role\Index.cshtml" />
     <Content Include="Views\Role\_ViewStart.cshtml" />
-    <Content Include="Views\Shared\_LayoutPhotos.cshtml" />
+    <Content Include="Views\Shared\_LayoutNoRBubble.cshtml" />
     <Content Include="Views\Blog\_PartialBlog.cshtml" />
     <Content Include="Views\Photos\_PartialAlbum.cshtml" />
     <Content Include="Views\Photos\_EditAlbumDetails.cshtml" />
@@ -558,11 +558,10 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Views\Music\_Layout.cshtml" />
     <Content Include="Views\Music\_PartialMusic.cshtml" />
     <Content Include="Views\Music\_ViewStart.cshtml" />
     <Content Include="Views\Music\PlaylistEdit.cshtml" />
-    <Content Include="Views\Music\SongList.cshtml" />
+    <Content Include="Views\Music\Songs.cshtml" />
     <Content Include="Views\Music\PlaylistView.cshtml" />
     <Content Include="Views\Music\PlaylistList.cshtml" />
     <Content Include="Views\Shared\MenuAccount.cshtml" />

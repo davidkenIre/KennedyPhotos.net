@@ -1,0 +1,91 @@
+﻿@model IEnumerable<Photos.Models.Song>
+<div class="page-header">
+    <h1>All Songs</h1>
+</div>
+
+
+<style>
+    #contextMenu {
+        position: absolute;
+        display: none;
+    }
+</style>
+
+<script>
+    $(function () {
+
+        var $contextMenu = $("#contextMenu");
+
+        $("body").on("contextmenu", "table tr", function (e) {
+            $contextMenu.css({
+                display: "block",
+                left: e.pageX,
+                top: e.pageY
+            });
+            return false;
+        });
+
+        $contextMenu.on("click", "a", function () {
+            $contextMenu.hide();
+        });
+
+    });
+
+    function AddSong(SongID) {
+        var JSONObject = { // Create JSON object to pass through AJAX
+            PlaylistID: GetURLParameter(), //Make sure these names match the properties in VM
+            SongID: SongID
+        };
+
+        $.ajax({ //Do an ajax post to the controller
+            type: 'POST',
+            url: '/Music/AddSong',
+            data: JSON.stringify(JSONObject),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                document.getElementById("td" + SongID).innerHTML = "";
+            }
+        });
+    }
+
+    function GetURLParameter() {
+        var sPageURL = window.location.href;
+        var indexOfLastSlash = sPageURL.lastIndexOf("/");
+
+        if (indexOfLastSlash > 0 && sPageURL.length - 1 != indexOfLastSlash)
+            return sPageURL.substring(indexOfLastSlash + 1);
+        else
+            return 0;
+    }
+
+</script>
+
+
+<table class="table">
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.Album</td>
+            <td>@item.Title</td>
+            <td>@item.Location</td>
+            @if (@ViewBag.Id != 0)
+            {
+                <td style="text-align:right" id="td@(item.Id)">
+                    <a class="btn btn-success" role="button" onclick="AddSong(@(item.Id))"><span class="glyphicon glyphicon-add"></span>Add</a>
+                </td>
+            }
+        </tr>
+    }
+</table>
+
+    <div id="contextMenu" class="dropdown clearfix">
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
+            <li><a tabindex="-1" href="#">Action</a></li>
+            <li><a tabindex="-1" href="#">Another action</a></li>
+            <li><a tabindex="-1" href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a tabindex="-1" href="#">Separated link</a></li>
+        </ul>
+    </div>
