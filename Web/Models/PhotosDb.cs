@@ -154,10 +154,11 @@ namespace Photos.Models
 
             // Create Command
             string SQL = "";
-            SQL = "select * from music.song s " +
-            "where s.active = 'Y' " +
-      //      "and s.album_name = 'F.A.C.T' " +
-            "order by s.album_name, s.song_name ";
+            SQL = "select S.SONG_ID, S.SONG_NAME, S.ALBUM_NAME, S.FILENAME, ps.playlist_song_id " +
+                    "from music.song s " +
+                    "LEFT OUTER JOIN music.playlist_song ps ON ps.song_id = s.song_id " +
+                    "where s.active = 'Y' " +
+                    "order by s.album_name, s.song_name ";
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
@@ -173,6 +174,7 @@ namespace Photos.Models
                     Title = dataReader["song_name"].ToString(),
                     Album = dataReader["album_name"].ToString(),
                     Location = dataReader["filename"].ToString(),
+                    PlaylistSongID = dataReader["playlist_song_id"].ToString(),
                 };
                 _songs.Add(item);
             }

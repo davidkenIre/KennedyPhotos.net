@@ -64,6 +64,7 @@ namespace Photos.Models
         public string Title { get; set; }
         public string Album { get; set; }
         public string Location { get; set; }
+        public string PlaylistSongID { get; set; }
     }
 
     /// <summary>

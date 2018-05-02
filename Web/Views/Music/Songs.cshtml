@@ -49,6 +49,10 @@
         });
     }
 
+    function RemoveSong(SongID) {
+        alert('To Be Implemented')
+    }
+
     function GetURLParameter() {
         var sPageURL = window.location.href;
         var indexOfLastSlash = sPageURL.lastIndexOf("/");
@@ -73,19 +77,26 @@
             @if (@ViewBag.Id != 0)
             {
                 <td style="text-align:right" id="td@(item.Id)">
-                    <a class="btn btn-success" role="button" onclick="AddSong(@(item.Id))"><span class="glyphicon glyphicon-add"></span>Add</a>
+                    @if (@item.PlaylistSongID == "")
+                    {
+                        <a class="btn btn-success" role="button" onclick="AddSong(@(item.Id))"><span class="glyphicon glyphicon-add"></span>Add</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-danger" role="button" onclick="RemoveSong(@(item.Id))"><span class="glyphicon glyphicon-add"></span>Remove</a>
+                    }
                 </td>
             }
         </tr>
     }
 </table>
 
-    <div id="contextMenu" class="dropdown clearfix">
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
-            <li><a tabindex="-1" href="#">Action</a></li>
-            <li><a tabindex="-1" href="#">Another action</a></li>
-            <li><a tabindex="-1" href="#">Something else here</a></li>
-            <li class="divider"></li>
-            <li><a tabindex="-1" href="#">Separated link</a></li>
-        </ul>
-    </div>
+<div id="contextMenu" class="dropdown clearfix">
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
+        <li><a tabindex="-1" href="#">Action</a></li>
+        <li><a tabindex="-1" href="#">Another action</a></li>
+        <li><a tabindex="-1" href="#">Something else here</a></li>
+        <li class="divider"></li>
+        <li><a tabindex="-1" href="#">Separated link</a></li>
+    </ul>
+</div>
