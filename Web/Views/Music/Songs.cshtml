@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Photos.Models.Song>
+﻿@model Music.Models.AlbumSong
 <div class="page-header">
     <h1>All Songs</h1>
 </div>
@@ -66,8 +66,18 @@
 </script>
 
 
+<select>
+    @foreach (var item in Model.Album)
+    {
+    <option id="@item.Id">@item.AlbumName</option>
+    }
+</select>
+
+<br />
+<br />
+
 <table class="table">
-    @foreach (var item in Model)
+    @foreach (var item in Model.Song)
     {
         <tr>
             <td>@item.Id</td>

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Photos.Models;
+using Blogs.Models;
 using System.IO;
 using Microsoft.AspNet.Identity;
 
-namespace Photos.Controllers
+namespace Blogs.Controllers
 {
     public class BlogController : Controller
     {
-        PhotosDb _db = new PhotosDb();
+        BlogDb _db = new BlogDb();
 
         /// <summary>
         /// Get an Blog Listing

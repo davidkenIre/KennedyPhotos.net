@@ -41,7 +41,7 @@ playlistcursor2 = playlistcnx2.cursor()
 
 ################
 # Delete playlists which dont exist in the database anymore
-# Temp code until i can figure out how to truncate existing google playlists
+# TODO: Temp code until i can figure out how to truncate existing google playlists
 playlists = api.get_all_playlists()
 for playlist in playlists:
     id_to_delete = playlist['id']
@@ -92,9 +92,11 @@ playlistsongs=[]
 count=0
 old_playlist_id=""
 songs = api.get_all_songs()
-query = ("select s.album_name, s.song_name, s.filename, p.playlist_name from playlist p, playlist_song ps, song s where p.playlist_id = ps.playlist_id and ps.song_id = s.song_id order by p.playlist_name")
+query = ("select a.album_name, s.song_name, s.filename, p.playlist_name from playlist p, playlist_song ps, song s, album a where p.playlist_id = ps.playlist_id and s.album_id = a.album_id and ps.song_id = s.song_id order by p.playlist_name")
 playlistsongcursor.execute(query)
 
+
+#### TODO - album_name and song_name is not unique...
 for (album_name,  song_name, filename, playlist_name) in playlistsongcursor:
     for song in songs: 
         if song['album'] == album_name and song['title'] == song_name:

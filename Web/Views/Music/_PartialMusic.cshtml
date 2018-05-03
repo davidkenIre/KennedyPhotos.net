@@ -1,9 +1,0 @@
-﻿@model IEnumerable<Photos.Models.Blog>
-<h2 style="color: white">Recent Blogs</h2>
-
-@foreach (var item in Model)
-{
-    <a href="/Blog/View/@item.Id" style="color:white">@item.Title</a><br />
-}
-<br />
-<p><a class="btn btn-default" href="/Blog/Index" role="button">See All Blogs</a></p>

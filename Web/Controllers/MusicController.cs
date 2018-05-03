@@ -3,32 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Photos.Models;
+using Music.Models;
 using System.IO;
 using Microsoft.AspNet.Identity;
 
-namespace Photos.Controllers
+namespace Music.Controllers
 {
     public class MusicController : Controller
     {
-        PhotosDb _db = new PhotosDb();
+        MusicDb _db = new MusicDb();
 
-        ////////////////////// Songs
-        
         /// <summary>
-        /// Get a Song Listing
+        /// Get an Album Listing, along with a list of songs
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Authorize]
         public ActionResult Songs(int id)
         {
-            List<Song> _SongListing = _db.GetSongs();
+            var albumsong = new AlbumSong();
+            albumsong.Song = _db.GetSongs();
+            albumsong.Album = _db.GetAlbums();
             ViewBag.id = id;
-            return View(_SongListing.ToList());
+            return View(albumsong);
         }
 
-        /// <summary>
+        /// <summary> 
         /// Get a Song Listing
         /// </summary>
         /// <returns></returns>
