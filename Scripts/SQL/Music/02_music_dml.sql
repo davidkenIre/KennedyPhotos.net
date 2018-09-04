@@ -171,6 +171,10 @@ insert into music.playlist_song (song_id, created_date, created_by_id, playlist_
 insert into music.playlist_song (song_id, created_date, created_by_id, playlist_id, active) values (2324, curdate(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', (select playlist_id from playlist where playlist_name = 'General'), 'Y');
 insert into music.playlist_song (song_id, created_date, created_by_id, playlist_id, active) values (220, curdate(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', (select playlist_id from playlist where playlist_name = 'General'), 'Y');
 
+-- Settings
+insert into music.setting (created_date, created_by_id, setting, value) values (curdate(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', 'Reset Google Playlist', 'Y');
+
+
 
 
 select * from music.playlist;

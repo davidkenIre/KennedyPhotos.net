@@ -63,7 +63,7 @@ namespace Music.Models
         /// Retrive a list of all Songs from the database
         /// </summary>
         /// <returns></returns>
-        public List<Song> GetSongs()
+        public List<Song> GetSongs(int AlbumId)
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -84,8 +84,9 @@ namespace Music.Models
                     "LEFT JOIN music.album a ON a.album_id = s.album_id " +
                     "LEFT OUTER JOIN music.playlist_song ps ON ps.song_id = s.song_id " +
                     "where s.active = 'Y' " +
-                    "and A.Album_name = 'Believe' " +
-                    "and s.Album_id = A.ALBUM_ID " +
+            //        "and A.Album_name = 'Believe' " +
+            //        "and s.Album_id = A.ALBUM_ID " +
+                    "and s.Album_id = " + AlbumId + " " +
                     "order by A.album_name, s.song_name ";
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
@@ -143,7 +144,12 @@ namespace Music.Models
                 //Create a data reader and Execute the command
                 cmd.ExecuteNonQuery();
 
-     
+                // Set flag to regenerate playlist
+                SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
+                cmd = new MySqlCommand(SQL, conn);
+                //Create a data reader and Execute the command
+                cmd.ExecuteNonQuery();
+
                 conn.Close();
 
                 return true;
@@ -280,23 +286,30 @@ namespace Music.Models
             {
                 // Insert
                 SQL = "insert into music.playlist(created_date, created_by_id, owner_id, playlist_name,active) values(now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', '" + playlist.PlaylistName + "', 'Y');";
-                MySqlCommand cmd = new MySqlCommand(SQL, conn);
-                cmd.ExecuteNonQuery();
+                MySqlCommand cmdInt = new MySqlCommand(SQL, conn);
+                cmdInt.ExecuteNonQuery();
 
                 // Get the ID
                 SQL = "select LAST_INSERT_ID() AS MYID from music.playlist;";
-                cmd = new MySqlCommand(SQL, conn);
-                MySqlDataReader dataReader = cmd.ExecuteReader();
+                cmdInt = new MySqlCommand(SQL, conn);
+                MySqlDataReader dataReader = cmdInt.ExecuteReader();
                 dataReader.Read();
                 Id = dataReader["MYID"].ToString();
             }
             else
             {
                 SQL = "update music.playlist set playlist_name = '" + playlist.PlaylistName + "', updated_by_id = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', updated_date = now() where playlist_id = " + playlist.Id;
-                MySqlCommand cmd = new MySqlCommand(SQL, conn);
-                cmd.ExecuteNonQuery();
+                MySqlCommand cmdInt = new MySqlCommand(SQL, conn);
+                cmdInt.ExecuteNonQuery();
                 Id = playlist.Id;
             }
+
+            // Set flag to regenerate playlist
+            SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
+            MySqlCommand cmd = new MySqlCommand(SQL, conn);
+            cmd = new MySqlCommand(SQL, conn);
+            //Create a data reader and Execute the command
+            cmd.ExecuteNonQuery();
 
             conn.Close();
             return Id;
@@ -321,6 +334,12 @@ namespace Music.Models
 
             SQL = "update music.playlist set active = 'N', updated_by_id = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', updated_date = now() where playlist_id = " + Id;
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
+            cmd.ExecuteNonQuery();
+
+            // Set flag to regenerate playlist
+            SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
+            cmd = new MySqlCommand(SQL, conn);
+            //Create a data reader and Execute the command
             cmd.ExecuteNonQuery();
 
             conn.Close();

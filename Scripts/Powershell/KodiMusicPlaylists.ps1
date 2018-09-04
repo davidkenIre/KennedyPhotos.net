@@ -74,14 +74,25 @@ for($i = 0; $i -lt $PlayLists.Count; $i++) {
 	foreach($DataSet in $MYSQLDataSet.tables[0]) {
 		$OutputFile | foreach {
 			if (test-path($_)) {
-				$DataSet[0] | Out-File $_\$($PlayLists[$i].File) -append -encoding ASCII
+				$DataSet[0] | Out-File $_\$($PlayLists[$i].File) -append -encoding UTF8
 			}
 		}
 	}
 }
 ###############################################
 # Update the google playlists
-python ..\Python\GooglePlayPlaylists.py
+$Sql="select value from music.setting where setting = 'Reset Google Playlist'"
+$MYSQLCommand.CommandText = $Sql
+$Setting=$MYSQLCommand.ExecuteScalar()
+Write-Output "Update Google Playlist indicator: $($Setting)"
+if ($Setting -eq 'Y') {	
+	python ..\Python\GooglePlayPlaylists.py
+
+	# Reset update indicator
+	$Sql="update music.setting set value='N', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' "
+	$MYSQLCommand.CommandText = $Sql
+	$MYSQLCommand.ExecuteNonQuery()
+}
 
 write-output "Done"
 $Connection.Close()

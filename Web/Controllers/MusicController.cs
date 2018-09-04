@@ -22,7 +22,7 @@ namespace Music.Controllers
         public ActionResult Songs(int id)
         {
             var albumsong = new AlbumSong();
-            albumsong.Song = _db.GetSongs();
+            albumsong.Song = _db.GetSongs(id);
             albumsong.Album = _db.GetAlbums();
             ViewBag.id = id;
             return View(albumsong);

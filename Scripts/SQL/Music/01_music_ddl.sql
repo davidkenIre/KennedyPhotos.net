@@ -64,3 +64,16 @@ create table playlist_song (
 );
 
 CREATE UNIQUE index kodi_idsong_playlist_ind on playlist_song(song_id, playlist_id); 
+
+create table setting (
+	setting_id integer auto_increment,
+    created_date date not null,
+    created_by_id varchar(128) not null,
+    updated_date date,
+    updated_by_id varchar(128),
+    setting varchar(128) NOT NULL,
+    value varchar(128),    
+    primary key (setting_id)
+);
+
+CREATE UNIQUE index setting_ind on setting(setting_id); 

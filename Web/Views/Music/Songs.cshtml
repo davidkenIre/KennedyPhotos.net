@@ -3,7 +3,6 @@
     <h1>All Songs</h1>
 </div>
 
-
 <style>
     #contextMenu {
         position: absolute;
@@ -63,13 +62,16 @@
             return 0;
     }
 
+    function LoadAlbum(val) {
+        document.location.href = "/Music/Songs/" + val;
+    }
+
 </script>
 
-
-<select>
+<select id="SelectAlbum" onchange=LoadAlbum(this.options[this.selectedIndex].value)>
     @foreach (var item in Model.Album)
     {
-    <option id="@item.Id">@item.AlbumName</option>
+        <option value="@item.Id">@item.AlbumName</option>
     }
 </select>
 
@@ -110,3 +112,10 @@
         <li><a tabindex="-1" href="#">Separated link</a></li>
     </ul>
 </div>
+
+<script>
+    
+    // Default Selected Value
+    document.getElementById("SelectAlbum").value = @ViewBag.Id;
+
+</script>
