@@ -118,7 +118,7 @@ namespace Music.Models
 
 
         /// <summary>
-        /// Àdd a Song to the Database
+        /// Àdd a Song to a playlist
         /// </summary>
         /// <returns></returns>
         public bool AddSongToPlaylist(string PlayListID, string SongID)
@@ -159,7 +159,49 @@ namespace Music.Models
             }
         }
 
-       
+        /// <summary>
+        /// Remove a Song from a Playlist
+        /// </summary>
+        /// <returns></returns>
+        public bool RemoveSongFromPlaylist(string PlayListID, string SongID)
+        {
+            try
+            {
+                // Connect to MySQL and load all the photos
+                MySql.Data.MySqlClient.MySqlConnection conn;
+                string myConnectionString;
+
+                // Get the connection password
+                string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLPassword", "");
+
+                myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+                conn = new MySql.Data.MySqlClient.MySqlConnection();
+                conn.ConnectionString = myConnectionString;
+                conn.Open();
+
+                // Create Command
+                string SQL = "";
+                SQL = "delete from music.playlist_song where playlist_id = '" + PlayListID + "' and song_id =  '" + SongID + "'";
+
+                MySqlCommand cmd = new MySqlCommand(SQL, conn);
+                //Create a data reader and Execute the command
+                cmd.ExecuteNonQuery();
+
+                // Set flag to regenerate playlist
+                SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
+                cmd = new MySqlCommand(SQL, conn);
+                //Create a data reader and Execute the command
+                cmd.ExecuteNonQuery();
+
+                conn.Close();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         //////////////////////////////////////////////////////////
         // Playlist

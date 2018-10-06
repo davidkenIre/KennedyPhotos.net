@@ -32,7 +32,7 @@
 
     function AddSong(SongID) {
         var JSONObject = { // Create JSON object to pass through AJAX
-            PlaylistID: GetURLParameter(), //Make sure these names match the properties in VM
+            PlaylistID: GetPlaylistID(), //Make sure these names match the properties in VM
             SongID: SongID
         };
 
@@ -43,27 +43,45 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                document.getElementById("td" + SongID).innerHTML = "";
+                document.getElementById("td" + SongID).innerHTML = '<a class="btn btn-danger" role="button" onclick="RemoveSong(' + SongID + ')"><span class="glyphicon glyphicon-add"></span>Remove</a>';
             }
         });
     }
 
     function RemoveSong(SongID) {
-        alert('To Be Implemented')
+        var JSONObject = { // Create JSON object to pass through AJAX
+            PlaylistID: GetPlaylistID(), //Make sure these names match the properties in VM
+            SongID: SongID
+        };
+
+        $.ajax({ //Do an ajax post to the controller
+            type: 'POST',
+            url: '/Music/RemoveSong',
+            data: JSON.stringify(JSONObject),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                document.getElementById("td" + SongID).innerHTML = '<a class="btn btn-success" role="button" onclick="AddSong(' + SongID + ')"><span class="glyphicon glyphicon-add"></span>Add</a>';
+            }
+        });
     }
 
-    function GetURLParameter() {
-        var sPageURL = window.location.href;
-        var indexOfLastSlash = sPageURL.lastIndexOf("/");
-
-        if (indexOfLastSlash > 0 && sPageURL.length - 1 != indexOfLastSlash)
-            return sPageURL.substring(indexOfLastSlash + 1);
-        else
-            return 0;
+    function GetPlaylistID() {
+        urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('PlaylistID');
     }
 
-    function LoadAlbum(val) {
-        document.location.href = "/Music/Songs/" + val;
+    //Display songs for a partucular album
+    function LoadAlbum(AlbumID) {
+        URLToLoad = "/Music/Songs/" + AlbumID;
+
+        // If PlaylistID exists on the querystring, persist on a page refresh
+        if (GetPlaylistID() != '') {
+            URLToLoad = URLToLoad + "?PlaylistID=" + GetPlaylistID();
+        }
+
+        // Reload page
+        document.location.href = URLToLoad;
     }
 
 </script>

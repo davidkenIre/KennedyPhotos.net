@@ -29,7 +29,7 @@ namespace Music.Controllers
         }
 
         /// <summary> 
-        /// Get a Song Listing
+        /// Add a song to a playlist
         /// </summary>
         /// <returns></returns>
         [HttpPost]
@@ -41,6 +41,26 @@ namespace Music.Controllers
             if (_db.AddSongToPlaylist(model.PlaylistID, model.SongID)) {
                 return Json("Success");
             } else {
+                return Json("Fail");
+            }
+        }
+
+        /// <summary> 
+        /// Removes a song from a playlist
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        public ActionResult RemoveSong(JSONMessage model)
+        {
+            var result = new JSONMessage();
+
+            if (_db.RemoveSongFromPlaylist(model.PlaylistID, model.SongID))
+            {
+                return Json("Success");
+            }
+            else
+            {
                 return Json("Fail");
             }
         }
