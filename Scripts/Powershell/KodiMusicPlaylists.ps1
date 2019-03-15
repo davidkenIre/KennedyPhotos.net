@@ -6,14 +6,19 @@
 	directly to the playlist folder in Kodi
 .LINK  
 #>
+[Reflection.Assembly]::LoadFile("c:\program files\Lattuce\Library.dll")
 
 ###############################################
 # GetValues from Registry
 $LattuceRegKey=Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Lattuce
 
 ###############################################
+# Extract Album Art MOVED TO THE SERVICE
+#$Utility = new-object Music.Utility
+# $Utility.ExtractAlbumArt()
+
+###############################################
 # Keep the master song tables in sync with the Kody databases
-[Reflection.Assembly]::LoadFile("c:\program files\Lattuce\Library.dll")
 $Utility = new-object Music.Utility
 $Utility.SyncMusicFromKodi()
 

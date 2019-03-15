@@ -93,6 +93,16 @@
     }
 </select>
 
+
+<select title="Select your surfboard" class="selectpicker">
+    <option>Select...</option>
+    <option data-thumbnail="/images/album/19923.jpg">Chrome</option>
+    <option data-thumbnail="images/icon-firefox.png">Firefox</option>
+    <option data-thumbnail="images/icon-ie.png">IE</option>
+    <option data-thumbnail="images/icon-opera.png">Opera</option>
+    <option data-thumbnail="images/icon-safari.png">Safari</option>
+</select>
+
 <br />
 <br />
 
@@ -135,5 +145,9 @@
     
     // Default Selected Value
     document.getElementById("SelectAlbum").value = @ViewBag.Id;
+
+    // Initialize select control
+    $('select.selectpicker').selectpicker();
+
 
 </script>

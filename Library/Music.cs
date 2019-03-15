@@ -125,6 +125,65 @@ namespace Music
                 WriteLog("Error syncing music from Kodi to Master table: " + e1.Message);   
             }
         }
+
+        public void ExtractAlbumArt()
+        {
+            try
+            {
+                string SQL = @"select song_id, album_id, Path from music.song";
+
+                MySqlCommand cmd = new MySqlCommand(SQL, MySQLConn);
+
+                //Create a data reader and Execute the command
+                cmd.CommandTimeout = 0;
+                cmd.ExecuteNonQuery();
+                cmd.Dispose();
+
+                //Create a data reader and Execute the command
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                //Read the data and store them in the list            
+                if (dataReader.Read())
+                {
+                    // Get Path to the music File
+                    string MusicPath = dataReader["path"].ToString();
+                    MusicPath = MusicPath.Replace("smb://", "d:\\");
+                    MusicPath = MusicPath.Replace("/", "\\");
+
+                    string AlbumArtPath = "d:\\Media\\Music\\Master\\AlbumArt\\" + dataReader["album_id"].ToString() + "\\.bmp";
+
+                    Console.WriteLine(AlbumArtPath);
+                    if (!File.Exists(AlbumArtPath))
+                    {
+
+                        TagLib.File file = TagLib.File.Create(MusicPath); //FilePath is the audio file location
+                        TagLib.IPicture pic = file.Tag.Pictures[0];  //pic contains data for image.
+                        MemoryStream stream = new MemoryStream(pic.Data.Data);  // create an in memory stream
+
+                        //write to file
+                        FileStream file1 = new FileStream(AlbumArtPath, FileMode.Create, FileAccess.Write);
+                        stream.WriteTo(file1);
+                        file1.Close();
+                        stream.Close();
+
+
+                        //Console.WriteLine("Creating");
+                        //File.Create(Path);
+                        //TextWriter tw = new StreamWriter(Path);
+                        //tw.WriteLine("The very first line!");
+                        //tw.Close();
+                        //tw.Dispose();
+                    }
+                }
+
+                //close Data Reader
+                dataReader.Close();
+            }
+            catch (Exception e1)
+            {
+                Console.WriteLine("Error: Could not execute database command - " + e1.Message);
+            }
+        }
     }
 }
 

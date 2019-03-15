@@ -63,7 +63,7 @@ namespace Music.Models
         /// Retrive a list of all Songs from the database
         /// </summary>
         /// <returns></returns>
-        public List<Song> GetSongs(int AlbumId)
+        public List<Song> GetSongs(int AlbumId, int? PlaylistId)
         {
             // Connect to MySQL and load all the photos
             MySql.Data.MySqlClient.MySqlConnection conn;
@@ -82,10 +82,8 @@ namespace Music.Models
                 SQL = "select S.SONG_ID, S.SONG_NAME, A.ALBUM_NAME, S.FILENAME, ps.playlist_song_id " +
                     "FROM music.song s " +
                     "LEFT JOIN music.album a ON a.album_id = s.album_id " +
-                    "LEFT OUTER JOIN music.playlist_song ps ON ps.song_id = s.song_id " +
+                    "LEFT OUTER JOIN music.playlist_song ps ON ps.song_id = s.song_id and ps.playlist_id = " + (PlaylistId==null ? 0 : PlaylistId)  + " " +
                     "where s.active = 'Y' " +
-            //        "and A.Album_name = 'Believe' " +
-            //        "and s.Album_id = A.ALBUM_ID " +
                     "and s.Album_id = " + AlbumId + " " +
                     "order by A.album_name, s.song_name ";
 
@@ -337,6 +335,7 @@ namespace Music.Models
                 MySqlDataReader dataReader = cmdInt.ExecuteReader();
                 dataReader.Read();
                 Id = dataReader["MYID"].ToString();
+                dataReader.Close();
             }
             else
             {

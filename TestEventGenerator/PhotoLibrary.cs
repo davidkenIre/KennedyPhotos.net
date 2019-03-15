@@ -48,5 +48,11 @@ namespace TestEventGenerator
             Music.Utility U = new Music.Utility();
             U.SyncMusicFromKodi();
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            ServiceController sc = new ServiceController("PhotoWatcher");
+            sc.ExecuteCommand(254);
+        }
     }
 }

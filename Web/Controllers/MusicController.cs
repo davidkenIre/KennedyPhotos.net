@@ -19,10 +19,10 @@ namespace Music.Controllers
         /// <returns></returns>
         [HttpGet]
         [Authorize]
-        public ActionResult Songs(int id)
+        public ActionResult Songs(int id, int? PlaylistId)
         {
             var albumsong = new AlbumSong();
-            albumsong.Song = _db.GetSongs(id);
+            albumsong.Song = _db.GetSongs(id, PlaylistId);
             albumsong.Album = _db.GetAlbums();
             ViewBag.id = id;
             return View(albumsong);

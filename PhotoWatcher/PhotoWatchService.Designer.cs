@@ -15,7 +15,8 @@ namespace PhotoWatcher
         // Must be int between 128 and 255
         public enum CustomEvents
         {
-            RefreshAlbumEvent = 255
+            RefreshAlbumEvent = 255,
+            RefreshMusicEvent = 254
         }        
 
         /// <summary> 
@@ -76,14 +77,15 @@ namespace PhotoWatcher
         #endregion
 
         private System.IO.FileSystemWatcher FSPhotoWatcher;
+        private System.IO.FileSystemWatcher FSMusicWatcher;
+
         /// <summary>
         /// Event occurs when the contents of a File or Directory are changed
         /// </summary>
-
         private void FSPhotoWatcher_Changed(object sender,
                         System.IO.FileSystemEventArgs e)
         {
-            PerformRefresh();
+            PerformPhotoRefresh();
         }
 
         /// <summary>
@@ -92,7 +94,7 @@ namespace PhotoWatcher
         private void FSPhotoWatcher_Created(object sender,
                         System.IO.FileSystemEventArgs e)
         {
-            PerformRefresh();
+            PerformPhotoRefresh();
         }
 
         /// <summary>
@@ -101,7 +103,7 @@ namespace PhotoWatcher
         private void FSPhotoWatcher_Deleted(object sender,
                         System.IO.FileSystemEventArgs e)
         {
-            PerformRefresh();
+            PerformPhotoRefresh();
         }
         /// <summary>
         /// Event occurs when the a File or Directory is renamed
@@ -109,7 +111,7 @@ namespace PhotoWatcher
         private void FSPhotoWatcher_Renamed(object sender,
                         System.IO.RenamedEventArgs e)
         {
-            PerformRefresh();
+            PerformPhotoRefresh();
         }
 
         /// <summary>
@@ -122,19 +124,79 @@ namespace PhotoWatcher
             base.OnCustomCommand(command);
             if (command == (int)CustomEvents.RefreshAlbumEvent)
             {
-                PerformRefresh();
+                PerformPhotoRefresh();
+            }
+
+            if (command == (int)CustomEvents.RefreshMusicEvent)
+            {
+                PerformMusicRefresh();
             }
         }
 
         /// <summary>
         /// Makes a call to the Photowatcher library, to perform a Library Refresh
         /// </summary>
-        private void PerformRefresh()
+        private void PerformPhotoRefresh()
         {
             Photos.Utility U = new Photos.Utility();
             
             U.RefreshAlbums((string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "BaseDirectory", ""));
             U.PerformCleanup();
+        }
+
+
+
+
+
+
+
+
+
+
+
+        /// <summary>
+        /// Event occurs when the contents of a File or Directory are changed
+        /// </summary>
+        private void FSMusicWatcher_Changed(object sender,
+                        System.IO.FileSystemEventArgs e)
+        {
+            PerformMusicRefresh();
+        }
+
+        /// <summary>
+        /// Event occurs when the a File or Directory is created
+        /// </summary>
+        private void FSMusicWatcher_Created(object sender,
+                        System.IO.FileSystemEventArgs e)
+        {
+            PerformMusicRefresh();
+        }
+
+        /// <summary>
+        /// Event occurs when the a File or Directory is deleted
+        /// </summary>
+        private void FSMusicWatcher_Deleted(object sender,
+                        System.IO.FileSystemEventArgs e)
+        {
+            PerformMusicRefresh();
+        }
+        /// <summary>
+        /// Event occurs when the a File or Directory is renamed
+        /// </summary>
+        private void FSMusicWatcher_Renamed(object sender,
+                        System.IO.RenamedEventArgs e)
+        {
+            PerformMusicRefresh();
+        }
+
+
+        /// <summary>
+        /// Makes a call to the Photowatcher library, to perform a Library Refresh
+        /// </summary>
+        private void PerformMusicRefresh()
+        {
+            Music.Utility U = new Music.Utility();
+            U.ExtractAlbumArt();
         }
     }
 }
