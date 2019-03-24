@@ -43,6 +43,7 @@
     <Content Include="SQL\Photo\02_photos_dml.sql" />
     <Content Include="Registry\Lattuce.reg" />
     <Content Include="Python\GooglePlayPlaylists.py" />
+    <Content Include="SQL\Video\ReapplyWatchedStatus.sql" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Powershell\" />
@@ -51,6 +52,7 @@
     <Folder Include="Registry\" />
     <Folder Include="SQL\" />
     <Folder Include="SQL\Music\" />
+    <Folder Include="SQL\Video\" />
     <Folder Include="SQL\Photo\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

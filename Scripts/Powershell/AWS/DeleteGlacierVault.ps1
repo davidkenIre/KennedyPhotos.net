@@ -33,7 +33,7 @@ $ArchiveList=$Glacier.ArchiveList
 
 foreach ($ArchiveId in $ArchiveList.ArchiveId) {
 	$Count++
-	write-output "Deleting Archive ID: $($ArchiveId) ($($Count) of $($ArchiveList.ArchiveId.Count)"
+	write-output "Deleting Archive ID: $($ArchiveId) ($($Count) of $($ArchiveList.ArchiveId.Count))"
 	aws glacier delete-archive --archive-id=$($ArchiveId) --vault-name VAULT_NAME --account-id ACCOUNT_ID --region REGION
 }
 
