@@ -26,6 +26,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Powershell\AD\ResetADDNS.ps1" />
     <Compile Include="Powershell\AWS\DeleteGlacierVault.ps1" />
     <Compile Include="Powershell\DeleteJunkFiles.ps1" />
     <Compile Include="Powershell\Deploy.ps1" />
@@ -48,6 +49,7 @@
   <ItemGroup>
     <Folder Include="Powershell\" />
     <Folder Include="Powershell\AWS\" />
+    <Folder Include="Powershell\AD\" />
     <Folder Include="Python\" />
     <Folder Include="Registry\" />
     <Folder Include="SQL\" />
