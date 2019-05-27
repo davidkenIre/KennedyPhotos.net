@@ -38,7 +38,7 @@
 
         $.ajax({ //Do an ajax post to the controller
             type: 'POST',
-            url: '/Music/AddSong',
+            url: '~/Music/AddSong',
             data: JSON.stringify(JSONObject),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -56,7 +56,7 @@
 
         $.ajax({ //Do an ajax post to the controller
             type: 'POST',
-            url: '/Music/RemoveSong',
+            url: '~/Music/RemoveSong',
             data: JSON.stringify(JSONObject),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -73,7 +73,7 @@
 
     //Display songs for a partucular album
     function LoadAlbum(AlbumID) {
-        URLToLoad = "/Music/Songs/" + AlbumID;
+        URLToLoad = "~/Music/Songs/" + AlbumID;
 
         // If PlaylistID exists on the querystring, persist on a page refresh
         if (GetPlaylistID() != '') {

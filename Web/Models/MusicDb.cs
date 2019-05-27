@@ -10,10 +10,12 @@ namespace Music.Models
 {
     public class MusicDb 
     {
+        //////////////////////////////////////////////////////////
+        /// Album
+        //////////////////////////////////////////////////////////
         
-
         /// <summary>
-        /// Retrive a list of all Songs from the database
+        /// Retrive a list of all Albums from the database
         /// </summary>
         /// <returns></returns>
         public List<Album> GetAlbums()
@@ -58,6 +60,11 @@ namespace Music.Models
 
             return _albums;
         }
+
+
+        //////////////////////////////////////////////////////////
+        /// Songs
+        //////////////////////////////////////////////////////////
 
         /// <summary>
         /// Retrive a list of all Songs from the database
@@ -113,101 +120,15 @@ namespace Music.Models
             return _songs;
         }
 
-
-
-        /// <summary>
-        /// Àdd a Song to a playlist
-        /// </summary>
-        /// <returns></returns>
-        public bool AddSongToPlaylist(string PlayListID, string SongID)
-        {
-            try { 
-                // Connect to MySQL and load all the photos
-                MySql.Data.MySqlClient.MySqlConnection conn;
-                string myConnectionString;
-
-                // Get the connection password
-                string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLPassword", "");
-
-                myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
-                conn = new MySql.Data.MySqlClient.MySqlConnection();
-                conn.ConnectionString = myConnectionString;
-                conn.Open();
-
-                // Create Command
-                string SQL = "";
-                SQL = "insert into music.playlist_song (created_date, created_by_id, playlist_id, song_id, active) values (now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3',  '" + PlayListID + "', '" + SongID + "','Y') ";
-
-                MySqlCommand cmd = new MySqlCommand(SQL, conn);
-                //Create a data reader and Execute the command
-                cmd.ExecuteNonQuery();
-
-                // Set flag to regenerate playlist
-                SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
-                cmd = new MySqlCommand(SQL, conn);
-                //Create a data reader and Execute the command
-                cmd.ExecuteNonQuery();
-
-                conn.Close();
-
-                return true;
-            } catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Remove a Song from a Playlist
-        /// </summary>
-        /// <returns></returns>
-        public bool RemoveSongFromPlaylist(string PlayListID, string SongID)
-        {
-            try
-            {
-                // Connect to MySQL and load all the photos
-                MySql.Data.MySqlClient.MySqlConnection conn;
-                string myConnectionString;
-
-                // Get the connection password
-                string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLPassword", "");
-
-                myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
-                conn = new MySql.Data.MySqlClient.MySqlConnection();
-                conn.ConnectionString = myConnectionString;
-                conn.Open();
-
-                // Create Command
-                string SQL = "";
-                SQL = "delete from music.playlist_song where playlist_id = '" + PlayListID + "' and song_id =  '" + SongID + "'";
-
-                MySqlCommand cmd = new MySqlCommand(SQL, conn);
-                //Create a data reader and Execute the command
-                cmd.ExecuteNonQuery();
-
-                // Set flag to regenerate playlist
-                SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
-                cmd = new MySqlCommand(SQL, conn);
-                //Create a data reader and Execute the command
-                cmd.ExecuteNonQuery();
-
-                conn.Close();
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         //////////////////////////////////////////////////////////
-        // Playlist
+        /// Playlist
+        //////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Retrive a list of all albums from the database
+        /// Retrive a list of all Playlists from the database
         /// </summary>
-        /// <param name="Limit">No. of Blog Entries to return</param>
+        /// <param name="Limit">No. of Playlist Entries to return</param>
+        /// <param name="UserID"></param>
         /// <returns></returns>
         public List<Playlist> GetPlaylists(int Limit, string UserID)
         {
@@ -253,13 +174,11 @@ namespace Music.Models
             return _playlists;
         }
 
-
-
-
         /// <summary>
-        /// Retrive a single blog entry from the database
+        /// Retrive a single playlist (Headers and Songs) from the database
         /// </summary>
-        /// <param name="BlogId">the blog Id to load</param>
+        /// <param name="PlaylistId">the playlist Id to load</param>
+        /// <param name="UserID"></param>
         /// <returns></returns>
         public Playlist GetPlaylist(int PlaylistId, string UserID)
         {
@@ -293,6 +212,70 @@ namespace Music.Models
                 _playlist.DateModified = dataReader["modified_date"].ToString();
             }
 
+
+
+            ///gggggggggggggggggggggggggggg
+
+
+            // Create the SQL command - This is a union statement because if the user is an Administrator
+            //                          we do not want to restrict the blogs returned
+            string SQL = "";
+            SQL = "select * from ( " +
+            "select b1.* from blog b1, blogaccess ba1 " +
+            "where b1.blog_id = ba1.blog_id " +
+            "and ba1.userid = '" + UserID + "' " +
+            "and b1.active = 'Y' " +
+            "union " +
+            "select b2.* from blog b2, user.aspnetroles ar2, user.aspnetuserroles aur2 " +
+            "where " +
+            "aur2.userid = '" + UserID + "' " +
+            "and aur2.RoleId = ar2.Id " +
+            "and ar2.Name = 'Admin' " +
+            "and b2.active = 'Y') As blogscombined " +
+            "order by blogscombined.created_date desc";
+
+            // Sometimes we only want to return a certain amount of blogs
+            if (Limit != 0)
+            {
+                SQL += " Limit " + Limit;
+            }
+
+            MySqlCommand cmd = new MySqlCommand(SQL, conn);
+            //Create a data reader and Execute the command
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+
+            //Read the data and store them in the list
+            List<Blog> _blogs = new List<Blog>();
+            while (dataReader.Read())
+            {
+                Blog item = new Blog()
+                {
+                    Id = dataReader["blog_id"].ToString(),
+                    Title = dataReader["Title"].ToString(),
+                    Author = dataReader["Author"].ToString(),
+                    DatePosted = dataReader["dte_posted"].ToString(),
+                    BlogText = dataReader["Blog_Text"].ToString(),
+                };
+                _blogs.Add(item);
+            }
+
+            //close Data Reader
+            dataReader.Close();
+            conn.Close();
+
+
+
+
+            ///gggggggggggggggggggggggggg
+
+
+
+
+
+
+
+
+
             //close Data Reader
             dataReader.Close();
             conn.Close();
@@ -304,9 +287,10 @@ namespace Music.Models
 
 
         /// <summary>
-        /// Insert or Update a playlist entry
+        /// Insert or Update a playlist entry 
+        /// (Headers only, i.e. songs are added via seperate routines)
         /// </summary>
-        /// <param name="blog">The Blog model</param>
+        /// <param name="playlist">The Blog model</param>
         /// <returns></returns>
         public string SavePlaylistEntry(Playlist playlist)
         {
@@ -357,9 +341,9 @@ namespace Music.Models
         }
 
         /// <summary>
-        /// Delete a blog entry
+        /// Delete a playlist entry
         /// </summary>
-        /// <param name="Id">The Blog Id</param>
+        /// <param name="Id">The playlist Id</param>
         /// <returns></returns>
         public void DeletePlaylistEntry(string Id)
         {
@@ -386,6 +370,96 @@ namespace Music.Models
             conn.Close();
         }
 
-        
+        /// <summary>
+        /// Àdd a Song to a playlist
+        /// </summary>
+        /// <param name="PlayListID"></param>
+        /// <param name="SongID"></param>
+        /// <returns></returns>
+        public bool AddSongToPlaylist(string PlayListID, string SongID)
+        {
+            try
+            {
+                // Connect to MySQL and load all the photos
+                MySql.Data.MySqlClient.MySqlConnection conn;
+                string myConnectionString;
+
+                // Get the connection password
+                string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLPassword", "");
+
+                myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+                conn = new MySql.Data.MySqlClient.MySqlConnection();
+                conn.ConnectionString = myConnectionString;
+                conn.Open();
+
+                // Create Command
+                string SQL = "";
+                SQL = "insert into music.playlist_song (created_date, created_by_id, playlist_id, song_id, active) values (now(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3',  '" + PlayListID + "', '" + SongID + "','Y') ";
+
+                MySqlCommand cmd = new MySqlCommand(SQL, conn);
+                //Create a data reader and Execute the command
+                cmd.ExecuteNonQuery();
+
+                // Set flag to regenerate playlist
+                SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
+                cmd = new MySqlCommand(SQL, conn);
+                //Create a data reader and Execute the command
+                cmd.ExecuteNonQuery();
+
+                conn.Close();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Remove a Song from a Playlist
+        /// </summary>
+        /// <param name="PlayListID"></param>
+        /// <param name="SongID"></param>
+        /// <returns></returns>
+        public bool RemoveSongFromPlaylist(string PlayListID, string SongID)
+        {
+            try
+            {
+                // Connect to MySQL and load all the photos
+                MySql.Data.MySqlClient.MySqlConnection conn;
+                string myConnectionString;
+
+                // Get the connection password
+                string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLPassword", "");
+
+                myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+                conn = new MySql.Data.MySqlClient.MySqlConnection();
+                conn.ConnectionString = myConnectionString;
+                conn.Open();
+
+                // Create Command
+                string SQL = "";
+                SQL = "delete from music.playlist_song where playlist_id = '" + PlayListID + "' and song_id =  '" + SongID + "'";
+
+                MySqlCommand cmd = new MySqlCommand(SQL, conn);
+                //Create a data reader and Execute the command
+                cmd.ExecuteNonQuery();
+
+                // Set flag to regenerate playlist
+                SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
+                cmd = new MySqlCommand(SQL, conn);
+                //Create a data reader and Execute the command
+                cmd.ExecuteNonQuery();
+
+                conn.Close();
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

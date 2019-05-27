@@ -77,7 +77,7 @@ namespace PhotoWatcher
         #endregion
 
         private System.IO.FileSystemWatcher FSPhotoWatcher;
-        private System.IO.FileSystemWatcher FSMusicWatcher;
+        //private System.IO.FileSystemWatcher FSMusicWatcher;
 
         /// <summary>
         /// Event occurs when the contents of a File or Directory are changed

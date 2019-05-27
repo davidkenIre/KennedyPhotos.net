@@ -43,6 +43,7 @@ namespace Music.Models
         public string PlaylistName { get; set; }
         public string Owner { get; set; }
         public string DateModified { get; set; }
+        public List<Song> Song { set; get; }
     }
 }
 
