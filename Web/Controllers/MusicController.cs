@@ -21,9 +21,10 @@ namespace Music.Controllers
         [Authorize]
         public ActionResult Songs(int id, int? PlaylistId)
         {
-            var albumsong = new AlbumSong();
+            var albumsong = new AlbumSongPlaylist();
             albumsong.Song = _db.GetSongs(id, PlaylistId);
             albumsong.Album = _db.GetAlbums();
+            albumsong.Playlist = _db.GetPlaylists(0, null);
             ViewBag.id = id;
             return View(albumsong);
         }
@@ -34,7 +35,7 @@ namespace Music.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public ActionResult AddSong(JSONMessage model)
+        public ActionResult AddSongToPlaylist(JSONMessage model)
         {
             var result = new JSONMessage();
 
@@ -51,7 +52,7 @@ namespace Music.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public ActionResult RemoveSong(JSONMessage model)
+        public ActionResult RemoveSongFromPlaylist(JSONMessage model)
         {
             var result = new JSONMessage();
 
@@ -64,6 +65,11 @@ namespace Music.Controllers
                 return Json("Fail");
             }
         }
+
+
+
+
+
 
         public class JSONMessage
         {
@@ -83,29 +89,6 @@ namespace Music.Controllers
         {
             List<Playlist> _PlaylistListing = _db.GetPlaylists(0, User.Identity.GetUserId());
             return View(_PlaylistListing.ToList());
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Id">A Playlist ID</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Authorize]
-        public ActionResult PlaylistView(int Id)
-        {
-            ViewBag.Id = Id;
-            // If Id <> 0 then load existing blog data
-            if (Id > 0)
-            {
-                // Load Blog entry from the database
-                Playlist _playlist = _db.GetPlaylist(Id, User.Identity.GetUserId());
-                return View(_playlist);
-            }
-            else
-            {
-                return View(new Playlist());
-            }
         }
 
         /// <summary>
@@ -150,7 +133,7 @@ namespace Music.Controllers
                     playlist.PlaylistName = playlistname;
       
                     Id = _db.SavePlaylistEntry(playlist);
-                    return RedirectToAction("PlaylistView", "Music", new { id = Id });
+                    return RedirectToAction("PlaylistEdit", "Music", new { id = Id });
                 case "Delete":
                     _db.DeletePlaylistEntry(Id);
                     return RedirectToAction("PlaylistList", "Music");

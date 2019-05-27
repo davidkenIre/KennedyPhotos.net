@@ -1,4 +1,4 @@
-﻿@model Music.Models.AlbumSong
+﻿@model Music.Models.AlbumSongPlaylist
 <div class="page-header">
     <h1>All Songs</h1>
 </div>
@@ -30,7 +30,7 @@
 
     });
 
-    function AddSong(SongID) {
+    function AddSongToPlaylist(SongID) {
         var JSONObject = { // Create JSON object to pass through AJAX
             PlaylistID: GetPlaylistID(), //Make sure these names match the properties in VM
             SongID: SongID
@@ -38,17 +38,17 @@
 
         $.ajax({ //Do an ajax post to the controller
             type: 'POST',
-            url: '~/Music/AddSong',
+            url: "@Url.Action("AddSongToPlaylist", "Music")",
             data: JSON.stringify(JSONObject),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                document.getElementById("td" + SongID).innerHTML = '<a class="btn btn-danger" role="button" onclick="RemoveSong(' + SongID + ')"><span class="glyphicon glyphicon-add"></span>Remove</a>';
+                document.getElementById("td" + SongID).innerHTML = '<a class="btn btn-danger" role="button" onclick="RemoveSongFromPlaylist(' + SongID + ')"><span class="glyphicon glyphicon-add"></span>Remove</a>';
             }
         });
     }
 
-    function RemoveSong(SongID) {
+    function RemoveSongFromPlaylist(SongID) {
         var JSONObject = { // Create JSON object to pass through AJAX
             PlaylistID: GetPlaylistID(), //Make sure these names match the properties in VM
             SongID: SongID
@@ -56,16 +56,17 @@
 
         $.ajax({ //Do an ajax post to the controller
             type: 'POST',
-            url: '~/Music/RemoveSong',
+            url: "@Url.Action("RemoveSongFromPlaylist", "Music")",
             data: JSON.stringify(JSONObject),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
-                document.getElementById("td" + SongID).innerHTML = '<a class="btn btn-success" role="button" onclick="AddSong(' + SongID + ')"><span class="glyphicon glyphicon-add"></span>Add</a>';
+                document.getElementById("td" + SongID).innerHTML = '<a class="btn btn-success" role="button" onclick="AddSongToPlaylist(' + SongID + ')"><span class="glyphicon glyphicon-add"></span>Add</a>';
             }
         });
     }
 
+    // Get a playlist ID from the querystring
     function GetPlaylistID() {
         urlParams = new URLSearchParams(window.location.search);
         return urlParams.get('PlaylistID');
@@ -73,9 +74,9 @@
 
     //Display songs for a partucular album
     function LoadAlbum(AlbumID) {
-        URLToLoad = "~/Music/Songs/" + AlbumID;
+        URLToLoad = "@Url.Content("~/")" + "Music/Songs/" + AlbumID;
 
-        // If PlaylistID exists on the querystring, persist on a page refresh
+        // If PlaylistID exists on the querystring, persist on a page refreshs
         if (GetPlaylistID() != '') {
             URLToLoad = URLToLoad + "?PlaylistID=" + GetPlaylistID();
         }
@@ -84,17 +85,37 @@
         document.location.href = URLToLoad;
     }
 
+    // Set the Playlist we are going to add songs tos
+    function LoadPlaylist(PlaylistID) {
+        URLToLoad = "@Url.Content("~/")" + "Music/Songs/" + @ViewBag.Id;
+
+        // If PlaylistID exists on the querystring, persist on a page refresh
+        URLToLoad = URLToLoad + "?PlaylistID=" + PlaylistID;
+
+        // Reload page
+        document.location.href = URLToLoad;
+    }
+
 </script>
 
-<select id="SelectAlbum" onchange=LoadAlbum(this.options[this.selectedIndex].value)>
+<select id="SelectAlbum" onchange="LoadAlbum(this.options[this.selectedIndex].value);">
+    <option value="0">--Select an Album--</option>
     @foreach (var item in Model.Album)
     {
         <option value="@item.Id">@item.AlbumName</option>
     }
 </select>
 
+<br />
+<select id="SelectPlaylist" onchange="LoadPlaylist(this.options[this.selectedIndex].value);">
+    <option value="0">--Select a Playlist--</option>
+    @foreach (var item in Model.Playlist)
+    {
+        <option value="@item.Id">@item.PlaylistName</option>
+    }
+</select>
 
-<select title="Select your surfboard" class="selectpicker">
+@*<select title="Select your surfboard" class="selectpicker">
     <option>Select...</option>
     <option data-thumbnail="/images/album/19923.jpg">Chrome</option>
     <option data-thumbnail="images/icon-firefox.png">Firefox</option>
@@ -103,31 +124,32 @@
     <option data-thumbnail="images/icon-safari.png">Safari</option>
 </select>
 
-<br />
+<br />*@
 <br />
 
 <table class="table">
     @foreach (var item in Model.Song)
     {
-        <tr>
-            <td>@item.Id</td>
-            <td>@item.Album</td>
-            <td>@item.Title</td>
-            <td>@item.Location</td>
-            @if (@ViewBag.Id != 0)
-            {
-                <td style="text-align:right" id="td@(item.Id)">
-                    @if (@item.PlaylistSongID == "")
-                    {
-                        <a class="btn btn-success" role="button" onclick="AddSong(@(item.Id))"><span class="glyphicon glyphicon-add"></span>Add</a>
-                    }
-                    else
-                    {
-                        <a class="btn btn-danger" role="button" onclick="RemoveSong(@(item.Id))"><span class="glyphicon glyphicon-add"></span>Remove</a>
-                    }
-                </td>
-            }
-        </tr>
+    <tr>
+        <td>@item.Id</td>
+        <td>@item.Album</td>
+        <td>@item.Title</td>
+        <td>@item.Location</td>
+        @*Not good design - should be built into model*@
+        @if (Request.QueryString["PlaylistID"] != "0")
+        {
+            <td style="text-align:right" id="td@(item.Id)">
+                @if (@item.PlaylistSongID == "")
+                {
+                    <a class="btn btn-success" role="button" onclick="AddSongToPlaylist(@(item.Id))"><span class="glyphicon glyphicon-add"></span>Add</a>
+                }
+                else
+                {
+                    <a class="btn btn-danger" role="button" onclick="RemoveSongFromPlaylist(@(item.Id))"><span class="glyphicon glyphicon-add"></span>Remove</a>
+                }
+            </td>
+        }
+    </tr>
     }
 </table>
 
@@ -144,10 +166,12 @@
 <script>
     
     // Default Selected Value
-    document.getElementById("SelectAlbum").value = @ViewBag.Id;
-
+    document.getElementById("SelectAlbum").value = '@ViewBag.Id';
+      document.getElementById("SelectPlaylist").value = '@Request.QueryString["PlaylistID"]';
     // Initialize select control
-    $('select.selectpicker').selectpicker();
+   // $('select.selectpicker').selectpicker();
+
+
 
 
 </script>

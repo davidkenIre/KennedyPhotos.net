@@ -567,7 +567,6 @@
     <Content Include="Views\Music\_ViewStart.cshtml" />
     <Content Include="Views\Music\PlaylistEdit.cshtml" />
     <Content Include="Views\Music\Songs.cshtml" />
-    <Content Include="Views\Music\PlaylistView.cshtml" />
     <Content Include="Views\Music\PlaylistList.cshtml" />
     <Content Include="Views\Shared\MenuAccount.cshtml" />
     <Content Include="Views\Shared\_LayoutNoMenu.cshtml" />

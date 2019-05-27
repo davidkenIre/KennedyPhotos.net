@@ -212,79 +212,43 @@ namespace Music.Models
                 _playlist.DateModified = dataReader["modified_date"].ToString();
             }
 
+            //close Data Reader
+            dataReader.Close();
 
+            // Select a list of sonds belonging to the playlist and add to the playlist model
+            SQL = "select s.song_id, song_name, album_name, concat(path, filename) as location, ps.playlist_song_id " +
+                "from music.song s, music.playlist p, music.playlist_song ps, music.album a " +
+                "where p.playlist_id = " + PlaylistId + " " +
+                "and p.playlist_id = ps.playlist_id " +
+                "and s.song_id = ps.song_id " +
+                "and s.album_id = a.album_id ";
 
-            ///gggggggggggggggggggggggggggg
-
-
-            // Create the SQL command - This is a union statement because if the user is an Administrator
-            //                          we do not want to restrict the blogs returned
-            string SQL = "";
-            SQL = "select * from ( " +
-            "select b1.* from blog b1, blogaccess ba1 " +
-            "where b1.blog_id = ba1.blog_id " +
-            "and ba1.userid = '" + UserID + "' " +
-            "and b1.active = 'Y' " +
-            "union " +
-            "select b2.* from blog b2, user.aspnetroles ar2, user.aspnetuserroles aur2 " +
-            "where " +
-            "aur2.userid = '" + UserID + "' " +
-            "and aur2.RoleId = ar2.Id " +
-            "and ar2.Name = 'Admin' " +
-            "and b2.active = 'Y') As blogscombined " +
-            "order by blogscombined.created_date desc";
-
-            // Sometimes we only want to return a certain amount of blogs
-            if (Limit != 0)
-            {
-                SQL += " Limit " + Limit;
-            }
-
-            MySqlCommand cmd = new MySqlCommand(SQL, conn);
-            //Create a data reader and Execute the command
-            MySqlDataReader dataReader = cmd.ExecuteReader();
+            cmd = new MySqlCommand(SQL, conn);
+            // Create a data reader and Execute the command
+            dataReader = cmd.ExecuteReader();
 
             //Read the data and store them in the list
-            List<Blog> _blogs = new List<Blog>();
+            List<Song> _Songs = new List<Song>();
             while (dataReader.Read())
             {
-                Blog item = new Blog()
+                Song item = new Song()
                 {
-                    Id = dataReader["blog_id"].ToString(),
-                    Title = dataReader["Title"].ToString(),
-                    Author = dataReader["Author"].ToString(),
-                    DatePosted = dataReader["dte_posted"].ToString(),
-                    BlogText = dataReader["Blog_Text"].ToString(),
+                    Id = dataReader["song_id"].ToString(),
+                    Title = dataReader["song_name"].ToString(),
+                    Album = dataReader["album_name"].ToString(),
+                    Location = dataReader["location"].ToString(),
+                    PlaylistSongID = dataReader["playlist_song_id"].ToString(),
                 };
-                _blogs.Add(item);
+                _Songs.Add(item);
             }
 
             //close Data Reader
             dataReader.Close();
             conn.Close();
 
-
-
-
-            ///gggggggggggggggggggggggggg
-
-
-
-
-
-
-
-
-
-            //close Data Reader
-            dataReader.Close();
-            conn.Close();
-
+            _playlist.Song = _Songs;
             return _playlist;
         }
-
-
-
 
         /// <summary>
         /// Insert or Update a playlist entry 

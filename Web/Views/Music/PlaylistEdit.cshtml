@@ -1,4 +1,61 @@
 ﻿@model Music.Models.Playlist
+
+
+    <script>
+        function RemoveSongFromPlaylist(SongID, btn) {
+            var JSONObject = { // Create JSON object to pass through AJAX
+                PlaylistID: "@Model.Id", //Make sure these names match the properties in VM
+                SongID: SongID,
+            };
+            $.ajax({ //Do an ajax post to the controller
+                type: 'POST',
+                url: "@Url.Action("RemoveSongFromPlaylist", "Music")",
+                data: JSON.stringify(JSONObject),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                 document.getElementById("td" + SongID).innerHTML = '<a class="btn btn-success" role="button" onclick="AddSongToPlaylist(' + SongID + ')"><span class="glyphicon glyphicon-add"></span>Undo</a>';
+                },
+                                
+                error: function (response) {
+                    alert(response.status);
+                }
+            });
+        }
+
+    function AddSongToPlaylist(SongID) {
+        var JSONObject = { // Create JSON object to pass through AJAX
+            PlaylistID: "@Model.Id", //Make sure these names match the properties in VM
+            SongID: SongID
+        };
+
+        $.ajax({ //Do an ajax post to the controller
+            type: 'POST',
+            url: "@Url.Action("AddSongToPlaylist", "Music")",
+            data: JSON.stringify(JSONObject),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                document.getElementById("td" + SongID).innerHTML = '<a class="btn btn-danger" role="button" onclick="RemoveSongFromPlaylist(' + SongID + ')"><span class="glyphicon glyphicon-add"></span>Remove</a>';
+            }
+        });
+    }
+
+
+    function GetPlaylistID() {
+        urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('PlaylistID');
+    }
+
+    </script>
+
+
+
+
+
+
+
+
 <div class="page-header">
     <h1>Edit Playlist</h1>
 </div>
@@ -18,12 +75,46 @@
         <br />
         <div class="btn-group" role="group" aria-label="...">
             <input type="submit" class="btn btn-primary" value="Save" id="btnsubmit" name="btnsubmit" />
-            @if (@ViewBag.Id != 0) {
+            @if (@ViewBag.Id != 0)
+            {
                 <input type="submit" class="btn btn-default" value="Delete" id="btnsubmit" name="btnsubmit" />
             }
             <a class="btn btn-default" href="~/Music/PlaylistList" role="button"> &laquo; Back to Playlists</a>
         </div>
     </div>
 
-    list songs in playlist here and allow remove
+
+
+    @if (@ViewBag.Id != 0)
+    { 
+        <table class="table">
+            @foreach (var item in Model.Song)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Album</td>
+                    <td>@item.Title</td>
+
+                    @if (@ViewBag.Id != 0)
+                    {
+                        <td style="text-align:right" id="td@(item.Id)">
+                            @if (@item.PlaylistSongID == "")
+                            {
+                                <a class="btn btn-success" role="button" onclick="AddSongToPlaylist(@(item.Id))"><span class="glyphicon glyphicon-add"></span>Add</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-danger" role="button" onclick="RemoveSongFromPlaylist(@(item.Id), this)"><span class="glyphicon glyphicon-add"></span>Remove</a>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+
+        }
+
+
+
+
 </form>

@@ -34,6 +34,13 @@ namespace Music.Models
         public List<Album> Album { set; get; }
     }
 
+    public class AlbumSongPlaylist
+    {
+        public List<Song> Song { set; get; }
+        public List<Album> Album { set; get; }
+        public List<Playlist> Playlist { set; get; }
+    }
+
     /// <summary>
     /// This class represents a Playlist
     /// </summary>
