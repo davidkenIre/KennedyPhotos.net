@@ -14,7 +14,8 @@ Param(
 )
 
 $EmailFrom = "davidken@live.ie"
-$EmailTo = "davidken@live.ie"
+$EmailTo1 = "davidken@live.ie"
+$EmailTo2 = "michellekennedy1306@gmail.com"
 $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $EmailFrom, $($EmailPassword | ConvertTo-SecureString -AsPlainText -Force) 
     
 
@@ -28,17 +29,20 @@ for ($Count=0; $Count -lt 3; $Count++) {
 $LastIndex=$LastIndex+3
 
 $StartIndex=$LastIndex+13
-$EndIndex=$HTML.IndexOf(' MB </TD>', $StartIndex+1)
+$EndIndex=$HTML.IndexOf(' MB </TD>', $StaartIndex+1)
 
 $Year = get-date -Format yyyy
 $Month = get-date -Format MM
 $Day = get-date -Format dd
 $DaysInMonth = [DateTime]::DaysInMonth($Year, $Month)
-$PercentageThroughMonth=($Day/$DaysInMonth)*100
+$PercentageThroughMonth=[math]::Round((($Day/$DaysInMonth)*100),2)
 
-$GBUsed=$($HTML.substring($StartIndex, $EndIndex-$StartIndex))
-$GBUsedFormat='{0:N0}' -f [int]$GBUsed
-$Subject = "Eir Broadband Usage for month: $($GBUsed / 10000)%"
+$MBUsed=$($HTML.substring($StartIndex, $EndIndex-$StartIndex))
+$GBUsedFormat='{0:N0}' -f [int]$MBUsed/1000
+$MBUsedPercentage=[math]::Round($MBUsed/10000,2)
 
-$Body = "Eir Broadband Usage for the current month: $($GBUsedFormat)GB / 1,000,000GB`nPercentage through month: $($PercentageThroughMonth)%"
-Send-MailMessage -To "$($EmailTo)" -from "$($EmailFrom)" -Subject $Subject -SmtpServer $SmtpServer -UseSsl -Credential $Credentials -Body $Body
+If (($MBUsed / 10000) -gt $PercentageThroughMonth) {$Warning="WARNING! "}
+$Subject = "$($Warning)Eir Broadband usage for month: $($MBUsedPercentage)%"
+
+$Body = "Eir Broadband Usage for the current month: $($MBUsedPercentage)% ($($GBUsedFormat)GB / 1,000GB) <br />Percentage through month: $($PercentageThroughMonth)%"
+Send-MailMessage -To "$($EmailTo1)" -from "$($EmailFrom)" -Subject $Subject -SmtpServer $SmtpServer -UseSsl -Credential $Credentials -Body $Body -BodyAsHtml
