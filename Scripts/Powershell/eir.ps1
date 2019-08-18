@@ -10,12 +10,13 @@ Param(
   [Parameter(Mandatory=$True)][string]$EmailPassword,
   [Parameter(Mandatory=$True)][string]$EirUsername,
   [Parameter(Mandatory=$True)][string]$EirPassword,
-  [Parameter(Mandatory=$True)][string]$SmtpServer
+  [Parameter(Mandatory=$True)][string]$SmtpServer,
+  [Parameter(Mandatory=$True)][string]$AccessKey,
+  [Parameter(Mandatory=$True)][string]$SecretKey
 )
 
-$EmailFrom = "davidken@live.ie"
-$EmailTo1 = "davidken@live.ie"
-$EmailTo2 = "michellekennedy1306@gmail.com"
+$EmailFrom = "david.kennedy@gecas.com" # Need to fix this - Outlooks does not seem to accept emails if the sender appears to be spoofed
+$EmailTo = "davidken@live.ie"
 $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $EmailFrom, $($EmailPassword | ConvertTo-SecureString -AsPlainText -Force) 
     
 
@@ -45,4 +46,7 @@ If (($MBUsed / 10000) -gt $PercentageThroughMonth) {$Warning="WARNING! "}
 $Subject = "$($Warning)Eir Broadband usage for month: $($MBUsedPercentage)%"
 
 $Body = "Eir Broadband Usage for the current month: $($MBUsedPercentage)% ($($GBUsedFormat)GB / 1,000GB) <br />Percentage through month: $($PercentageThroughMonth)%"
-Send-MailMessage -To "$($EmailTo1)" -from "$($EmailFrom)" -Subject $Subject -SmtpServer $SmtpServer -UseSsl -Credential $Credentials -Body $Body -BodyAsHtml
+$SecureKey = $(ConvertTo-SecureString -AsPlainText -String $SecretKey -Force)
+$creds = $(New-Object System.Management.Automation.PSCredential ($AccessKey, $SecureKey))
+
+Send-MailMessage -From $EmailFrom -To $EmailTo -Subject $Subject -Body $Body -SmtpServer $SmtpServer -Credential $creds -UseSsl -Port 25 -BodyAsHtml

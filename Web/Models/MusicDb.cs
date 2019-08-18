@@ -36,7 +36,8 @@ namespace Music.Models
             string SQL = "";
             SQL = "select A.ALBUM_ID, A.ALBUM_NAME " +
                 "FROM music.ALBUM A " +
-                "where A.active = 'Y' ";
+                "where A.active = 'Y' " +
+                "order by UPPER(A.ALBUM_NAME)";
 
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command

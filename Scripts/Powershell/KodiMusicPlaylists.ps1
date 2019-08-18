@@ -93,10 +93,16 @@ Write-Output "Update Google Playlist indicator: $($Setting)"
 if ($Setting -eq 'Y') {	
 	python ..\Python\GooglePlayPlaylists.py
 
-	# Reset update indicator
-	$Sql="update music.setting set value='N', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' "
-	$MYSQLCommand.CommandText = $Sql
-	$MYSQLCommand.ExecuteNonQuery()
+	# If there is an error running the python music updator we don't want
+	# to reset the indicator which indicates that there is a pending music list update
+	if ($LASTEXITCODE -eq 0) {
+		# Reset update indicator
+		$Sql="update music.setting set value='N', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' "
+		$MYSQLCommand.CommandText = $Sql
+		$MYSQLCommand.ExecuteNonQuery()
+	} else {
+		Write-output "There was an error executing python"
+	}
 }
 
 write-output "Done"
