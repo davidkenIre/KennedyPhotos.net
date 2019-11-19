@@ -5,6 +5,12 @@
     This script runs on a fixed schedule, scanning for files downloaded by a torrent client.  It's makes a connection
     to thetvdb via its API's to get extra media information, it then places the files in an appropiate directory to be
     used by Kodi etc.  It sends a daily email detailing files processed (or files which could not be processed)
+
+    Sample series.csv:-
+    Name,Pattern,Path,SeriesID
+	The Man In The High Castle,*The.Man.In.The.High.Castle*,d:\Media\Video\TV\The Man In The High Castle,295829
+	The Walking Dead,*the.walking.dead*,d:\Media\Video\TV\The Walking Dead,153021
+
 .LINK  
 #>
 
@@ -42,7 +48,6 @@ $Files = Get-ChildItem $DownloadsDir -recurse | Where-Object {$_.Name -like "*.m
 ForEach ($File in $Files) {
     ForEach ($Serie in $Series) {
         If ($File.Name -like $Serie.Pattern) {
-
             $Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
             $Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
             $EpisodesPath = ($MirrorPath + "/api/" + $APIKey + "/series/" + $Serie.SeriesID + "/all/en.xml")
@@ -61,7 +66,7 @@ ForEach ($File in $Files) {
                     # $NewFilePath = ($Serie.Path) + "\" + ($Serie.Name + " - " + "S" + $Season + "E" + $Episode + " - " + (     ((((($_.EpisodeName) -replace "\?", "") -replace "`"","'") -replace " / ",", ") -replace "/",", ") -replace ":"," -"     ) + $File.Extension)
                     $NewFilePath = "$($Serie.Path)\Season $($Season)\$($File.Name)"
 
-	                Move-Item  "$($File.FullName)"  "$($NewFilePath)" -force
+	                Move-Item -literalpath "$($File.FullName)"  "$($NewFilePath)" -force
 	                if (test-path $NewFilePath) {$FilesProcessed += "Moved $($File.FullName) to $NewFilePath</br>"}
                 }
             }

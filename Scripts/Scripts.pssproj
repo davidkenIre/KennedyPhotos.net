@@ -36,10 +36,12 @@
     <Compile Include="Powershell\KodiMusicPlaylists.ps1" />
     <Compile Include="Powershell\Backup.ps1" />
     <Compile Include="Powershell\MYSQLBackup.ps1" />
+    <Compile Include="Powershell\Powermove\PowerMove.ps1" />
     <Compile Include="Powershell\Reboot.ps1" />
     <Compile Include="Powershell\Time.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Powershell\Powermove\Series.csv" />
     <Content Include="SQL\Music\01_music_ddl.sql" />
     <Content Include="SQL\Music\02_music_dml.sql" />
     <Content Include="SQL\Photo\01_photos_ddl.sql" />
@@ -52,6 +54,7 @@
     <Folder Include="Powershell\" />
     <Folder Include="Powershell\AWS\" />
     <Folder Include="Powershell\AD\" />
+    <Folder Include="Powershell\Powermove\" />
     <Folder Include="Python\" />
     <Folder Include="Registry\" />
     <Folder Include="SQL\" />
