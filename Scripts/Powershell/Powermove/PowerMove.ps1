@@ -26,6 +26,7 @@ $SmtpServer = "email-smtp.eu-west-1.amazonaws.com"
 $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $EmailFrom, $($EmailPassword | ConvertTo-SecureString -AsPlainText -Force) 
 $SecureKey = $(ConvertTo-SecureString -AsPlainText -String $SecretKey -Force)
 $creds = $(New-Object System.Management.Automation.PSCredential ($AccessKey, $SecureKey))
+$MovieFilePath = $Reg.MovieFilePath
 $FilesProcessed = ""
 
 ######################
@@ -46,30 +47,42 @@ $DestinationDir = $Reg.DestinationDir
 $Files = Get-ChildItem $DownloadsDir -recurse | Where-Object {$_.Name -like "*.mkv" -or $_.Name -like "*.mp4" -or $_.Name -like "*.avi"}  # Find all media files dropped by torrent appliction
 
 ForEach ($File in $Files) {
-    ForEach ($Serie in $Series) {
-        If ($File.Name -like $Serie.Pattern) {
-            $Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
-            $Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
-            $EpisodesPath = ($MirrorPath + "/api/" + $APIKey + "/series/" + $Serie.SeriesID + "/all/en.xml")
+    $Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
+    $Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
+	if ($Season -ne "" -and $Episode -ne "") {
+		# Movie
+		Write-Output "Movie: $($File.Name)"
+		Move-Item -literalpath "$($File.FullName)"  "$($MovieFilePath)" -force
+		if (test-path "$($MovieFilePath)\$($File.Name)") {$FilesProcessed += "Moved $($File.FullName) to $($MovieFilePath)\$($File.Name)</br>"}
+	} else {
+		# TV Show
+		Write-Output "TV Show: $($File.Name)"
+	    ForEach ($Serie in $Series) {
+	        If ($File.Name -like $Serie.Pattern) {
+	            $Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
+	            $Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
+	            $EpisodesPath = ($MirrorPath + "/api/" + $APIKey + "/series/" + $Serie.SeriesID + "/all/en.xml")
 
-            Try {
-                $xml = [xml](Invoke-WebRequest -Uri $EpisodesPath | select-object -ExpandProperty Content -ErrorAction Stop)
-            } Catch {
-                $FilesProcessed += "Error querying TheTVDB for file: $($File.Name)</br>"
-                Break
-            }
 
- 			$xml.Data.Episode | ForEach {
-                If (($_.Combined_season -eq $Season.TrimStart('0')) -and ($_.EpisodeNumber -eq $Episode.TrimStart('0'))) {
-                	new-item "$($Serie.Path)\Season $($Season)" -force -ItemType Directory
+				Try {
+					$xml = [xml](Invoke-WebRequest -Uri $EpisodesPath | select-object -ExpandProperty Content -ErrorAction Stop)
+				} Catch {
+					$FilesProcessed += "Error querying TheTVDB for file: $($File.Name)</br>"
+					Break
+				}
 
-                    # $NewFilePath = ($Serie.Path) + "\" + ($Serie.Name + " - " + "S" + $Season + "E" + $Episode + " - " + (     ((((($_.EpisodeName) -replace "\?", "") -replace "`"","'") -replace " / ",", ") -replace "/",", ") -replace ":"," -"     ) + $File.Extension)
-                    $NewFilePath = "$($Serie.Path)\Season $($Season)\$($File.Name)"
+ 				$xml.Data.Episode | ForEach {
+					If (($_.Combined_season -eq $Season.TrimStart('0')) -and ($_.EpisodeNumber -eq $Episode.TrimStart('0'))) {
+                		new-item "$($Serie.Path)\Season $($Season)" -force -ItemType Directory
 
-	                Move-Item -literalpath "$($File.FullName)"  "$($NewFilePath)" -force
-	                if (test-path $NewFilePath) {$FilesProcessed += "Moved $($File.FullName) to $NewFilePath</br>"}
-                }
-            }
+						# $NewFilePath = ($Serie.Path) + "\" + ($Serie.Name + " - " + "S" + $Season + "E" + $Episode + " - " + (     ((((($_.EpisodeName) -replace "\?", "") -replace "`"","'") -replace " / ",", ") -replace "/",", ") -replace ":"," -"     ) + $File.Extension)
+						$NewFilePath = "$($Serie.Path)\Season $($Season)\$($File.Name)"
+
+						Move-Item -literalpath "$($File.FullName)"  "$($NewFilePath)" -force
+						if (test-path $NewFilePath) {$FilesProcessed += "Moved $($File.FullName) to $NewFilePath</br>"}
+					}
+				}
+			}
         }
     }
 }
@@ -79,6 +92,18 @@ $Files = Get-ChildItem $DownloadsDir -recurse | Where-Object {$_.Name -like "*.m
 ForEach ($File in $Files) {
     $FilesProcessed += "Could not move: $($File.FullName)</br>"
 }
+
+
+######################
+# Delete Old Filess from downloaded directory
+$limit = (Get-Date).AddDays(-60)
+
+# Delete files older than the $limit.
+Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.CreationTime -lt $limit } | Remove-Item -Force
+
+# Delete any empty directories left behind after deleting the old files.
+Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { $_.PSIsContainer -and (Get-ChildItem -Path $_.FullName -Recurse -Force | Where-Object { !$_.PSIsContainer }) -eq $null } | Remove-Item -Force -Recurse
+
 
 ######################
 # Final Email
