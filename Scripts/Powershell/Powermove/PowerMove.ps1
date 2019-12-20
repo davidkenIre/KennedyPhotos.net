@@ -28,6 +28,7 @@ $SecureKey = $(ConvertTo-SecureString -AsPlainText -String $SecretKey -Force)
 $creds = $(New-Object System.Management.Automation.PSCredential ($AccessKey, $SecureKey))
 $MovieFilePath = $Reg.MovieFilePath
 $FilesProcessed = ""
+$Problems = $False
 
 ######################
 # Retrieve values needed for the thtv.com scraper - I'm not really bothered about keeping these in sourcecode - the values are in the public domain anyway
@@ -49,7 +50,8 @@ $Files = Get-ChildItem $DownloadsDir -recurse | Where-Object {$_.Name -like "*.m
 ForEach ($File in $Files) {
     $Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
     $Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
-	if ($Season -ne "" -and $Episode -ne "") {
+	Write-Output "Season: >$($Season)<  Episode: >$($Episode)<"
+    if ($Season -eq $null -and $Episode -eq $null) {
 		# Movie
 		Write-Output "Movie: $($File.Name)"
 		Move-Item -literalpath "$($File.FullName)"  "$($MovieFilePath)" -force
@@ -91,19 +93,21 @@ ForEach ($File in $Files) {
 $Files = Get-ChildItem $DownloadsDir -recurse | Where-Object {$_.Name -like "*.mkv" -or $_.Name -like "*.mp4" -or $_.Name -like "*.avi"}
 ForEach ($File in $Files) {
     $FilesProcessed += "Could not move: $($File.FullName)</br>"
+    $Problems = $True
 }
 
 
 ######################
 # Delete Old Filess from downloaded directory
-$limit = (Get-Date).AddDays(-60)
+if ($Problems -eq $False) {
+	$limit = (Get-Date).AddDays(-60)
 
-# Delete files older than the $limit.
-Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.CreationTime -lt $limit } | Remove-Item -Force
+	# Delete files older than the $limit.
+	Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.CreationTime -lt $limit } | Remove-Item -Force
 
-# Delete any empty directories left behind after deleting the old files.
-Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { $_.PSIsContainer -and (Get-ChildItem -Path $_.FullName -Recurse -Force | Where-Object { !$_.PSIsContainer }) -eq $null } | Remove-Item -Force -Recurse
-
+	# Delete any empty directories left behind after deleting the old files.
+	Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { $_.PSIsContainer -and (Get-ChildItem -Path $_.FullName -Recurse -Force | Where-Object { !$_.PSIsContainer }) -eq $null } | Remove-Item -Force -Recurse
+}
 
 ######################
 # Final Email
