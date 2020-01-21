@@ -28,6 +28,7 @@
   <ItemGroup>
     <Compile Include="Powershell\AD\ResetADDNS.ps1" />
     <Compile Include="Powershell\AWS\AddGlacierVault.ps1" />
+    <Compile Include="Powershell\AWS\Amplify.ps1" />
     <Compile Include="Powershell\AWS\DeleteGlacierVault.ps1" />
     <Compile Include="Powershell\DeleteJunkFiles.ps1" />
     <Compile Include="Powershell\Deploy.ps1" />
