@@ -30,25 +30,29 @@
     <Compile Include="Powershell\AWS\AddGlacierVault.ps1" />
     <Compile Include="Powershell\AWS\Amplify.ps1" />
     <Compile Include="Powershell\AWS\DeleteGlacierVault.ps1" />
+    <Compile Include="Powershell\AWS\Sync-Folder.ps1" />
     <Compile Include="Powershell\DeleteJunkFiles.ps1" />
     <Compile Include="Powershell\Deploy.ps1" />
     <Compile Include="Powershell\eir.ps1" />
     <Compile Include="Powershell\KeepAlive.ps1" />
-    <Compile Include="Powershell\KodiMusicPlaylists.ps1" />
     <Compile Include="Powershell\Backup.ps1" />
+    <Compile Include="Powershell\Music.ps1" />
     <Compile Include="Powershell\MYSQLBackup.ps1" />
     <Compile Include="Powershell\Powermove\PowerMove.ps1" />
     <Compile Include="Powershell\Reboot.ps1" />
     <Compile Include="Powershell\Time.ps1" />
+    <Compile Include="Python\UploadNewSongs.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Powershell\Powermove\Series.csv" />
+    <Content Include="Python\headers_auth.json" />
+    <Content Include="Python\LinkYouTubeMusicToDB.py" />
+    <Content Include="Python\YouTubeMusicPlaylist.py" />
     <Content Include="SQL\Music\01_music_ddl.sql" />
     <Content Include="SQL\Music\02_music_dml.sql" />
     <Content Include="SQL\Photo\01_photos_ddl.sql" />
     <Content Include="SQL\Photo\02_photos_dml.sql" />
     <Content Include="Registry\Lattuce.reg" />
-    <Content Include="Python\GooglePlayPlaylists.py" />
     <Content Include="SQL\Video\ReapplyWatchedStatus.sql" />
   </ItemGroup>
   <ItemGroup>

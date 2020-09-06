@@ -5,4 +5,4 @@
 .NOTES     
 #>
 
-get-childitem d:\ -include .DS_Store -recurse | foreach ($_) {remove-item $_.fullname}
+get-childitem d:\ -include .DS_Store -recurse | foreach ($_) {remove-item $_.fullname -force}

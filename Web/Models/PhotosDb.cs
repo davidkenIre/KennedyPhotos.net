@@ -233,7 +233,7 @@ namespace Photos.Models
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            SQL = "update album set description = '" + album.Description + "', album_date = STR_TO_DATE('" + album.AlbumDate + "','%d-%b-%Y') , updated_date = now(), updated_by = 'TEMPUSER', active= '" + album.Active + "' where album_id = " + album.Id;
+            SQL = "update album set description = '" + album.Description + "', album_date = STR_TO_DATE('" + album.AlbumDate + "','%d-%b-%Y') , updated_date = current_date(), updated_by = 'TEMPUSER', active= '" + album.Active + "' where album_id = " + album.Id;
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             cmd.ExecuteNonQuery();
 
@@ -400,7 +400,7 @@ namespace Photos.Models
             }
             else
             {
-                SQL = "update blog set title = '" + blog.Title + "', author = '" + blog.Author + "', dte_posted = now(), blog_text = '" + blog.BlogText + "', updated_by = 'TEMPUSER', updated_date = now() where blog_id = " + blog.Id;
+                SQL = "update blog set title = '" + blog.Title + "', author = '" + blog.Author + "', dte_posted = current_date(), blog_text = '" + blog.BlogText + "', updated_by = 'TEMPUSER', updated_date = current_date() where blog_id = " + blog.Id;
                 MySqlCommand cmd = new MySqlCommand(SQL, conn);
                 cmd.ExecuteNonQuery();
                 Id = blog.Id;
@@ -427,7 +427,7 @@ namespace Photos.Models
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            SQL = "update blog set active = 'N', updated_by = 'TEMPUSER', updated_date = now() where blog_id = " + Id;
+            SQL = "update blog set active = 'N', updated_by = 'TEMPUSER', updated_date = current_date() where blog_id = " + Id;
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             cmd.ExecuteNonQuery();
 

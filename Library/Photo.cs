@@ -137,7 +137,7 @@ namespace Photos
                 int AlbumID = GetAlbum(fInfo.Directory.Name);
 
                 // Connect to MySQL and mark file removed
-                dbDML("update photo set active='N', update_date = now(), update_by = 'TEMPUSER' where album_id = " + AlbumID + " and filename = '" + Path.GetFileName(FileName).ToString() + "'");
+                dbDML("update photo set active='N', update_date = current_date(), update_by = 'TEMPUSER' where album_id = " + AlbumID + " and filename = '" + Path.GetFileName(FileName).ToString() + "'");
                 dbDML("update album set active='N' where album_id not in (select distinct album_id from photo where active = 'Y');");
                 dbDML("update album set active='Y' where album_id in (select distinct album_id from photo where active = 'Y');");
             }

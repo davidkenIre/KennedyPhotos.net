@@ -288,14 +288,14 @@ namespace Music.Models
             }
             else
             {
-                SQL = "update music.playlist set playlist_name = '" + playlist.PlaylistName + "', updated_by_id = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', updated_date = now() where playlist_id = " + playlist.Id;
+                SQL = "update music.playlist set playlist_name = '" + playlist.PlaylistName + "', updated_by_id = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', updated_date = current_date() where playlist_id = " + playlist.Id;
                 MySqlCommand cmdInt = new MySqlCommand(SQL, conn);
                 cmdInt.ExecuteNonQuery();
                 Id = playlist.Id;
             }
 
             // Set flag to regenerate playlist
-            SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
+            SQL = "update music.setting set value='Y', created_date = current_date(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
@@ -322,12 +322,12 @@ namespace Music.Models
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            SQL = "update music.playlist set active = 'N', updated_by_id = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', updated_date = now() where playlist_id = " + Id;
+            SQL = "update music.playlist set active = 'N', updated_by_id = 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', updated_date = current_date() where playlist_id = " + Id;
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             cmd.ExecuteNonQuery();
 
             // Set flag to regenerate playlist
-            SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
+            SQL = "update music.setting set value='Y', created_date = current_date(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
             cmd = new MySqlCommand(SQL, conn);
             //Create a data reader and Execute the command
             cmd.ExecuteNonQuery();
@@ -366,7 +366,7 @@ namespace Music.Models
                 cmd.ExecuteNonQuery();
 
                 // Set flag to regenerate playlist
-                SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
+                SQL = "update music.setting set value='Y', created_date = current_date(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
                 cmd = new MySqlCommand(SQL, conn);
                 //Create a data reader and Execute the command
                 cmd.ExecuteNonQuery();
@@ -412,7 +412,7 @@ namespace Music.Models
                 cmd.ExecuteNonQuery();
 
                 // Set flag to regenerate playlist
-                SQL = "update music.setting set value='Y', created_date = now(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
+                SQL = "update music.setting set value='Y', created_date = current_date(), created_by_id =  'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3'  where setting = 'Reset Google Playlist' ";
                 cmd = new MySqlCommand(SQL, conn);
                 //Create a data reader and Execute the command
                 cmd.ExecuteNonQuery();

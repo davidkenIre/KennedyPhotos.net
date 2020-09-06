@@ -172,7 +172,7 @@ namespace Blogs.Models
             }
             else
             {
-                SQL = "update blog set title = '" + blog.Title + "', author = '" + blog.Author + "', dte_posted = now(), blog_text = '" + blog.BlogText + "', updated_by = 'TEMPUSER', updated_date = now() where blog_id = " + blog.Id;
+                SQL = "update blog set title = '" + blog.Title + "', author = '" + blog.Author + "', dte_posted = current_date(), blog_text = '" + blog.BlogText + "', updated_by = 'TEMPUSER', updated_date = current_date() where blog_id = " + blog.Id;
                 MySqlCommand cmd = new MySqlCommand(SQL, conn);
                 cmd.ExecuteNonQuery();
                 Id = blog.Id;
@@ -199,7 +199,7 @@ namespace Blogs.Models
             conn.ConnectionString = myConnectionString;
             conn.Open();
 
-            SQL = "update blog set active = 'N', updated_by = 'TEMPUSER', updated_date = now() where blog_id = " + Id;
+            SQL = "update blog set active = 'N', updated_by = 'TEMPUSER', updated_date = current_date() where blog_id = " + Id;
             MySqlCommand cmd = new MySqlCommand(SQL, conn);
             cmd.ExecuteNonQuery();
 
