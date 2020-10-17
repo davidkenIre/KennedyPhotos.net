@@ -44,7 +44,7 @@ songcursor = songcnx.cursor()
 # update the youtubemusic_idSong column with a natched file.  Then in the next section we'll upload missing songs
 
 # Upload new songs
-query = "select replace(replace(concat(path,  filename), 'smb:', ''), '/', '\\\\') as fullfilename, song_id from music.song where youtubemusic_idSong is null and active = 'Y'"
+query = "select replace(replace(concat(path,  filename), 'smb:', ''), '/', '\\\\') as fullfilename, song_id from music.song s, music.album a where a.album_id = s.album_id and s.youtubemusic_idSong is null and a.active = 'Y' and s.active = 'Y'"
 songcursor.execute(query)
 records = songcursor.fetchall()
 for row in records:

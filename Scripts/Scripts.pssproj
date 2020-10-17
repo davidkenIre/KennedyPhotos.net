@@ -33,6 +33,7 @@
     <Compile Include="Powershell\AWS\Sync-Folder.ps1" />
     <Compile Include="Powershell\DeleteJunkFiles.ps1" />
     <Compile Include="Powershell\Deploy.ps1" />
+    <Compile Include="Powershell\Duplicates\Duplicates.ps1" />
     <Compile Include="Powershell\eir.ps1" />
     <Compile Include="Powershell\KeepAlive.ps1" />
     <Compile Include="Powershell\Backup.ps1" />
@@ -59,6 +60,7 @@
     <Folder Include="Powershell\" />
     <Folder Include="Powershell\AWS\" />
     <Folder Include="Powershell\AD\" />
+    <Folder Include="Powershell\Duplicates\" />
     <Folder Include="Powershell\Powermove\" />
     <Folder Include="Python\" />
     <Folder Include="Registry\" />
