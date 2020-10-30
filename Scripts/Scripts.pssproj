@@ -45,6 +45,7 @@
     <Compile Include="Python\UploadNewSongs.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Powershell\AD\logon.vbs" />
     <Content Include="Powershell\Powermove\Series.csv" />
     <Content Include="Python\headers_auth.json" />
     <Content Include="Python\LinkYouTubeMusicToDB.py" />

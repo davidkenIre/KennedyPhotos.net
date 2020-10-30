@@ -22,11 +22,11 @@ $SecureKey = $(ConvertTo-SecureString -AsPlainText -String $SecretKey -Force)
 $creds = $(New-Object System.Management.Automation.PSCredential ($AccessKey, $SecureKey))
 $List = @{}
 $DuplicatePhotos=""
-$Directory = 'd:\media\Photos'
-$ExcludeDirectory = 'd:\Media\Photos\Albums'
+$Directory = "d:\media\Photos"
+$ExcludeDirectory = "d:\Media\Photos\Albums*"
 
-write-output "Scanning directory: $($Directory) for duplicates<br /><br />"
-$DuplicatePhotos += "Scanning directory: $($Directory) for duplicates<br /><br />"
+write-output "Scanning directory: $($Directory) for duplicates<br />"
+$DuplicatePhotos += "Scanning directory: $($Directory) for duplicates<br />"
 
 try {
     $Files=get-childitem $Directory -recurse | where-object{$_.fullname -notlike $ExcludeDirectory}
@@ -42,7 +42,8 @@ try {
     } # Each File
 
     $Groups=$List.GetEnumerator() | Group-Object Value | ? { $_.Count -gt 1 }
-    
+    write-output "Found $($Groups.Count) duplicate groups<br /><br />"
+    $DuplicatePhotos += "Found $($Groups.Count) duplicate groups<br /><br />"
     ForEach ($Group in $Groups) {
         write-output "Group Name: $($Group.Name)<br />"
         write-output "Files in group:-<br />"
@@ -51,7 +52,7 @@ try {
         $DuplicatePhotos += "Group Name: $($Group.Name)<br />"
         $DuplicatePhotos += "Files in group:-<br />"
         ForEach ($Dup in $Group.Group.Name){
-            $DuplicatePhotos += "$($Dup)<br />"
+            $DuplicatePhotos += """$($Dup)""<br />"
         }
         $DuplicatePhotos += "<hr /><br />"
 
