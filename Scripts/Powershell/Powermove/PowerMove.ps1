@@ -48,73 +48,88 @@ $DestinationDir = $Reg.DestinationDir
 # Start Processing
 $Files = Get-ChildItem $DownloadsDir -recurse | Where-Object {$_.Name -like "*.mkv" -or $_.Name -like "*.mp4" -or $_.Name -like "*.avi"}  # Find all media files dropped by torrent appliction
 
-ForEach ($File in $Files) {
-    $Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
-    $Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
-	Write-Output "Season: >$($Season)<  Episode: >$($Episode)<"
-    if ($Season -eq $null -and $Episode -eq $null) {
-		# Movie
-		Write-Output "Movie: $($File.Name)"
-		Move-Item -literalpath "$($File.FullName)"  "$($MovieFilePath)" -force
-		if (test-path "$($MovieFilePath)\$($File.Name)") {$FilesProcessed += "Moved $($File.FullName) to $($MovieFilePath)\$($File.Name)</br>"}
-	} else {
-		# TV Show
-		Write-Output "TV Show: $($File.Name)"
-	    ForEach ($Serie in $Series) {
-	        If ($File.Name -like $Serie.Pattern) {
-	            $Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
-	            $Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
-	            $EpisodesPath = ($MirrorPath + "/api/" + $APIKey + "/series/" + $Serie.SeriesID + "/all/en.xml")
+if ($Files.Count -gt 0) {
+	ForEach ($File in $Files) {
+		$Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
+		$Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
+		Write-Output "Season: >$($Season)<  Episode: >$($Episode)<"
+		if ($Season -eq $null -and $Episode -eq $null) {
+			# Movie
+			Write-Output "Movie: $($File.Name)"
+			Move-Item -literalpath "$($File.FullName)"  "$($MovieFilePath)" -force
+			if (test-path "$($MovieFilePath)\$($File.Name)") {$FilesProcessed += "Moved $($File.FullName) to $($MovieFilePath)\$($File.Name)</br>"}
+		} else {
+			# TV Show
+			Write-Output "TV Show: $($File.Name)"
+			ForEach ($Serie in $Series) {
+				If ($File.Name -like $Serie.Pattern) {
+					$Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
+					$Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
+					$EpisodesPath = ($MirrorPath + "/api/" + $APIKey + "/series/" + $Serie.SeriesID + "/all/en.xml")
 
 
-				Try {
-					$xml = [xml](Invoke-WebRequest -Uri $EpisodesPath | select-object -ExpandProperty Content -ErrorAction Stop)
-				} Catch {
-					$FilesProcessed += "Error querying TheTVDB for file: $($File.Name)</br>"
-					Break
-				}
+					Try {
+						$xml = [xml](Invoke-WebRequest -Uri $EpisodesPath | select-object -ExpandProperty Content -ErrorAction Stop)
+					} Catch {
+						$FilesProcessed += "Error querying TheTVDB for file: $($File.Name)</br>"
+						Break
+					}
 
- 				$xml.Data.Episode | ForEach {
-					If (($_.Combined_season -eq $Season.TrimStart('0')) -and ($_.EpisodeNumber -eq $Episode.TrimStart('0'))) {
-                		new-item "$($Serie.Path)\Season $($Season)" -force -ItemType Directory
+ 					$xml.Data.Episode | ForEach {
+						If (($_.Combined_season -eq $Season.TrimStart('0')) -and ($_.EpisodeNumber -eq $Episode.TrimStart('0'))) {
+                			new-item "$($Serie.Path)\Season $($Season)" -force -ItemType Directory
 
-						# $NewFilePath = ($Serie.Path) + "\" + ($Serie.Name + " - " + "S" + $Season + "E" + $Episode + " - " + (     ((((($_.EpisodeName) -replace "\?", "") -replace "`"","'") -replace " / ",", ") -replace "/",", ") -replace ":"," -"     ) + $File.Extension)
-						$NewFilePath = "$($Serie.Path)\Season $($Season)\$($File.Name)"
+							# $NewFilePath = ($Serie.Path) + "\" + ($Serie.Name + " - " + "S" + $Season + "E" + $Episode + " - " + (     ((((($_.EpisodeName) -replace "\?", "") -replace "`"","'") -replace " / ",", ") -replace "/",", ") -replace ":"," -"     ) + $File.Extension)
+							$NewFilePath = "$($Serie.Path)\Season $($Season)\$($File.Name)"
 
-						Move-Item -literalpath "$($File.FullName)"  "$($NewFilePath)" -force
-						if (test-path $NewFilePath) {$FilesProcessed += "Moved $($File.FullName) to $NewFilePath</br>"}
+							Move-Item -literalpath "$($File.FullName)"  "$($NewFilePath)" -force
+							if (test-path $NewFilePath) {$FilesProcessed += "Moved $($File.FullName) to $NewFilePath</br>"}
+						}
 					}
 				}
 			}
-        }
-    }
-}
+		}
+	}
 
-# Check for files which failed to move
-$Files = Get-ChildItem $DownloadsDir -recurse | Where-Object {$_.Name -like "*.mkv" -or $_.Name -like "*.mp4" -or $_.Name -like "*.avi"}
-ForEach ($File in $Files) {
-    $FilesProcessed += "Could not move: $($File.FullName)</br>"
-    $Problems = $True
-}
+	# Check for files which failed to move
+	$Files = Get-ChildItem $DownloadsDir -recurse | Where-Object {$_.Name -like "*.mkv" -or $_.Name -like "*.mp4" -or $_.Name -like "*.avi"}
+	ForEach ($File in $Files) {
+		$FilesProcessed += "Could not move: $($File.FullName)</br>"
+		$Problems = $True
+	}
 
 
-######################
-# Delete Old Filess from downloaded directory
-if ($Problems -eq $False) {
-	$limit = (Get-Date).AddDays(-60)
+	######################
+	# Delete Old Filess from downloaded directory
+	if ($Problems -eq $False) {
+		$limit = (Get-Date).AddDays(-60)
 
-	# Delete files older than the $limit.
-	Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.LastWriteTime -lt $limit } | Remove-Item -Force
+		# Delete files older than the $limit.
+		Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { !$_.PSIsContainer -and $_.LastWriteTime -lt $limit } | Remove-Item -Force
 
-	# Delete any empty directories left behind after deleting the old files.
-	Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { $_.PSIsContainer -and (Get-ChildItem -Path $_.FullName -Recurse -Force | Where-Object { !$_.PSIsContainer }) -eq $null } | Remove-Item -Force -Recurse
-}
+		# Delete any empty directories left behind after deleting the old files.
+		Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { $_.PSIsContainer -and (Get-ChildItem -Path $_.FullName -Recurse -Force | Where-Object { !$_.PSIsContainer }) -eq $null } | Remove-Item -Force -Recurse
+	}
 
-######################
-# Call Kodi Video Update * clean
-curl --data-binary '{ "jsonrpc": "2.0", "method": "VideoLibrary.Scan", "id": "mybash"}' -H 'content-type: application/json;' http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc
-curl --data-binary '{ "jsonrpc": "2.0", "method": "VideoLibrary.Clean", "id": "mybash"}' -H 'content-type: application/json;' http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc
+	######################
+	# Call Kodi Video Update & Clean
+	$Headers = @{
+		'content-type' = 'application/json'
+	}
+	$BodyScan = @{
+		"jsonrpc" = "2.0"
+		"method" = "VideoLibrary.Scan"
+		"id" = "mybash"
+	} | ConvertTo-Json
+	$BodyClean = @{
+		"jsonrpc" = "2.0"
+		"method" = "VideoLibrary.Clean"
+		"id" = "mybash"
+	} | ConvertTo-Json
+	Invoke-RestMethod -Method Post -Body $BodyScan -Headers $Headers -Uri "http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc"
+	Invoke-RestMethod -Method Post -Body $BodyClean -Headers $Headers -Uri "http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc"
 
-######################
-# Final Email
-if ($FilesProcessed -ne "") {Send-MailMessage -From $EmailFrom -To $EmailTo -Subject "Torrented File Move" -Body $FilesProcessed -SmtpServer $SmtpServer -Credential $creds -UseSsl -Port 25 -BodyAsHtml}
+	######################
+	# Final Email
+	if ($FilesProcessed -ne "") {Send-MailMessage -From $EmailFrom -To $EmailTo -Subject "Torrented File Move" -Body $FilesProcessed -SmtpServer $SmtpServer -Credential $creds -UseSsl -Port 25 -BodyAsHtml}
+} # Files gt 0

@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Powershell\AD\logon.vbs" />
-    <Content Include="Powershell\Powermove\Series.csv" />
+    <Content Include="Powershell\Powermove\SeriesSample.csv" />
     <Content Include="Powershell\Music\headers_auth.json" />
     <Content Include="Powershell\Music\LinkYouTubeMusicToDB.py" />
     <Content Include="Powershell\Music\YouTubeMusicPlaylist.py" />
