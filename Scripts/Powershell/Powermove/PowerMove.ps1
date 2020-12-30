@@ -27,6 +27,7 @@ $Credentials = New-Object System.Management.Automation.PSCredential -ArgumentLis
 $SecureKey = $(ConvertTo-SecureString -AsPlainText -String $SecretKey -Force)
 $creds = $(New-Object System.Management.Automation.PSCredential ($AccessKey, $SecureKey))
 $MovieFilePath = $Reg.MovieFilePath
+$LibreelecRootPwd = $Reg.LibreelecRootPwd
 $FilesProcessed = ""
 $Problems = $False
 
@@ -108,6 +109,11 @@ if ($Problems -eq $False) {
 	# Delete any empty directories left behind after deleting the old files.
 	Get-ChildItem -Path $DownloadsDir -Recurse -Force | Where-Object { $_.PSIsContainer -and (Get-ChildItem -Path $_.FullName -Recurse -Force | Where-Object { !$_.PSIsContainer }) -eq $null } | Remove-Item -Force -Recurse
 }
+
+######################
+# Call Kodi Video Update * clean
+curl --data-binary '{ "jsonrpc": "2.0", "method": "VideoLibrary.Scan", "id": "mybash"}' -H 'content-type: application/json;' http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc
+curl --data-binary '{ "jsonrpc": "2.0", "method": "VideoLibrary.Clean", "id": "mybash"}' -H 'content-type: application/json;' http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc
 
 ######################
 # Final Email

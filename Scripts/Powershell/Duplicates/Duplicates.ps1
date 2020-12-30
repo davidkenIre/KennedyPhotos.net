@@ -23,13 +23,15 @@ $creds = $(New-Object System.Management.Automation.PSCredential ($AccessKey, $Se
 $List = @{}
 $DuplicatePhotos=""
 $Directory = "d:\media\Photos"
-$ExcludeDirectory = "d:\Media\Photos\Albums*"
+$ExcludeDirectory1 = "d:\Media\Photos\Albums*"
+$ExcludeDirectory2 = "d:\Media\Photos\Projects*"
+$ExcludeDirectory3 = "remove-item 'd:\Media\Photos\Projects\2016\book*"
 
 write-output "Scanning directory: $($Directory) for duplicates<br />"
 $DuplicatePhotos += "Scanning directory: $($Directory) for duplicates<br />"
 
 try {
-    $Files=get-childitem $Directory -recurse | where-object{$_.fullname -notlike $ExcludeDirectory}
+    $Files=get-childitem $Directory -recurse | where-object{$_.fullname -notlike $ExcludeDirectory1} | where-object{$_.fullname -notlike $ExcludeDirectory2} | where-object{$_.fullname -notlike $ExcludeDirectory3}
     foreach ($File in $Files) {
         # Ignore Dirs   
         if (Test-Path -Path $File.FullName -PathType Leaf) {

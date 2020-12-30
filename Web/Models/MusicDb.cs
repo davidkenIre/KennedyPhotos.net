@@ -26,8 +26,9 @@ namespace Music.Models
 
             // Get the connection password
             string password = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLPassword", "");
+            string MySQLServer = (string)Registry.GetValue("HKEY_LOCAL_MACHINE\\Software\\Lattuce", "MySQLServer", "");
 
-            myConnectionString = "Server=lattuce-dc;Database=photos;Uid=root;Pwd=" + password + ";";
+            myConnectionString = "Server=" + MySQLServer + ";Database=photos;Uid=root;Pwd=" + password + ";";
             conn = new MySql.Data.MySqlClient.MySqlConnection();
             conn.ConnectionString = myConnectionString;
             conn.Open();

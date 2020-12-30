@@ -38,18 +38,25 @@
     <Compile Include="Powershell\KeepAlive.ps1" />
     <Compile Include="Powershell\Backup.ps1" />
     <Compile Include="Powershell\Music.ps1" />
+    <Compile Include="Powershell\Music\05-Link-YTFilesToMaster.ps1" />
+    <Compile Include="Powershell\Music\06-Update-YTPlaylists.ps1" />
+    <Compile Include="Powershell\Music\04-Upload-NewFiles.ps1" />
+    <Compile Include="Powershell\Music\02-Sync-MusicKodiDB.ps1" />
+    <Compile Include="Powershell\Music\03-Update-GeneralPlaylists.ps1" />
+    <Compile Include="Powershell\Music\01-Check-FileConsistency.ps1" />
+    <Compile Include="Powershell\Music\00-Control.ps1" />
     <Compile Include="Powershell\MYSQLBackup.ps1" />
     <Compile Include="Powershell\Powermove\PowerMove.ps1" />
     <Compile Include="Powershell\Reboot.ps1" />
     <Compile Include="Powershell\Time.ps1" />
-    <Compile Include="Python\UploadNewSongs.py" />
+    <Compile Include="Powershell\Music\UploadNewSongs.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Powershell\AD\logon.vbs" />
     <Content Include="Powershell\Powermove\Series.csv" />
-    <Content Include="Python\headers_auth.json" />
-    <Content Include="Python\LinkYouTubeMusicToDB.py" />
-    <Content Include="Python\YouTubeMusicPlaylist.py" />
+    <Content Include="Powershell\Music\headers_auth.json" />
+    <Content Include="Powershell\Music\LinkYouTubeMusicToDB.py" />
+    <Content Include="Powershell\Music\YouTubeMusicPlaylist.py" />
     <Content Include="SQL\Music\01_music_ddl.sql" />
     <Content Include="SQL\Music\02_music_dml.sql" />
     <Content Include="SQL\Photo\01_photos_ddl.sql" />
@@ -62,6 +69,7 @@
     <Folder Include="Powershell\AWS\" />
     <Folder Include="Powershell\AD\" />
     <Folder Include="Powershell\Duplicates\" />
+    <Folder Include="Powershell\Music\" />
     <Folder Include="Powershell\Powermove\" />
     <Folder Include="Python\" />
     <Folder Include="Registry\" />
