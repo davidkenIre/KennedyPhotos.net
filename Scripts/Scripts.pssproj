@@ -35,6 +35,7 @@
     <Compile Include="Powershell\Deploy.ps1" />
     <Compile Include="Powershell\Duplicates\Duplicates.ps1" />
     <Compile Include="Powershell\eir.ps1" />
+    <Compile Include="Powershell\InternetUptime.ps1" />
     <Compile Include="Powershell\KeepAlive.ps1" />
     <Compile Include="Powershell\Backup.ps1" />
     <Compile Include="Powershell\Music.ps1" />
@@ -53,7 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Powershell\AD\logon.vbs" />
-    <Content Include="Powershell\Powermove\SeriesSample.csv" />
     <Content Include="Powershell\Music\headers_auth.json" />
     <Content Include="Powershell\Music\LinkYouTubeMusicToDB.py" />
     <Content Include="Powershell\Music\YouTubeMusicPlaylist.py" />

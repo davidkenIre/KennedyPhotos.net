@@ -15,6 +15,13 @@
 #>
 
 ######################
+# Types
+Add-Type –Path 'c:\program files\Lattuce\MySql.Data.dll'
+
+# GetValues from Registry
+$LattuceRegKey=Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Lattuce
+
+######################
 # Retrieve values from local windows registry specifically for emailing - These are values I don't want to keep in sourcecode!
 $Reg = Get-ItemProperty -Path HKLM:\SOFTWARE\Lattuce
 $EmailPassword = $Reg.EmailPassword
@@ -33,8 +40,8 @@ $Problems = $False
 
 ######################
 # Retrieve values needed for the thtv.com scraper - I'm not really bothered about keeping these in sourcecode - the values are in the public domain anyway
-$SeriesFile = ((Split-Path $MyInvocation.MyCommand.Definition) + "\Series.csv")  # This csv file contains constants at the TV series level
-$Series = Import-Csv -Path $SeriesFile
+#$SeriesFile = ((Split-Path $MyInvocation.MyCommand.Definition) + "\Series.csv")  # This csv file contains constants at the TV series level
+#$Series = Import-Csv -Path $SeriesFile
 $MirrorPath = "http://thetvdb.com"
 $APIKey = "548120FC9A5EDEE3"
 
@@ -46,13 +53,26 @@ $DestinationDir = $Reg.DestinationDir
 
 ######################
 # Start Processing
+
+# Open a database connection
+$Connection = [MySql.Data.MySqlClient.MySqlConnection]@{ConnectionString=''}
+$MYSQLCommand = New-Object MySql.Data.MySqlClient.MySqlCommand
+$MYSQLDataAdapter = New-Object MySql.Data.MySqlClient.MySqlDataAdapter
+$MYSQLDataSet = New-Object System.Data.DataSet
+
+
 $Files = Get-ChildItem $DownloadsDir -recurse | Where-Object {$_.Name -like "*.mkv" -or $_.Name -like "*.mp4" -or $_.Name -like "*.avi"}  # Find all media files dropped by torrent appliction
 
 if ($Files.Count -gt 0) {
+
+	$Connection.ConnectionString="server=$($LattuceRegKey.MySQLServer);uid=$($LattuceRegKey.MySQLUsername);pwd=$($LattuceRegKey.MySQLPassword);database=$($LattuceRegKey.KodiMusicSchema)"
+	$Connection.Open()
+	$MYSQLCommand.Connection=$Connection
+
 	ForEach ($File in $Files) {
 		$Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
 		$Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
-		Write-Output "Season: >$($Season)<  Episode: >$($Episode)<"
+
 		if ($Season -eq $null -and $Episode -eq $null) {
 			# Movie
 			Write-Output "Movie: $($File.Name)"
@@ -61,33 +81,42 @@ if ($Files.Count -gt 0) {
 		} else {
 			# TV Show
 			Write-Output "TV Show: $($File.Name)"
-			ForEach ($Serie in $Series) {
-				If ($File.Name -like $Serie.Pattern) {
-					$Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
-					$Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
-					$EpisodesPath = ($MirrorPath + "/api/" + $APIKey + "/series/" + $Serie.SeriesID + "/all/en.xml")
 
+			# Get a likely match from the database
+			$Sql="select name, pattern, path, seriesid from misc.tvdb_link where instr('$($file.name)', pattern) > 0;"
+			#$Sql="select name, pattern, path, seriesid from misc.tvdb_link where pattern like '%the.expanse%'"
+			$MYSQLCommand.CommandText = $Sql
+			$Setting=$MYSQLCommand.ExecuteReader()			
 
-					Try {
-						$xml = [xml](Invoke-WebRequest -Uri $EpisodesPath | select-object -ExpandProperty Content -ErrorAction Stop)
-					} Catch {
-						$FilesProcessed += "Error querying TheTVDB for file: $($File.Name)</br>"
-						Break
-					}
+			#Write-Output "Mssss: $($Setting.Rows.Count)"
+			If ($Setting.Read()) {
+				$SeriesID=$($Setting.GetValue(3))
+				$Path=$($Setting.GetValue(2))
+				Write-Output "Matched file with Series ID: $($SeriesID)"
+				Write-Output "Season: $($Season)  Episode: $($Episode)"
+				
+				$Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
+				$Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
+				$EpisodesPath = ($MirrorPath + "/api/" + $APIKey + "/series/" + $SeriesID + "/all/en.xml")
 
- 					$xml.Data.Episode | ForEach {
-						If (($_.Combined_season -eq $Season.TrimStart('0')) -and ($_.EpisodeNumber -eq $Episode.TrimStart('0'))) {
-                			new-item "$($Serie.Path)\Season $($Season)" -force -ItemType Directory
+				Try {
+					$xml = [xml](Invoke-WebRequest -Uri $EpisodesPath | select-object -ExpandProperty Content -ErrorAction Stop)
+				} Catch {
+					$FilesProcessed += "Error querying TheTVDB for file: $($File.Name)</br>"
+					Break
+				}
 
-							# $NewFilePath = ($Serie.Path) + "\" + ($Serie.Name + " - " + "S" + $Season + "E" + $Episode + " - " + (     ((((($_.EpisodeName) -replace "\?", "") -replace "`"","'") -replace " / ",", ") -replace "/",", ") -replace ":"," -"     ) + $File.Extension)
-							$NewFilePath = "$($Serie.Path)\Season $($Season)\$($File.Name)"
-
-							Move-Item -literalpath "$($File.FullName)"  "$($NewFilePath)" -force
-							if (test-path $NewFilePath) {$FilesProcessed += "Moved $($File.FullName) to $NewFilePath</br>"}
-						}
+ 				$xml.Data.Episode | ForEach {
+					If (($_.Combined_season -eq $Season.TrimStart('0')) -and ($_.EpisodeNumber -eq $Episode.TrimStart('0'))) {
+                		new-item "$($Path)\Season $($Season)" -force -ItemType Directory
+						$NewFilePath = "$($Path)\Season $($Season)\$($File.Name)"
+						Move-Item -literalpath "$($File.FullName)"  "$($NewFilePath)" -force
+						if (test-path $NewFilePath) {$FilesProcessed += "Moved $($File.FullName) to $NewFilePath</br>"}
 					}
 				}
 			}
+			$Setting.Close()
+			$MYSQLCommand.Dispose()
 		}
 	}
 
@@ -97,7 +126,6 @@ if ($Files.Count -gt 0) {
 		$FilesProcessed += "Could not move: $($File.FullName)</br>"
 		$Problems = $True
 	}
-
 
 	######################
 	# Delete Old Filess from downloaded directory
@@ -127,7 +155,7 @@ if ($Files.Count -gt 0) {
 		"id" = "mybash"
 	} | ConvertTo-Json
 	Invoke-RestMethod -Method Post -Body $BodyScan -Headers $Headers -Uri "http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc"
-	Invoke-RestMethod -Method Post -Body $BodyClean -Headers $Headers -Uri "http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc"
+	#Invoke-RestMethod -Method Post -Body $BodyClean -Headers $Headers -Uri "http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc"
 
 	######################
 	# Final Email
