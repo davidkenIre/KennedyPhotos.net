@@ -44,6 +44,21 @@ try {
 			$Sql = "insert into misc.internet_downtime (start_date, end_date) values (now(), NULL);"
 			$MYSQLCommand.CommandText = $Sql
 			$MYSQLCommand.ExecuteNonQuery()
+
+			# Attempt a router restart			
+			$Url = "http://hue.lattuce.com/api/p3Gw2cnrtHOY-mo091kgYWvzhDv88sRS9DKDUhZx/lights/9/state"
+			For ($i=0; $i -le 10; $i++) {
+				$Body = @{"on" = $false}
+				$Body=$Body | ConvertTo-Json
+				Invoke-RestMethod -Method 'Put' -Uri $url -Body $Body
+				Start-Sleep 2
+				########
+				$Body = @{"on" = $true}
+				$Body=$Body | ConvertTo-Json
+				Invoke-RestMethod -Method 'Put' -Uri $url -Body $Body
+				Start-Sleep 2
+			}
+
 		} else {
 			# Internet has come back
 			$Sql = "update misc.internet_downtime a set end_date = now() "
