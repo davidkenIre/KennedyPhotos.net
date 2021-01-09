@@ -9,7 +9,6 @@
 # Types
 Add-Type –Path 'c:\program files\Lattuce\MySql.Data.dll'
 
-
 # GetValues from Registry
 $LattuceRegKey=Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Lattuce
 
@@ -24,13 +23,36 @@ try {
 	$Connection.Open()
 	$MYSQLCommand.Connection=$Connection
 
-	$Status = "Up"
+	$CurrentStatus = "Up"
+	if (Test-Connection 8.8.8.8 -Count 1 -ErrorAction SilentlyContinue) {$CurrentStatus="Up" } else {$CurrentStatus="Down"}             
 
-	$Sql = "insert into misc.internet_uptime (created_date, created_by, status) values ("
-	$Sql += "curdate(), 'feb66d43-7615-4dbe-93f1-73cc4b4bf2a3', '$($Status)'"
-
+	# Get the Max row
+	# Was previous status up or down?
+	$Sql = "select max(internet_downtime_id) from misc.internet_downtime"
 	$MYSQLCommand.CommandText = $Sql
-	$MYSQLCommand.ExecuteScalar()
+	$MaxInetnetDowntimeID=$MYSQLCommand.ExecuteScalar()
+
+	# Was previous status up or down?
+	$Sql = "select case when end_date is null then ""Down"" else ""Up"" end as status from misc.internet_downtime a "
+	$Sql += "where a.internet_downtime_id = $($MaxInetnetDowntimeID) "
+	$MYSQLCommand.CommandText = $Sql
+	$LastStatus=$MYSQLCommand.ExecuteScalar()
+
+	if ($CurrentStatus -ne $LastStatus) {
+		if ($CurrentStatus -eq "Down") {
+			# Internet has gone down
+			$Sql = "insert into misc.internet_downtime (start_date, end_date) values (now(), NULL);"
+			$MYSQLCommand.CommandText = $Sql
+			$MYSQLCommand.ExecuteNonQuery()
+		} else {
+			# Internet has come back
+			$Sql = "update misc.internet_downtime a set end_date = now() "
+			$Sql += "where a.internet_downtime_id = $($MaxInetnetDowntimeID) "
+			$MYSQLCommand.CommandText = $Sql
+			$MYSQLCommand.ExecuteNonQuery()
+		}
+	}
+	
 } catch {
 	Write-Error $_
 } finally {
