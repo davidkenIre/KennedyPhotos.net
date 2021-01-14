@@ -47,10 +47,14 @@ songcursor = songcnx.cursor()
 # Delete all existing playlists on youtube music (Excluding Your Likes playlist)
 playlists=ytmusic.get_library_playlists(10000)
 for playlist in playlists:
-    if playlist['playlistId'] != "LM":
-        id_to_delete = playlist['playlistId']
-        print("Deleting Playlist:", playlist['title'], [id_to_delete])
-        ytmusic.delete_playlist(id_to_delete)
+    #  Only delete playlists which are maintained manually
+    query = ("SELECT playlist_name FROM music.playlist where active = 'Y' and maintain_internally = 'Y'")
+    playlistcursortodelete.execute(query)
+    for (playlist_name) in playlistcursortodelete:
+        if playlist['title'] == playlist_name:
+            id_to_delete = playlist['playlistId']
+            print("Deleting Playlist:", playlist['title'], [id_to_delete])
+            ytmusic.delete_playlist(id_to_delete)
 
 # Create new playlists
 query = ("select playlist_name, playlist_id from playlist p where p.active='Y'")
