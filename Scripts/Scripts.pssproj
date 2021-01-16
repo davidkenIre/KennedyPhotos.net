@@ -57,6 +57,7 @@
     <Content Include="Powershell\Music\headers_auth.json" />
     <Content Include="Powershell\Music\LinkYouTubeMusicToDB.py" />
     <Content Include="Powershell\Music\YouTubeMusicPlaylist.py" />
+    <Content Include="SQL\Misc\InternetDowntime.sql" />
     <Content Include="SQL\Music\01_music_ddl.sql" />
     <Content Include="SQL\Music\02_music_dml.sql" />
     <Content Include="SQL\Photo\01_photos_ddl.sql" />
@@ -74,6 +75,7 @@
     <Folder Include="Powershell\Powermove\" />
     <Folder Include="Registry\" />
     <Folder Include="SQL\" />
+    <Folder Include="SQL\Misc\" />
     <Folder Include="SQL\Music\" />
     <Folder Include="SQL\Video\" />
     <Folder Include="SQL\Photo\" />
