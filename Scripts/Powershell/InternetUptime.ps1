@@ -51,12 +51,12 @@ try {
 				$Body = @{"on" = $false}
 				$Body=$Body | ConvertTo-Json
 				Invoke-RestMethod -Method 'Put' -Uri $url -Body $Body
-				Start-Sleep 2
+				Start-Sleep 1
 				########
 				$Body = @{"on" = $true}
 				$Body=$Body | ConvertTo-Json
 				Invoke-RestMethod -Method 'Put' -Uri $url -Body $Body
-				Start-Sleep 2
+				Start-Sleep 1
 			}
 
 		} else {
@@ -65,6 +65,19 @@ try {
 			$Sql += "where a.internet_downtime_id = $($MaxInetnetDowntimeID) "
 			$MYSQLCommand.CommandText = $Sql
 			$MYSQLCommand.ExecuteNonQuery()
+
+			$Url = "http://hue.lattuce.com/api/p3Gw2cnrtHOY-mo091kgYWvzhDv88sRS9DKDUhZx/lights/9/state"
+			For ($i=0; $i -le 6; $i++) {
+				$Body = @{"on" = $false}
+				$Body=$Body | ConvertTo-Json
+				Invoke-RestMethod -Method 'Put' -Uri $url -Body $Body
+				Start-Sleep 3
+				########
+				$Body = @{"on" = $true}
+				$Body=$Body | ConvertTo-Json
+				Invoke-RestMethod -Method 'Put' -Uri $url -Body $Body
+				Start-Sleep 3
+			}
 		}
 	}
 	

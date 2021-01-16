@@ -83,8 +83,8 @@ if ($Files.Count -gt 0) {
 			Write-Output "TV Show: $($File.Name)"
 
 			# Get a likely match from the database
-			$Sql="select name, pattern, path, seriesid from misc.tvdb_link where instr('$($file.name)', pattern) > 0;"
-			#$Sql="select name, pattern, path, seriesid from misc.tvdb_link where pattern like '%the.expanse%'"
+			$FileName = $($file.name).Replace("'", "''")
+			$Sql="select name, pattern, path, seriesid from misc.tvdb_link where instr('$FileName', pattern) > 0;"
 			$MYSQLCommand.CommandText = $Sql
 			$Setting=$MYSQLCommand.ExecuteReader()			
 

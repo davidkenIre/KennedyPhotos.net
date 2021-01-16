@@ -63,6 +63,7 @@
     <Content Include="SQL\Photo\02_photos_dml.sql" />
     <Content Include="Registry\Lattuce.reg" />
     <Content Include="SQL\Video\ReapplyWatchedStatus.sql" />
+    <Content Include="SQL\Video\tvdb_link.sql" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Powershell\" />
@@ -71,7 +72,6 @@
     <Folder Include="Powershell\Duplicates\" />
     <Folder Include="Powershell\Music\" />
     <Folder Include="Powershell\Powermove\" />
-    <Folder Include="Python\" />
     <Folder Include="Registry\" />
     <Folder Include="SQL\" />
     <Folder Include="SQL\Music\" />

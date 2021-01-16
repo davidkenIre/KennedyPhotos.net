@@ -48,7 +48,7 @@ songcursor = songcnx.cursor()
 playlists=ytmusic.get_library_playlists(10000)
 for playlist in playlists:
     #  Only delete playlists which are maintained manually
-    query = ("SELECT playlist_name, playlist_id FROM music.playlist where active = 'Y' and maintain_internally = 'Y'")
+    query = ("SELECT playlist_name, playlist_id FROM music.playlist where active = 'Y'")
     playlistcursortodelete.execute(query)
 
     records = playlistcursortodelete.fetchall()
@@ -60,7 +60,7 @@ for playlist in playlists:
             ytmusic.delete_playlist(id_to_delete)
 
 # Create new playlists
-query = ("select playlist_name, playlist_id from playlist p where p.active='Y' and maintain_internally = 'Y'" )
+query = ("select playlist_name, playlist_id from playlist p where p.active='Y'" )
 playlistcursor.execute(query)
 for (playlist_name, playlist_id) in playlistcursor:
     found=0
@@ -77,7 +77,7 @@ for (playlist_name, playlist_id) in playlistcursor:
 # Add Songs to a playlist
 playlists=ytmusic.get_library_playlists(100)
 for playlist in playlists:
-    query=("select youtubemusic_idSong from music.playlist p, music.playlist_song ps, music.song s where p.active = 'Y' and p.maintain_internally = 'Y' and playlist_name = '" + playlist['title'] + "' and p.playlist_id = ps.playlist_id and ps.song_id = s.song_id")
+    query=("select youtubemusic_idSong from music.playlist p, music.playlist_song ps, music.song s where p.active = 'Y' and playlist_name = '" + playlist['title'] + "' and p.playlist_id = ps.playlist_id and ps.song_id = s.song_id")
     print(query)
     playlistsongcursor.execute(query)
     records = playlistsongcursor.fetchall()
