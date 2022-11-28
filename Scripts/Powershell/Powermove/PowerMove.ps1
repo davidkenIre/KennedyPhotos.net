@@ -14,6 +14,7 @@
 .LINK  
 #>
 
+Start-Sleep 60
 Write-Output "$(get-date ): Starting PowerMove"
 
 ######################
@@ -25,11 +26,7 @@ $LattuceRegKey=Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Latt
 
 ######################
 # Pause Torrents 
-Start-Sleep 10
-python PauseAllTorrents.py > PauseAllTorrents.Log
-Write-Output "$(get-date ): Output from PauseAllTorrents.py"
-Write-Output (Get-Content PauseAllTorrents.Log)
-Start-Sleep 30
+Write-Output "$(get-date ): $(python PauseAllTorrents.py)"
 
 ######################
 # Retrieve values from local windows registry specifically for emailing - These are values I don't want to keep in sourcecode!
@@ -174,11 +171,7 @@ if ($Files.Count -gt 0) {
 ######################
 # Remove Completed torents and Resume
 
-
-# Pause Torrents 
-python RemoveCompletedTorrents.py > RemoveCompletedTorrents.Log
-Write-Output "$(get-date ): Output from RemoveCompletedTorrents.py"
-Write-Output (Get-Content RemoveCompletedTorrents.Log)
+Write-Output "$(get-date ): $(python RemoveCompletedTorrents.py)"
 
 Write-Output "$(get-date ): Finishing PowerMove"
 Write-Output "======================================================"

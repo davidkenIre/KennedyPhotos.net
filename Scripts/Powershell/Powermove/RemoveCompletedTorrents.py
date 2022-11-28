@@ -21,16 +21,16 @@ except qbittorrentapi.LoginFailed as e:
     print(e)
 
 # display qBittorrent info
-print(f'qBittorrent: {qbt_client.app.version}')
-print(f'qBittorrent Web API: {qbt_client.app.web_api_version}')
+print('qBittorrent: {qbt_client.app.version}')
+print('qBittorrent Web API: {qbt_client.app.web_api_version}')
 for k,v in qbt_client.app.build_info.items(): print(f'{k}: {v}')
 
 # retrieve and show all torrents
 for torrent in qbt_client.torrents_info():
-    print(f'{torrent.hash[-6:]}: {torrent.name} ({torrent.state})')
+    print('{torrent.hash[-6:]}: {torrent.name} ({torrent.state})')
     # Remove Complete Files
     if torrent.state_enum.is_complete:
-        print(f'Removing {torrent.hash[-6:]}: {torrent.name} ({torrent.state})')
+        print('Removing {torrent.hash[-6:]}: {torrent.name} ({torrent.state})')
         torrent.delete(delete_files='None')
 
 # Resume all torrents
