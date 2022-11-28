@@ -16,7 +16,6 @@ copy-item C:\Data\GitHub\Lattuce\Library\bin\Release\taglib-sharp.dll \\lattuce-
 copy-item C:\Data\GitHub\Lattuce\Library\bin\Release\policy.2.0.taglib-sharp.dll \\lattuce-dc\data\scripts\Powershell -force
 copy-item C:\Data\GitHub\Lattuce\Library\bin\Release\policy.2.0.taglib-sharp.config \\lattuce-dc\data\scripts\Powershell -force
 Copy-Item C:\data\github\Lattuce\Scripts\Powershell\*  \\lattuce-dc\data\scripts\Powershell -Recurse -force
-Copy-Item C:\data\github\Lattuce\Scripts\Python\*  \\lattuce-dc\data\scripts\Python -Recurse -force
 
 Copy-Item C:\Data\GitHub\Lattuce\Library\bin\Debug\*  '\\lattuce-dc\c$\Program Files\lattuce'  -force
 

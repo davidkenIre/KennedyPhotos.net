@@ -9,6 +9,12 @@
 # Types
 Add-Type –Path 'c:\program files\Lattuce\MySql.Data.dll'
 
+# Constants
+$UrlLight = "http://hue.lattuce.com/api/p3Gw2cnrtHOY-mo091kgYWvzhDv88sRS9DKDUhZx/lights/9/state"
+$UrlPlug = "http://hue.lattuce.com/api/p3Gw2cnrtHOY-mo091kgYWvzhDv88sRS9DKDUhZx/lights/18/state"
+$OnBodyJSON = @{"on" = $true}; $OnBodyJSON=$OnBodyJSON | ConvertTo-Json
+$OffBodyJSON = @{"on" = $false}; $OffBodyJSON=$OffBodyJSON | ConvertTo-Json
+
 # GetValues from Registry
 $LattuceRegKey=Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Lattuce
 
@@ -45,39 +51,35 @@ try {
 			$MYSQLCommand.CommandText = $Sql
 			$MYSQLCommand.ExecuteNonQuery()
 
-			# Attempt a router restart			
-			$Url = "http://hue.lattuce.com/api/p3Gw2cnrtHOY-mo091kgYWvzhDv88sRS9DKDUhZx/lights/9/state"
+			# Turn off router
+			Invoke-RestMethod -Method 'Put' -Uri $UrlPlug -Body $OffBodyJSON
+
+			# Flash Lights
 			For ($i=0; $i -le 10; $i++) {
-				$Body = @{"on" = $false}
-				$Body=$Body | ConvertTo-Json
-				Invoke-RestMethod -Method 'Put' -Uri $url -Body $Body
+				Invoke-RestMethod -Method 'Put' -Uri $UrlLight -Body $OffBodyJSON
 				Start-Sleep 1
 				########
-				$Body = @{"on" = $true}
-				$Body=$Body | ConvertTo-Json
-				Invoke-RestMethod -Method 'Put' -Uri $url -Body $Body
+				Invoke-RestMethod -Method 'Put' -Uri $UrlLight -Body $OnBodyJSON
 				Start-Sleep 1
 			}
 
+			# Turn on router
+			Invoke-RestMethod -Method 'Put' -Uri $UrlPlug -Body $OnBodyJSON						
 		} else {
 			# Internet has come back
 			$Sql = "update misc.internet_downtime a set end_date = now() "
 			$Sql += "where a.internet_downtime_id = $($MaxInetnetDowntimeID) "
 			$MYSQLCommand.CommandText = $Sql
 			$MYSQLCommand.ExecuteNonQuery()
-
-			$Url = "http://hue.lattuce.com/api/p3Gw2cnrtHOY-mo091kgYWvzhDv88sRS9DKDUhZx/lights/9/state"
+			
+			# Flash Lights
 			For ($i=0; $i -le 6; $i++) {
-				$Body = @{"on" = $false}
-				$Body=$Body | ConvertTo-Json
-				Invoke-RestMethod -Method 'Put' -Uri $url -Body $Body
+				Invoke-RestMethod -Method 'Put' -Uri $UrlLight -Body $OffBodyJSON
 				Start-Sleep 3
 				########
-				$Body = @{"on" = $true}
-				$Body=$Body | ConvertTo-Json
-				Invoke-RestMethod -Method 'Put' -Uri $url -Body $Body
+				Invoke-RestMethod -Method 'Put' -Uri $UrlLight -Body $OnBodyJSON
 				Start-Sleep 3
-			}
+			}			
 		}
 	}
 	

@@ -14,12 +14,22 @@
 .LINK  
 #>
 
+Write-Output "$(get-date ): Starting PowerMove"
+
 ######################
 # Types
 Add-Type –Path 'c:\program files\Lattuce\MySql.Data.dll'
 
 # GetValues from Registry
 $LattuceRegKey=Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Lattuce
+
+######################
+# Pause Torrents 
+Start-Sleep 10
+python PauseAllTorrents.py > PauseAllTorrents.Log
+Write-Output "$(get-date ): Output from PauseAllTorrents.py"
+Write-Output (Get-Content PauseAllTorrents.Log)
+Start-Sleep 30
 
 ######################
 # Retrieve values from local windows registry specifically for emailing - These are values I don't want to keep in sourcecode!
@@ -75,12 +85,12 @@ if ($Files.Count -gt 0) {
 
 		if ($Season -eq $null -and $Episode -eq $null) {
 			# Movie
-			Write-Output "Movie: $($File.Name)"
+			Write-Output "$(Get-Date): Movie: $($File.Name)"
 			Move-Item -literalpath "$($File.FullName)"  "$($MovieFilePath)" -force
 			if (test-path "$($MovieFilePath)\$($File.Name)") {$FilesProcessed += "Moved $($File.FullName) to $($MovieFilePath)\$($File.Name)</br>"}
 		} else {
 			# TV Show
-			Write-Output "TV Show: $($File.Name)"
+			Write-Output "$(Get-Date): TV Show: $($File.Name)"
 
 			# Get a likely match from the database
 			$FileName = $($file.name).Replace("'", "''")
@@ -88,12 +98,11 @@ if ($Files.Count -gt 0) {
 			$MYSQLCommand.CommandText = $Sql
 			$Setting=$MYSQLCommand.ExecuteReader()			
 
-			#Write-Output "Mssss: $($Setting.Rows.Count)"
 			If ($Setting.Read()) {
 				$SeriesID=$($Setting.GetValue(3))
 				$Path=$($Setting.GetValue(2))
-				Write-Output "Matched file with Series ID: $($SeriesID)"
-				Write-Output "Season: $($Season)  Episode: $($Episode)"
+				Write-Output "$(Get-Date): Matched file with Series ID: $($SeriesID)"
+				Write-Output "$(Get-Date): Season: $($Season)  Episode: $($Episode)"
 				
 				$Season = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[1]
 				$Episode = ($File.Name -split ('S*(\d{1,2})(x|E)(\d{1,2})'))[3]
@@ -155,9 +164,21 @@ if ($Files.Count -gt 0) {
 		"id" = "mybash"
 	} | ConvertTo-Json
 	Invoke-RestMethod -Method Post -Body $BodyScan -Headers $Headers -Uri "http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc"
-	#Invoke-RestMethod -Method Post -Body $BodyClean -Headers $Headers -Uri "http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc"
+	Invoke-RestMethod -Method Post -Body $BodyClean -Headers $Headers -Uri "http://root:$($LibreelecRootPwd)@media-sr.lattuce.com:80/jsonrpc"
 
 	######################
 	# Final Email
 	if ($FilesProcessed -ne "") {Send-MailMessage -From $EmailFrom -To $EmailTo -Subject "Torrented File Move" -Body $FilesProcessed -SmtpServer $SmtpServer -Credential $creds -UseSsl -Port 25 -BodyAsHtml}
 } # Files gt 0
+
+######################
+# Remove Completed torents and Resume
+
+
+# Pause Torrents 
+python RemoveCompletedTorrents.py > RemoveCompletedTorrents.Log
+Write-Output "$(get-date ): Output from RemoveCompletedTorrents.py"
+Write-Output (Get-Content RemoveCompletedTorrents.Log)
+
+Write-Output "$(get-date ): Finishing PowerMove"
+Write-Output "======================================================"
